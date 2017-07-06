@@ -61,29 +61,7 @@ class SphericalLensMenu(WBCommandMenu):
         return {"MenuText": "Spherical Lens",
                 #"Accel": "Ctrl+M",
                 "ToolTip": "Add Spherical Lens",
-                "Pixmap": """
-        /* XPM */
-        static const char *test_icon[]={
-        "16 16 2 1",
-        "a c #000000",
-        ". c None",
-        "................",
-        "................",
-        "..############..",
-        "..############..",
-        "..############..",
-        "......####......",
-        "......####......",
-        "......####......",
-        "......####......",
-        "......####......",
-        "......####......",
-        "......####......",
-        "......####......",
-        "......####......",
-        "................",
-        "................"};
-        """}
+                "Pixmap": ""}
 
 class SphericalLensPart(WBPart):
     def __init__(self,obj,CS1=0.01,CS2=-0.01,CT=10,D=50, matcat="", matref=""):
