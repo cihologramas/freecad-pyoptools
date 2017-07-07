@@ -8,7 +8,7 @@ from raysparallel import RaysParallelMenu
 from propagate import PropagateMenu
 from catalogcomponent import CatalogComponentMenu
 from sensor import SensorMenu
-
+from reports import ReportsMenu
 FreeCADGui.addCommand('SphericalLens',SphericalLensMenu())
 FreeCADGui.addCommand('RoundMirror',RoundMirrorMenu())
 FreeCADGui.addCommand('RaysPoint',RaysPointMenu())
@@ -16,3 +16,4 @@ FreeCADGui.addCommand('RaysParallel',RaysParallelMenu())
 FreeCADGui.addCommand('Propagate',PropagateMenu())
 FreeCADGui.addCommand('CatalogComponent',CatalogComponentMenu())
 FreeCADGui.addCommand('Sensor',SensorMenu())
+FreeCADGui.addCommand('Reports',ReportsMenu())

@@ -66,7 +66,7 @@ class SphericalLensMenu(WBCommandMenu):
 class SphericalLensPart(WBPart):
     def __init__(self,obj,CS1=0.01,CS2=-0.01,CT=10,D=50, matcat="", matref=""):
         WBPart.__init__(self,obj,"SphericalLens")
-        obj.Proxy = self
+
         obj.addProperty("App::PropertyFloat","CS1")
         obj.addProperty("App::PropertyFloat","CS2")
         obj.addProperty("App::PropertyFloat","CT")

@@ -43,7 +43,7 @@ class pyOpToolsWorkbench ( Workbench ):
 
         #self.appendToolbar("pyOpTools", ["MyCommand1","MyCommand2"])
         self.appendMenu("Add Components", ["SphericalLens","RoundMirror","CatalogComponent","Sensor","RaysParallel","RaysPoint"])
-        self.appendMenu("Simulate", ["Propagate"])
+        self.appendMenu("Simulate", ["Propagate", "Reports"])
 
         Log ("Loading MyModule... done\n")
 
