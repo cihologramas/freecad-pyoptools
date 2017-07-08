@@ -1,4 +1,7 @@
 from wbcommand import *
+
+import Part
+
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
 from math import radians
@@ -84,33 +87,8 @@ class SphericalLensPart(WBPart):
         obj.ViewObject.ShapeColor = (1.,1.,0.,0.)
 
     def execute(self,obj):
-        import Part,FreeCAD
 
-        d=Part.makeCylinder(obj.D/2.,obj.CT+obj.D)
-        d.translate(FreeCAD.Base.Vector(0,0,-(obj.CT+obj.D)/2))
-        if obj.CS1==0:
-            R1=1e6
-        else:
-            R1=1./obj.CS1
-        f1=Part.makeSphere(abs(R1))
-        f1.translate( FreeCAD.Base.Vector(0,0,R1-obj.CT/2))
-
-        if obj.CS2 ==0:
-            R2 = 1e6
-        else:
-            R2=1./obj.CS2
-        f2=Part.makeSphere(abs(R2))
-        f2.translate(FreeCAD.Base.Vector(0,0,R2+obj.CT/2))
-
-        if R1>0:
-            t=d.common(f1)
-        else:
-            t=d.cut(f1)
-        if R2>0:
-            t=t.cut(f2)
-        else:
-            t=t.common(f2)
-        obj.Shape = t
+        obj.Shape = buildlens(obj.CS1,obj.CS2,obj.D,obj.CT)
 
     def pyoptools_repr(self,obj):
         radius= obj.D/2.
@@ -136,3 +114,33 @@ def InsertSL(CS1=0.01,CS2=-0.01,CT=10,D=50,ID="L",matcat="",matref=""):
     myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj
+
+def buildlens(CS1,CS2,D,CT):
+
+    d=Part.makeCylinder(D/2.,CT+D)
+    d.translate(FreeCAD.Base.Vector(0,0,-(CT+D)/2))
+
+    if CS1==0:
+        R1=1e6
+    else:
+        R1=1./CS1
+    f1=Part.makeSphere(abs(R1))
+    f1.translate(FreeCAD.Base.Vector(0,0,R1-CT/2))
+
+    if CS2 ==0:
+        R2 = 1e6
+    else:
+        R2=1./CS2
+    f2=Part.makeSphere(abs(R2))
+    f2.translate(FreeCAD.Base.Vector(0,0,R2+CT/2))
+
+    if R1>0:
+        t=d.common(f1)
+    else:
+        t=d.cut(f1)
+    if R2>0:
+        t=t.cut(f2)
+    else:
+        t=t.common(f2)
+
+    return t

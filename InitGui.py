@@ -19,14 +19,14 @@ class pyOpToolsWorkbench ( Workbench ):
  			"........#.......",
  			".......###......",
  			".....#######....",
- 			"...###########..",
- 			"......####......",
- 			"......####......",
- 			"......####......",
- 			"......####......",
- 			"......####......",
- 			"......####......",
- 			"...###########..",
+ 			"...##..###..##..",
+ 			".......###......",
+ 			".......###......",
+ 			".......###......",
+ 			".......###......",
+ 			".......###......",
+ 			".......###......",
+ 			"...##..###..##..",
  			".....#######....",
  			".......###......",
  			"........#.......",
@@ -41,8 +41,7 @@ class pyOpToolsWorkbench ( Workbench ):
 
     def Initialize(self):
 
-        #self.appendToolbar("pyOpTools", ["MyCommand1","MyCommand2"])
-        self.appendMenu("Add Components", ["SphericalLens","RoundMirror","CatalogComponent","Sensor","RaysParallel","RaysPoint"])
+        self.appendMenu("Add Components", ["SphericalLens","DoubletLens","RoundMirror","CatalogComponent","Sensor","RaysParallel","RaysPoint"])
         self.appendMenu("Simulate", ["Propagate", "Reports"])
 
         Log ("Loading MyModule... done\n")
