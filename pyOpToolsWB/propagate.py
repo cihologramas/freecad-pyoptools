@@ -76,6 +76,8 @@ class PropagatePart(WBPart):
         rays=[]
         complist=[]
         for obj in objs:
+            if not obj.enabled:
+                continue
             X,Y,Z = obj.Placement.Base
             #No entiendo el orden pero parece que funciona
             RZ,RY,RX = obj.Placement.Rotation.toEuler()

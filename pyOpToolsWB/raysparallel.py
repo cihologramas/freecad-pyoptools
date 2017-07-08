@@ -54,7 +54,7 @@ class RaysParallelMenu(WBCommandMenu):
 
 class RaysParPart(WBPart):
     def __init__(self,obj,nr=6,na=6,distribution="polar",wavelenght=633, D=5,axis=FreeCAD.Vector((0,0,1)),enabled=True):
-        WBPart.__init__(self,obj,"RaysPar")
+        WBPart.__init__(self,obj,"RaysPar",enabled)
 
         obj.addProperty("App::PropertyInteger","nr")
         obj.addProperty("App::PropertyInteger","na")
@@ -62,7 +62,6 @@ class RaysParPart(WBPart):
         obj.addProperty("App::PropertyFloat","wavelenght")
         obj.addProperty("App::PropertyFloat","D")
         obj.addProperty("App::PropertyVector","axis")
-        obj.addProperty("App::PropertyBool","enabled")
 
         obj.nr=nr
         obj.na=na
@@ -78,13 +77,15 @@ class RaysParPart(WBPart):
         obj.ViewObject.ShapeColor = (r,g,b,0.)
 
 
-    def onChanged(self, obj, prop):
-        if prop =="cType":
-            obj.setEditorMode("cType", 2)
+    def propChanged(self, obj, prop):
+
+        # To keep all the housekeeping that WBPart do, this method replaces
+        # the standard onChanged
 
         if prop == "wavelenght":
             r,g,b = wavelength2RGB(obj.wavelenght/1000.)
             obj.ViewObject.ShapeColor = (r,g,b,0.)
+
 
 
     def pyoptools_repr(self,obj):

@@ -59,8 +59,6 @@ class RaysPointPart(WBPart):
         obj.addProperty("App::PropertyFloat","wavelenght")
         obj.addProperty("App::PropertyFloat","angle")
         obj.addProperty("App::PropertyVector","axis")
-        obj.addProperty("App::PropertyBool","enabled")
-
         obj.nr=nr
         obj.na=na
         obj.distribution=distribution.lower()
@@ -73,9 +71,10 @@ class RaysPointPart(WBPart):
 
 
 
-    def onChanged(self, obj, prop):
-        if prop =="cType":
-            obj.setEditorMode("cType", 2)
+    def propertyChanged(self, obj, prop):
+
+        # To keep all the housekeeping that WBPart do, this method replaces
+        # the standard onChanged
 
         if prop == "wavelenght":
             r,g,b = wavelength2RGB(obj.wavelenght/1000.)
@@ -110,17 +109,16 @@ class RaysPointPart(WBPart):
         ang=obj.angle
         DX,DY,DZ=obj.axis
         X,Y,Z = obj.Placement.Base
-        r=[]
-        if obj.enabled:
-            if dist=="polar":
-                r=rs_lib.point_source_p(origin=(X,Y,Z),direction=(DX,DY,DZ),span=radians(ang),
-                                          num_rays=(nr,na),wavelength=wl/1000., label="")
-            elif dist=="cartesian":
-                print "cartesian ray distribution, not implemented yet"
-            elif dist=="random":
-                print "random ray distribution, not implemented yet"
-            else:
-                print "Warning ray distribution {} not recognized".format(dist)
+
+        if dist=="polar":
+            r=rs_lib.point_source_p(origin=(X,Y,Z),direction=(DX,DY,DZ),span=radians(ang),
+                                      num_rays=(nr,na),wavelength=wl/1000., label="")
+        elif dist=="cartesian":
+            print "cartesian ray distribution, not implemented yet"
+        elif dist=="random":
+            print "random ray distribution, not implemented yet"
+        else:
+            print "Warning ray distribution {} not recognized".format(dist)
 
         return r
 

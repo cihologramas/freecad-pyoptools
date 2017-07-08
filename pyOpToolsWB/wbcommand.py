@@ -23,14 +23,31 @@ class WBCommandMenu:
         FreeCADGui.Control.showDialog(sl)
 
 class WBPart:
-    def __init__(self,obj,PartType):
+    def __init__(self,obj,PartType,enabled = True):
         obj.Proxy = self
         obj.addProperty("App::PropertyString","cType").cType =PartType
+        obj.addProperty("App::PropertyBool","enabled").enabled = enabled
 
     def onChanged(self, obj, prop):
+        #this method should not be overloaded. Overload propertyChanged instead
+
         #Esto se necesita para cuando se carga de un archivo
         if prop =="cType":
             obj.setEditorMode("cType", 2)
+
+        if prop =="enabled":
+
+            if obj.enabled:
+                obj.ViewObject.Transparency = 30
+            else:
+                obj.ViewObject.Transparency = 90
+
+        self.propertyChanged(obj,prop)
+
+    def propertyChanged(self,obj,prop):
+        # this method should be overloaded instead of onChanged
+        pass
+
 
     def pyoptools_repr(self, obj):
         print "pyOpTools representation of Object {} not implemented".format(obj.cType)
