@@ -42,7 +42,7 @@ class pyOpToolsWorkbench ( Workbench ):
     def Initialize(self):
 
         self.appendMenu("Add Components", ["SphericalLens","DoubletLens","RoundMirror","CatalogComponent","Sensor","RaysParallel","RaysPoint"])
-        self.appendMenu("Simulate", ["Propagate", "Reports"])
+        self.appendMenu("Simulate", ["Propagate", "Reports","Optimize"])
 
         Log ("Loading MyModule... done\n")
 

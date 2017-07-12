@@ -2,7 +2,7 @@ import FreeCAD, Part
 
 from math import radians
 from wbcommand import *
-
+from pyoptoolshelpers import getActiveSystem
 
 from pyoptools.raytrace.system import System
 
@@ -72,25 +72,8 @@ def get_prop_shape(ray):
 class PropagatePart(WBPart):
     def __init__(self, obj):
         WBPart.__init__(self,obj,"Propagation")
-        objs = FreeCAD.ActiveDocument.Objects
-        rays=[]
-        complist=[]
-        for obj in objs:
-            if not obj.enabled:
-                continue
-            X,Y,Z = obj.Placement.Base
-            #No entiendo el orden pero parece que funciona
-            RZ,RY,RX = obj.Placement.Rotation.toEuler()
 
-            # Hay que buscar una mejor forma de hacer esto, es decir como no tener
-            # que pasar obj en los parametros
-            e=obj.Proxy.pyoptools_repr(obj)
-            if isinstance(e,list):
-                rays.extend(e)
-            else:
-                complist.append((e,(X,Y,Z),(radians(RX),radians(RY),radians(RZ)),obj.Label))
-
-        self.S=System(complist)
+        self.S,rays = getActiveSystem()
         self.S.ray_add(rays)
         self.S.propagate()
 

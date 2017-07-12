@@ -3,6 +3,7 @@ from wbcommand import *
 from pyoptools.raytrace.library import library
 from pyoptools.raytrace.mat_lib.material import find_material
 from sphericallens import InsertSL
+from doubletlens import InsertDL
 from math import radians
 
 class CatalogComponentGUI(WBCommandGUI):
@@ -50,28 +51,50 @@ class CatalogComponentGUI(WBCommandGUI):
             comp_mat = lib.parser.get(reference,"material")
             matlibs=find_material(comp_mat)
             if len(matlibs)==0:
+                print "material {} not found".format(comp_mat)
                 ok=False
 
+        elif comp_type == "Doublet":
+            comp_mat1 = lib.parser.get(reference,"material_l1")
+            matlibs1=find_material(comp_mat1)
+            comp_mat2 = lib.parser.get(reference,"material_l1")
+            matlibs2=find_material(comp_mat2)
+
+            if len(matlibs1)==0:
+                print "material {} not found".format(comp_mat1)
+                ok=False
+            if len(matlibs2)==0:
+                print "material {} not found".format(comp_mat2)
+                ok=False
         else:
+            print "Component Type {} not found".format(comp_type)
             ok=False
+
         return ok
 
     def referenceChange(self,*args):
         catalog = self.form.Catalog.currentText()
         lib=getattr(library,catalog)
         reference = self.form.Reference.currentText()
-        options = lib.parser.options(reference)
-        self.form.Info.clear()
-        for option in options:
-            self.form.Info.insertPlainText("{} = {}\n".format(option, lib.parser.get(reference,option)))
+        #To avoid some errors raised when there is a catalog change.
+        #Todo: Find a better way to do this
+        try:
+            options = lib.parser.options(reference)
 
-        ok=self.is_available(catalog, reference)
-        if ok:
-            self.form.Status.setText("Component Available")
-            self.form.Status.setStyleSheet("color: green")
-        else:
-            self.form.Status.setText("Component not Available")
-            self.form.Status.setStyleSheet("color: red")
+            self.form.Info.clear()
+            for option in options:
+                self.form.Info.insertPlainText("{} = {}\n".format(option, lib.parser.get(reference,option)))
+
+            ok=self.is_available(catalog, reference)
+            if ok:
+                self.form.Status.setText("Component Available")
+                self.form.Status.setStyleSheet("color: green")
+            else:
+                self.form.Status.setText("Component not Available")
+                self.form.Status.setStyleSheet("color: red")
+
+        except:
+            pass
 
 
     def accept(self):
@@ -88,6 +111,9 @@ class CatalogComponentGUI(WBCommandGUI):
             Xrot=self.form.Xrot.value()
             Yrot=self.form.Yrot.value()
             Zrot=self.form.Zrot.value()
+
+            obj = None
+
             if comptype == "SphericalLens":
                 mat = lib.parser.get(reference,"material")
                 th = lib.parser.getfloat(reference,"thickness")
@@ -98,6 +124,20 @@ class CatalogComponentGUI(WBCommandGUI):
                 matcat = find_material(mat)[0]
                 obj = InsertSL(c1,c2,th,diam,"L",matcat,mat)
 
+            elif comptype == "Doublet":
+                mat1 =  lib.parser.get(reference,"material_l1")
+                mat2 =  lib.parser.get(reference,"material_l2")
+                th1 =  lib.parser.getfloat(reference,"thickness_l1")
+                th2 =  lib.parser.getfloat(reference,"thickness_l2")
+                diam = 2.* lib.parser.getfloat(reference,"radius")
+                c1 =  lib.parser.getfloat(reference,"curvature_s1")
+                c2 =  lib.parser.getfloat(reference,"curvature_s2")
+                c3 =  lib.parser.getfloat(reference,"curvature_s3")
+                matcat1 = find_material(mat1)[0]
+                matcat2 = find_material(mat2)[0]
+                obj = InsertDL(c1,c2,th1,c2,c3,th2,diam,0,"L", matcat1,mat1,matcat2,mat2)
+
+            if obj is not None:
                 m=FreeCAD.Matrix()
                 m.rotateX(radians(Xrot))
                 m.rotateY(radians(Yrot))
@@ -105,7 +145,6 @@ class CatalogComponentGUI(WBCommandGUI):
                 m.move((X,Y,Z))
                 p1 = FreeCAD.Placement(m)
                 obj.Placement = p1
-
 
             FreeCADGui.Control.closeDialog()
 

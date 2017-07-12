@@ -26,3 +26,6 @@ FreeCADGui.addCommand('Reports',ReportsMenu())
 
 from doubletlens import DoubletLensMenu
 FreeCADGui.addCommand('DoubletLens',DoubletLensMenu())
+
+from optimize import OptimizeMenu
+FreeCADGui.addCommand('Optimize',OptimizeMenu())
