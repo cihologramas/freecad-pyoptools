@@ -57,7 +57,7 @@ class CatalogComponentGUI(WBCommandGUI):
         elif comp_type == "Doublet":
             comp_mat1 = lib.parser.get(reference,"material_l1")
             matlibs1=find_material(comp_mat1)
-            comp_mat2 = lib.parser.get(reference,"material_l1")
+            comp_mat2 = lib.parser.get(reference,"material_l2")
             matlibs2=find_material(comp_mat2)
 
             if len(matlibs1)==0:
@@ -145,6 +145,7 @@ class CatalogComponentGUI(WBCommandGUI):
                 m.move((X,Y,Z))
                 p1 = FreeCAD.Placement(m)
                 obj.Placement = p1
+                obj.Reference ="{} - {}".format(catalog,reference)
 
             FreeCADGui.Control.closeDialog()
 
