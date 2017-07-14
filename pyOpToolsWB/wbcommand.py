@@ -23,11 +23,12 @@ class WBCommandMenu:
         FreeCADGui.Control.showDialog(sl)
 
 class WBPart:
-    def __init__(self,obj,PartType,enabled = True):
+    def __init__(self,obj,PartType,enabled = True, reference ="",notes =""):
         obj.Proxy = self
-        obj.addProperty("App::PropertyString","cType").cType =PartType
+        obj.addProperty("App::PropertyString","cType").cType = PartType
         obj.addProperty("App::PropertyBool","enabled").enabled = enabled
-
+        obj.addProperty("App::PropertyString","Reference").Reference = reference
+        obj.addProperty("App::PropertyString","Notes").Notes = notes
     def onChanged(self, obj, prop):
         #this method should not be overloaded. Overload propertyChanged instead
 

@@ -88,7 +88,7 @@ class RoundMirrorPart(WBPart):
         if matcat=="Value":
             material=float(matref.replace(",","."))
         else:
-            material=getattr(matlib,matcat)[matref]
+            material=getattr(matlib.material,matcat)[matref]
 
         rm=comp_lib.RoundMirror(obj.D/2.,obj.Thickness,obj.Reflectivity/100.,
                                                material=material)
