@@ -12,6 +12,9 @@ FreeCADGui.addCommand('RaysPoint',RaysPointMenu())
 from raysparallel import RaysParallelMenu
 FreeCADGui.addCommand('RaysParallel',RaysParallelMenu())
 
+from raysarray import RaysArrayMenu
+FreeCADGui.addCommand('RaysArray',RaysArrayMenu())
+
 from propagate import PropagateMenu
 FreeCADGui.addCommand('Propagate',PropagateMenu())
 
