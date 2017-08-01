@@ -114,35 +114,43 @@ class DoubletLensMenu(WBCommandMenu):
 
 class DoubletLensPart(WBPart):
     def __init__(self,obj,CS1_1,CS2_1,CT_1,CS1_2,CS2_2,CT_2,D,ILD,
-                     ID,matcat1,matref1,matcat2,matref2):
+                     matcat1,matref1,matcat2,matref2):
 
         WBPart.__init__(self,obj,"DoubletLens")
         obj.Proxy = self
         
-        obj.addProperty("App::PropertyFloat","CS1_1")
-        obj.addProperty("App::PropertyFloat","CS2_1")
-        obj.addProperty("App::PropertyFloat","CT_1")
+        obj.addProperty("App::PropertyPrecision","CS1_1","Shape lens 1",
+                        "Curvature surface 1").CS1_1=(0,-10,10,1e-3)
+        obj.addProperty("App::PropertyPrecision","CS2_1","Shape lens 1",
+                        "Curvature surface 2").CS2_1=(0,-10,10,1e-3)
 
-        obj.addProperty("App::PropertyFloat","CS1_2")
-        obj.addProperty("App::PropertyFloat","CS2_2")
-        obj.addProperty("App::PropertyFloat","CT_2")
+        obj.addProperty("App::PropertyLength","Thk_1","Shape lens 1",
+                        "Lens 1 center thickness")
 
-        obj.addProperty("App::PropertyFloat","D")
-        obj.addProperty("App::PropertyFloat","ILD")
+        obj.addProperty("App::PropertyPrecision","CS1_2","Shape lens 2",
+                        "Curvature surface 1").CS1_2=(0,-10,10,1e-3)
+        obj.addProperty("App::PropertyPrecision","CS2_2","Shape lens 2",
+                        "Curvature surface 2").CS2_2=(0,-10,10,1e-3)
 
-        obj.addProperty("App::PropertyString","matcat1")
-        obj.addProperty("App::PropertyString","matref1")
+        obj.addProperty("App::PropertyLength","Thk_2","Shape lens 2",
+                        "Lens 2 center thickness")
 
-        obj.addProperty("App::PropertyString","matcat2")
-        obj.addProperty("App::PropertyString","matref2")
+        obj.addProperty("App::PropertyLength","D","Global","Diameter")
+        obj.addProperty("App::PropertyLength","ILD","Global","Interlens distance")
+
+        obj.addProperty("App::PropertyString","matcat1","Material lens 1","Material catalog")
+        obj.addProperty("App::PropertyString","matref1","Material lens 1","Material reference")
+
+        obj.addProperty("App::PropertyString","matcat2","Material lens 2","Material catalog")
+        obj.addProperty("App::PropertyString","matref2","Material lens 2","Material reference")
 
         obj.CS1_1 = CS1_1
         obj.CS2_1 = CS2_1
-        obj.CT_1 = CT_1
+        obj.Thk_1 = CT_1
 
         obj.CS1_2 = CS1_2
         obj.CS2_2 = CS2_2
-        obj.CT_2 = CT_2
+        obj.Thk_2 = CT_2
 
         obj.D = D
         obj.ILD = ILD
@@ -173,26 +181,26 @@ class DoubletLensPart(WBPart):
         else:
             material2=getattr(matlib.material,matcat2)[matref2]
 
-        if obj.ILD==0:
-            radius = obj.D/2.
+        if obj.ILD.Value==0:
+            radius = obj.D.Value/2.
             curv_s1 = obj.CS1_1
             curv_s2 = obj.CS2_1
             curv_s3 = obj.CS2_2
-            th1= obj.CT_1
-            th2=obj.CT_2
+            th1 = obj.Thk_1.Value
+            th2 = obj.Thk_2.Value
             db=comp_lib.Doublet(radius, curv_s1,curv_s2,curv_s3,th1,th2,material1,material2)
         else:
-            radius = obj.D/2.
+            radius = obj.D.Value/2.
             curv_s1 = obj.CS1_1
             curv_s2 = obj.CS2_1
             curv_s3 = obj.CS1_2
             curv_s4 = obj.CS2_2
 
 
-            th1= obj.CT_1
-            th2=obj.CT_2
+            th1= obj.Thk_1.Value
+            th2=obj.Thk_2.Value
 
-            ag=obj.ILD
+            ag=obj.ILD.Value
             db = comp_lib.AirSpacedDoublet(radius,curv_s1,curv_s2,curv_s3,curv_s4,th1,
                                   ag,th2,material1,material2)
 
@@ -204,11 +212,11 @@ class DoubletLensPart(WBPart):
         #Todo: Verificat las restricciones por construccion cuando se cambian
         # los parametros a mano
 
-        L1 = buildlens(obj.CS1_1, obj.CS2_1, obj.D, obj.CT_1)
-        L2 = buildlens(obj.CS1_2, obj.CS2_2, obj.D, obj.CT_2)
-        TT=obj.CT_1+obj.CT_2+obj.ILD
-        L1.translate(FreeCAD.Base.Vector(0,0,-TT/2.+obj.CT_1/2.))
-        L2.translate(FreeCAD.Base.Vector(0,0,TT/2.-obj.CT_2/2.))
+        L1 = buildlens(obj.CS1_1, obj.CS2_1, obj.D.Value, obj.Thk_1.Value)
+        L2 = buildlens(obj.CS1_2, obj.CS2_2, obj.D.Value, obj.Thk_2.Value)
+        TT=obj.Thk_1.Value+obj.Thk_2.Value+obj.ILD.Value
+        L1.translate(FreeCAD.Base.Vector(0,0,-TT/2.+obj.Thk_1.Value/2.))
+        L2.translate(FreeCAD.Base.Vector(0,0,TT/2.-obj.Thk_2.Value/2.))
         obj.Shape = L1.fuse(L2)
 
 def InsertDL(CS1_1,CS2_1,CT_1,CS1_2,CS2_2,CT_2,D,ILD,
@@ -216,7 +224,7 @@ def InsertDL(CS1_1,CS2_1,CT_1,CS1_2,CS2_2,CT_2,D,ILD,
 
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",ID)
     DoubletLensPart(myObj,CS1_1,CS2_1,CT_1,CS1_2,CS2_2,CT_2,D,ILD,
-                     ID,matcat1,matref1,matcat2,matref2)
+                    matcat1,matref1,matcat2,matref2)
     myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj

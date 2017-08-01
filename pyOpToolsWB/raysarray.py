@@ -122,7 +122,7 @@ class RaysArrayPart(WBPart):
         obj.ViewObject.ShapeColor = (r,g,b,0.)
 
 
-    def propChanged(self, obj, prop):
+    def propertyChanged(self, obj, prop):
 
         # To keep all the housekeeping that WBPart do, this method replaces
         # the standard onChanged

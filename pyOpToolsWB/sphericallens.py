@@ -70,15 +70,17 @@ class SphericalLensPart(WBPart):
     def __init__(self,obj,CS1=0.01,CS2=-0.01,CT=10,D=50, matcat="", matref=""):
         WBPart.__init__(self,obj,"SphericalLens")
 
-        obj.addProperty("App::PropertyFloat","CS1")
-        obj.addProperty("App::PropertyFloat","CS2")
-        obj.addProperty("App::PropertyFloat","CT")
-        obj.addProperty("App::PropertyFloat","D")
-        obj.addProperty("App::PropertyString","matcat")
-        obj.addProperty("App::PropertyString","matref")
+        #Todo: Mirar como se puede usar un quantity
+        obj.addProperty("App::PropertyPrecision","CS1","Shape","Curvature surface 1").CS1=(0,-10,10,1e-3)
+        obj.addProperty("App::PropertyPrecision","CS2","Shape","Curvature surface 2").CS2=(0,-10,10,1e-3)
+
+        obj.addProperty("App::PropertyLength","Thk","Shape","Lens center thickness")
+        obj.addProperty("App::PropertyLength","D","Shape","Lens diameter")
+        obj.addProperty("App::PropertyString","matcat","Material","Material catalog")
+        obj.addProperty("App::PropertyString","matref","Material","Material reference")
         obj.CS1=CS1
         obj.CS2=CS2
-        obj.CT=CT
+        obj.Thk=CT
         obj.D=D
         obj.matcat=matcat
         obj.matref=matref
@@ -88,11 +90,11 @@ class SphericalLensPart(WBPart):
 
     def execute(self,obj):
 
-        obj.Shape = buildlens(obj.CS1,obj.CS2,obj.D,obj.CT)
+        obj.Shape = buildlens(obj.CS1,obj.CS2,obj.D.Value,obj.Thk.Value)
 
     def pyoptools_repr(self,obj):
-        radius= obj.D/2.
-        thickness=obj.CT
+        radius= obj.D.Value/2.
+        thickness=obj.Thk.Value
         curvature_s1=obj.CS1
         curvature_s2=obj.CS2
         matcat=obj.matcat

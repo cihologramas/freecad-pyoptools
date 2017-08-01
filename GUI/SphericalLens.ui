@@ -25,7 +25,7 @@
      <item row="2" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Diameter</string>
+        <string>Diameter (mm)</string>
        </property>
       </widget>
      </item>
@@ -39,7 +39,7 @@
      <item row="3" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Center Thickness</string>
+        <string>Center Thickness (mm)</string>
        </property>
       </widget>
      </item>
@@ -172,7 +172,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="label_10">
        <property name="text">
-        <string>Position</string>
+        <string>Position (mm)</string>
        </property>
       </widget>
      </item>

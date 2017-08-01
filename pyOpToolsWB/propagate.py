@@ -37,17 +37,27 @@ class PropagateMenu:
 
         #Se agrupan los rayos para poder eliminarlos facil
         grp=doc.addObject("App::DocumentObjectGroup", "Rays")
+        llines=[]
+
+        #Crear un diccionario para agrupar los rayos por longitud de onda
+
+        raydict={}
+
         for ray in PP.S.prop_ray:
             #lines = Part.Wire(get_prop_shape(ray))
-            lines = get_prop_shape(ray)
+            llines = llines + get_prop_shape(ray)
             wl=ray.wavelength
+            raydict[wl]=llines+raydict.get(wl,[])
 
+        for wl in raydict.keys():
+            lines = Part.makeCompound(raydict[wl])
             myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython","Ray")
             myObj.Shape=lines
             r,g,b = wavelength2RGB(wl)
             myObj.ViewObject.LineColor = (r,g,b,0.)
             myObj.ViewObject.Proxy = 0
             grp.addObject(myObj)
+
         FreeCAD.ActiveDocument.recompute()
 
 
@@ -62,10 +72,10 @@ def get_prop_shape(ray):
     else:
         P2 = FreeCAD.Base.Vector(tuple(ray.pos + 10. * ray.dir))
 
-    L1 = Part.makeLine(P1,P2)
+    L1 = [Part.makeLine(P1,P2)]
 
     for i in ray.childs:
-        L1=L1.fuse(get_prop_shape(i))
+        L1=L1+get_prop_shape(i)
 
     return L1
 

@@ -2,11 +2,11 @@ from wbcommand import *
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
 from math import radians
+import Part,FreeCAD
 
-
-class RoundMirrorGUI(WBCommandGUI):
+class RectMirrorGUI(WBCommandGUI):
     def __init__(self):
-        WBCommandGUI.__init__(self, 'RoundMirror.ui')
+        WBCommandGUI.__init__(self, 'RectMirror.ui')
 
 
         self.form.Catalog.addItem("Value",[])
@@ -28,7 +28,8 @@ class RoundMirrorGUI(WBCommandGUI):
     def accept(self):
         Th=self.form.Thickness.value()
         Ref=self.form.Reflectivity.value()
-        D=self.form.D.value()
+        SX=self.form.SX.value()
+        SY=self.form.SY.value()
         X=self.form.Xpos.value()
         Y=self.form.Ypos.value()
         Z=self.form.Zpos.value()
@@ -41,7 +42,7 @@ class RoundMirrorGUI(WBCommandGUI):
         else:
             matref=self.form.Reference.currentText()
 
-        obj=InsertRM(Ref,Th,D,ID="M1",matcat=matcat,matref=matref)
+        obj=InsertRectM(Ref,Th,SX,SY,ID="M1",matcat=matcat,matref=matref)
         m=FreeCAD.Matrix()
         m.rotateX(radians(Xrot))
         m.rotateY(radians(Yrot))
@@ -52,29 +53,31 @@ class RoundMirrorGUI(WBCommandGUI):
         FreeCADGui.Control.closeDialog()
 
 
-class RoundMirrorMenu(WBCommandMenu):
+class RectMirrorMenu(WBCommandMenu):
     def __init__(self):
-        WBCommandMenu.__init__(self,RoundMirrorGUI)
+        WBCommandMenu.__init__(self,RectMirrorGUI)
 
     def GetResources(self):
-        return {"MenuText": "Round Mirror",
+        return {"MenuText": "Rectangular Mirror",
                 #"Accel": "Ctrl+M",
-                "ToolTip": "Add Round Mirror",
+                "ToolTip": "Add Rectangular Mirror",
                 "Pixmap": ""}
 
-class RoundMirrorPart(WBPart):
-    def __init__(self,obj,Ref=100,Th=10,D=50, matcat="", matref=""):
+class RectMirrorPart(WBPart):
+    def __init__(self,obj,Ref=100,Th=10,SX=50,SY=50, matcat="", matref=""):
 
-        WBPart.__init__(self,obj,"RoundMirror")
+        WBPart.__init__(self,obj,"RectangularMirror")
         obj.Proxy = self
         obj.addProperty("App::PropertyPercent","Reflectivity","Coating","Mirror reflectivity")
-        obj.addProperty("App::PropertyLength","Thk","Shape","Mirror thickness")
-        obj.addProperty("App::PropertyLength","D","Shape","Mirror diameter")
+        obj.addProperty("App::PropertyLength","Thk","Shape","Mirror Thickness")
+        obj.addProperty("App::PropertyLength","Width","Shape","Mirror width")
+        obj.addProperty("App::PropertyLength","Height","Shape","Mirror height")
         obj.addProperty("App::PropertyString","matcat","Material","Material catalog")
         obj.addProperty("App::PropertyString","matref","Material","Material reference")
         obj.Reflectivity=int(Ref)
         obj.Thk=Th
-        obj.D=D
+        obj.Width=SX
+        obj.Height=SY
         obj.matcat=matcat
         obj.matref=matref
 
@@ -90,24 +93,19 @@ class RoundMirrorPart(WBPart):
         else:
             material=getattr(matlib.material,matcat)[matref]
 
-        rm=comp_lib.RoundMirror(obj.D.Value/2.,obj.Thk.Value,obj.Reflectivity/100.,
+        rm=comp_lib.RectMirror((obj.Width.Value,obj.Height.Value,obj.Thk.Value),obj.Reflectivity/100.,
                                                material=material)
         return rm
 
 
     def execute(self,obj):
-        import Part,FreeCAD
 
-        d=Part.makeCylinder(obj.D.Value/2.,obj.Thk.Value,FreeCAD.Base.Vector(0,0,0))
-        #Esto aca no funciona
-        #d.translate(FreeCAD.Base.Vector(0,0,-obj.Thickness))
-
+        d=Part.makeBox(obj.Width.Value,obj.Height.Value,obj.Thk.Value,FreeCAD.Base.Vector(-obj.SX.Value/2.,-obj.SY.Value/2.,0))
         obj.Shape = d
 
-def InsertRM(Ref=100,Th=10,D=50,ID="L",matcat="",matref=""):
-    import FreeCAD
+def InsertRectM(Ref=100,Th=10,SX=50,SY=50,ID="L",matcat="",matref=""):
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",ID)
-    RoundMirrorPart(myObj,Ref,Th,D,matcat,matref)
+    RectMirrorPart(myObj,Ref,Th,SX,SY,matcat,matref)
     myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj

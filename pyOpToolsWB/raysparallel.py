@@ -56,34 +56,36 @@ class RaysParPart(WBPart):
     def __init__(self,obj,nr=6,na=6,distribution="polar",wavelenght=633, D=5,axis=FreeCAD.Vector((0,0,1)),enabled=True):
         WBPart.__init__(self,obj,"RaysPar",enabled)
 
-        obj.addProperty("App::PropertyInteger","nr")
-        obj.addProperty("App::PropertyInteger","na")
-        obj.addProperty("App::PropertyString","distribution")
-        obj.addProperty("App::PropertyFloat","wavelenght")
-        obj.addProperty("App::PropertyFloat","D")
-        obj.addProperty("App::PropertyVector","axis")
+        obj.addProperty("App::PropertyIntegerConstraint","nr","Shape","Number of rays (radial)").nr=(0,0,10000,1)
+        obj.addProperty("App::PropertyIntegerConstraint","na","Shape","Number of rays (angular)").na=(0,0,10000,1)
+        obj.addProperty("App::PropertyString","distribution","Options","Ray distribution (Polar for the moment)")
+        obj.addProperty("App::PropertyLength","wl","Options","Wavelength of the source")
+        obj.addProperty("App::PropertyLength","D","Shape","Ray Source Diameter")
+        obj.addProperty("App::PropertyVector","axis","","Direction of propagation")
 
         obj.nr=nr
         obj.na=na
         obj.distribution=distribution.lower()
-        obj.wavelenght = wavelenght
+        obj.wl = Quantity("{} nm".format(wavelenght)) # wavelenght is received in nm
+
         obj.D = D
         obj.axis = axis
         obj.enabled=enabled
-        r,g,b = wavelength2RGB(wavelenght/1000.)
+        r,g,b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
 
 
 
         obj.ViewObject.ShapeColor = (r,g,b,0.)
 
 
-    def propChanged(self, obj, prop):
+
+    def propertyChanged(self, obj, prop):
 
         # To keep all the housekeeping that WBPart do, this method replaces
         # the standard onChanged
 
-        if prop == "wavelenght":
-            r,g,b = wavelength2RGB(obj.wavelenght/1000.)
+        if prop == "wl":
+            r,g,b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
             obj.ViewObject.ShapeColor = (r,g,b,0.)
 
 
@@ -93,14 +95,14 @@ class RaysParPart(WBPart):
         dist=obj.distribution
         nr=obj.nr
         na=obj.na
-        wl=obj.wavelenght
+        wl=obj.wl.getValueAs("µm").Value
         R=obj.D/2.
         DX,DY,DZ=obj.axis
         r=[]
         if obj.enabled:
             if dist=="polar":
                 r=rs_lib.parallel_beam_p(origin=(X,Y,Z),direction=(DX,DY,DZ),
-                                         radius=R, num_rays=(nr,na),wavelength=wl/1000.,
+                                         radius=R, num_rays=(nr,na),wavelength=wl,
                                          label="")
 
             elif dist=="cartesian":
@@ -124,7 +126,7 @@ class RaysParPart(WBPart):
             print "Ray Distribution not understood, changing it to polar"
 
         if dist == "polar":
-            r=obj.D/2.
+            r=obj.D.Value/2.
             d=Part.makeCylinder(r,5,FreeCAD.Vector(0,0,0),obj.axis)
             #d.translate(FreeCAD.Base.Vector(0,0,-0.5))
         else: #Cartesian

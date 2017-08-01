@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 from wbcommand import *
 from pyoptools.misc.pmisc.misc import wavelength2RGB
 import pyoptools.raytrace.ray.ray_source as rs_lib
 from math import tan, radians
+from Units import Quantity
 
 class RaysPointGUI(WBCommandGUI):
     def __init__(self):
@@ -53,20 +56,21 @@ class RaysPointPart(WBPart):
     def __init__(self,obj,nr=6,na=6,distribution="polar",wavelenght=633, angle=30,axis=FreeCAD.Vector((0,0,1)),enabled = True):
         WBPart.__init__(self,obj,"RaysPoint")
         obj.Proxy = self
-        obj.addProperty("App::PropertyInteger","nr")
-        obj.addProperty("App::PropertyInteger","na")
-        obj.addProperty("App::PropertyString","distribution")
-        obj.addProperty("App::PropertyFloat","wavelenght")
-        obj.addProperty("App::PropertyFloat","angle")
-        obj.addProperty("App::PropertyVector","axis")
+        obj.addProperty("App::PropertyIntegerConstraint","nr","Shape","Number of rays (radial)").nr=(0,0,10000,1)
+        obj.addProperty("App::PropertyIntegerConstraint","na","Shape","Number of rays (angular)").na=(0,0,10000,1)
+        obj.addProperty("App::PropertyString","distribution","Options","Ray distribution (Polar for the moment)")
+        obj.addProperty("App::PropertyLength","wl","Options","Wavelength of the source")
+        obj.addProperty("App::PropertyAngle","angle","Shape","Source subtended angle")
+        obj.addProperty("App::PropertyVector","axis","","Direction of propagation")
         obj.nr=nr
         obj.na=na
         obj.distribution=distribution.lower()
-        obj.wavelenght = wavelenght
+        obj.wl = Quantity("{} nm".format(wavelenght)) # wavelenght is received in nm
         obj.angle = angle
         obj.axis = axis
         obj.enabled=enabled
-        r,g,b = wavelength2RGB(wavelenght/1000.)
+
+        r,g,b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
         obj.ViewObject.ShapeColor = (r,g,b,0.)
 
 
@@ -76,8 +80,8 @@ class RaysPointPart(WBPart):
         # To keep all the housekeeping that WBPart do, this method replaces
         # the standard onChanged
 
-        if prop == "wavelenght":
-            r,g,b = wavelength2RGB(obj.wavelenght/1000.)
+        if prop == "wl":
+            r,g,b = wavelength2RGB(obj.wl.getValueAs("µm").Value) #se pasa wl a um
             obj.ViewObject.ShapeColor = (r,g,b,0.)
 
 
@@ -92,7 +96,8 @@ class RaysPointPart(WBPart):
             print "Ray Distribution not understood, changing it to polar"
 
         if dist == "polar":
-            r=5*tan(radians(obj.angle))
+            print obj.angle , type(obj.angle)
+            r=5*tan(obj.angle.getValueAs("rad").Value)
             d=Part.makeCone(0,r,5,FreeCAD.Vector(0,0,0),obj.axis)
             #d.translate(FreeCAD.Base.Vector(0,0,-0.5))
         else: #Cartesian
@@ -105,14 +110,15 @@ class RaysPointPart(WBPart):
         dist=obj.distribution
         nr=obj.nr
         na=obj.na
-        wl=obj.wavelenght
-        ang=obj.angle
+        wl=obj.wl.getValueAs("µm").Value
+        ang=obj.angle.getValueAs("rad").Value
+
         DX,DY,DZ=obj.axis
         X,Y,Z = obj.Placement.Base
 
         if dist=="polar":
-            r=rs_lib.point_source_p(origin=(X,Y,Z),direction=(DX,DY,DZ),span=radians(ang),
-                                      num_rays=(nr,na),wavelength=wl/1000., label="")
+            r=rs_lib.point_source_p(origin=(X,Y,Z),direction=(DX,DY,DZ),span=ang,
+                                      num_rays=(nr,na),wavelength=wl, label="")
         elif dist=="cartesian":
             print "cartesian ray distribution, not implemented yet"
         elif dist=="random":
@@ -121,7 +127,6 @@ class RaysPointPart(WBPart):
             print "Warning ray distribution {} not recognized".format(dist)
 
         return r
-
 
 
 def InsertRPoint(nr=6, na=6,distribution="polar",wavelenght=633,angle=30, axis =FreeCAD.Vector((0,0,1)),ID="S", enabled = True):

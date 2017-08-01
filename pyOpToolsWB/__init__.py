@@ -6,6 +6,9 @@ FreeCADGui.addCommand('SphericalLens',SphericalLensMenu())
 from roundmirror import RoundMirrorMenu
 FreeCADGui.addCommand('RoundMirror',RoundMirrorMenu())
 
+from rectmirror import RectMirrorMenu
+FreeCADGui.addCommand('RectangularMirror',RectMirrorMenu())
+
 from rayspoint import RaysPointMenu
 FreeCADGui.addCommand('RaysPoint',RaysPointMenu())
 

@@ -45,8 +45,8 @@ class SensorPart(WBPart):
 
         WBPart.__init__(self,obj,"Sensor")
         obj.Proxy = self
-        obj.addProperty("App::PropertyFloat","Width")
-        obj.addProperty("App::PropertyFloat","Height")
+        obj.addProperty("App::PropertyLength","Width","Shape","Sensor width")
+        obj.addProperty("App::PropertyLength","Height","Shape","Sensor height")
 
         obj.Height = height
         obj.Width = width
@@ -61,8 +61,7 @@ class SensorPart(WBPart):
     def execute(self,obj):
         import Part,FreeCAD
 
-        d=Part.makePlane(obj.Width,obj.Height,FreeCAD.Base.Vector(-obj.Width/2.,-obj.Height/2.,0))
-
+        d=Part.makePlane(obj.Width.Value,obj.Height.Value,FreeCAD.Base.Vector(-obj.Width.Value/2.,-obj.Height.Value/2.,0))
         obj.Shape = d
 
 def InsertSen(height=100, widht =100,ID="SEN"):
