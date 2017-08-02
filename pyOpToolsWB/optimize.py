@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from wbcommand import *
 import FreeCAD
 from pyoptoolshelpers import getActiveSystem

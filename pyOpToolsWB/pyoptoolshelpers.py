@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import FreeCAD
 from pyoptools.raytrace.system import System
 from math import radians

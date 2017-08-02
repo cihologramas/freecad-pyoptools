@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import FreeCAD, Plot
 from propagate import PropagatePart
 

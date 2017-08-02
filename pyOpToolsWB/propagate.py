@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import FreeCAD, Part
 
 from math import radians

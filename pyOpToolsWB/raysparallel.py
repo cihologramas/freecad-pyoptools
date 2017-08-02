@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from wbcommand import *
 from pyoptools.misc.pmisc.misc import wavelength2RGB
 import pyoptools.raytrace.ray.ray_source as rs_lib

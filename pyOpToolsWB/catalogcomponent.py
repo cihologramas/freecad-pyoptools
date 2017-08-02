@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from PySide import QtGui
 from wbcommand import *
 from pyoptools.raytrace.library import library
