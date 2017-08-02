@@ -41,8 +41,8 @@ class pyOpToolsWorkbench ( Workbench ):
 
     def Initialize(self):
 
-        self.appendMenu("Add Components", ["SphericalLens","DoubletLens","RoundMirror",
-                                           "RectangularMirror",
+        self.appendMenu("Add Components", ["SphericalLens","DoubletLens","ThickLens",
+                                           "RoundMirror", "RectangularMirror",
                                            "CatalogComponent","Sensor","RaysParallel",
                                            "RaysPoint","RaysArray"])
         self.appendMenu("Simulate", ["Propagate", "Reports","Optimize"])

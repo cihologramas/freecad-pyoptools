@@ -105,14 +105,12 @@ class RaysParPart(WBPart):
                 r=rs_lib.parallel_beam_p(origin=(X,Y,Z),direction=(DX,DY,DZ),
                                          radius=R, num_rays=(nr,na),wavelength=wl,
                                          label="")
-
             elif dist=="cartesian":
                 print "cartesian ray distribution, not implemented yet"
             elif dist=="random":
                 print "random ray distribution, not implemented yet"
             else:
                 print "Warning ray distribution {} not recognized".format(dist)
-
         return r
 
 

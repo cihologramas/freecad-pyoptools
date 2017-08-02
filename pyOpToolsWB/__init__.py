@@ -35,3 +35,6 @@ FreeCADGui.addCommand('DoubletLens',DoubletLensMenu())
 
 from optimize import OptimizeMenu
 FreeCADGui.addCommand('Optimize',OptimizeMenu())
+
+from thicklens import ThickLensMenu
+FreeCADGui.addCommand('ThickLens',ThickLensMenu())
