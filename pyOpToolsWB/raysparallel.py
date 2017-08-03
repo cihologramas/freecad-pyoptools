@@ -2,6 +2,8 @@
 from wbcommand import *
 from pyoptools.misc.pmisc.misc import wavelength2RGB
 import pyoptools.raytrace.ray.ray_source as rs_lib
+from Units import Quantity
+from math import radians
 
 class RaysParallelGUI(WBCommandGUI):
     def __init__(self):
@@ -13,11 +15,11 @@ class RaysParallelGUI(WBCommandGUI):
         Y=self.form.Oy.value()
         Z=self.form.Oz.value()
 
-        Dx = self.form.Dx.value()
-        Dy = self.form.Dy.value()
-        Dz = self.form.Dz.value()
+        Xrot = self.form.Xrot.value()
+        Yrot = self.form.Yrot.value()
+        Zrot = self.form.Zrot.value()
 
-        axis = FreeCAD.Vector(Dx,Dy,Dz)
+
 
         nr = self.form.nr.value()
         na = self.form.na.value()
@@ -28,12 +30,12 @@ class RaysParallelGUI(WBCommandGUI):
         D = self.form.D.value()
         m=FreeCAD.Matrix()
 
-        #m.rotateX(radians(Ox))
-        #m.rotateY(radians(Oy))
-        #m.rotateZ(radians(Oz))
+        m.rotateX(radians(Xrot))
+        m.rotateY(radians(Yrot))
+        m.rotateZ(radians(Zrot))
 
         m.move((X,Y,Z))
-        obj=InsertRPar(nr,na, distribution,wavelenght,D,axis,"S",enabled)
+        obj=InsertRPar(nr,na, distribution,wavelenght,D,"S",enabled)
 
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
@@ -54,7 +56,7 @@ class RaysParallelMenu(WBCommandMenu):
 
 
 class RaysParPart(WBPart):
-    def __init__(self,obj,nr=6,na=6,distribution="polar",wavelenght=633, D=5,axis=FreeCAD.Vector((0,0,1)),enabled=True):
+    def __init__(self,obj,nr=6,na=6,distribution="polar",wavelenght=633, D=5,enabled=True):
         WBPart.__init__(self,obj,"RaysPar",enabled)
 
         obj.addProperty("App::PropertyIntegerConstraint","nr","Shape","Number of rays (radial)").nr=(0,0,10000,1)
@@ -62,7 +64,7 @@ class RaysParPart(WBPart):
         obj.addProperty("App::PropertyString","distribution","Options","Ray distribution (Polar for the moment)")
         obj.addProperty("App::PropertyLength","wl","Options","Wavelength of the source")
         obj.addProperty("App::PropertyLength","D","Shape","Ray Source Diameter")
-        obj.addProperty("App::PropertyVector","axis","","Direction of propagation")
+        #obj.addProperty("App::PropertyVector","axis","","Direction of propagation")
 
         obj.nr=nr
         obj.na=na
@@ -70,7 +72,6 @@ class RaysParPart(WBPart):
         obj.wl = Quantity("{} nm".format(wavelenght)) # wavelenght is received in nm
 
         obj.D = D
-        obj.axis = axis
         obj.enabled=enabled
         r,g,b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
 
@@ -93,16 +94,16 @@ class RaysParPart(WBPart):
 
     def pyoptools_repr(self,obj):
         X,Y,Z = obj.Placement.Base
+        RZ,RY,RX = obj.Placement.Rotation.toEuler()
         dist=obj.distribution
         nr=obj.nr
         na=obj.na
         wl=obj.wl.getValueAs("µm").Value
         R=obj.D/2.
-        DX,DY,DZ=obj.axis
         r=[]
         if obj.enabled:
             if dist=="polar":
-                r=rs_lib.parallel_beam_p(origin=(X,Y,Z),direction=(DX,DY,DZ),
+                r=rs_lib.parallel_beam_p(origin=(X,Y,Z),direction=(radians(RX),radians(RY),radians(RZ)),
                                          radius=R, num_rays=(nr,na),wavelength=wl,
                                          label="")
             elif dist=="cartesian":
@@ -126,7 +127,7 @@ class RaysParPart(WBPart):
 
         if dist == "polar":
             r=obj.D.Value/2.
-            d=Part.makeCylinder(r,5,FreeCAD.Vector(0,0,0),obj.axis)
+            d=Part.makeCylinder(r,5)
             #d.translate(FreeCAD.Base.Vector(0,0,-0.5))
         else: #Cartesian
             #Todo: Crear una piramide en lugar de un cono
@@ -136,10 +137,10 @@ class RaysParPart(WBPart):
 
 
 
-def InsertRPar(nr=6, na=6,distribution="polar",wavelenght=633,D=5, axis =FreeCAD.Vector((0,0,1)),ID="S",enabled = True):
+def InsertRPar(nr=6, na=6,distribution="polar",wavelenght=633,D=5,ID="S",enabled = True):
     import FreeCAD
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",ID)
-    RaysParPart(myObj,nr,na,distribution,wavelenght,D,axis,enabled)
+    RaysParPart(myObj,nr,na,distribution,wavelenght,D,enabled)
     myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj

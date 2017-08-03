@@ -16,11 +16,9 @@ class RaysPointGUI(WBCommandGUI):
         Y=self.form.Oy.value()
         Z=self.form.Oz.value()
 
-        Dx = self.form.Dx.value()
-        Dy = self.form.Dy.value()
-        Dz = self.form.Dz.value()
-
-        axis = FreeCAD.Vector(Dx,Dy,Dz)
+        Xrot = self.form.Xrot.value()
+        Yrot = self.form.Yrot.value()
+        Zrot = self.form.Zrot.value()
 
         nr = self.form.nr.value()
         na = self.form.na.value()
@@ -28,13 +26,14 @@ class RaysPointGUI(WBCommandGUI):
         wavelenght = self.form.wavelenght.value()
         angle = self.form.ang.value()
         enabled = self.form.Enabled.isChecked()
+
         m=FreeCAD.Matrix()
-        #m.rotateX(radians(Ox))
-        #m.rotateY(radians(Oy))
-        #m.rotateZ(radians(Oz))
+        m.rotateX(radians(Xrot))
+        m.rotateY(radians(Yrot))
+        m.rotateZ(radians(Zrot))
 
         m.move((X,Y,Z))
-        obj=InsertRPoint(nr,na, distribution,wavelenght,angle,axis,"S",enabled)
+        obj=InsertRPoint(nr,na, distribution,wavelenght,angle,"S",enabled)
 
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
@@ -53,7 +52,7 @@ class RaysPointMenu(WBCommandMenu):
 
 
 class RaysPointPart(WBPart):
-    def __init__(self,obj,nr=6,na=6,distribution="polar",wavelenght=633, angle=30,axis=FreeCAD.Vector((0,0,1)),enabled = True):
+    def __init__(self,obj,nr=6,na=6,distribution="polar",wavelenght=633, angle=30,enabled = True):
         WBPart.__init__(self,obj,"RaysPoint")
         obj.Proxy = self
         obj.addProperty("App::PropertyIntegerConstraint","nr","Shape","Number of rays (radial)").nr=(0,0,10000,1)
@@ -61,13 +60,11 @@ class RaysPointPart(WBPart):
         obj.addProperty("App::PropertyString","distribution","Options","Ray distribution (Polar for the moment)")
         obj.addProperty("App::PropertyLength","wl","Options","Wavelength of the source")
         obj.addProperty("App::PropertyAngle","angle","Shape","Source subtended angle")
-        obj.addProperty("App::PropertyVector","axis","","Direction of propagation")
         obj.nr=nr
         obj.na=na
         obj.distribution=distribution.lower()
         obj.wl = Quantity("{} nm".format(wavelenght)) # wavelenght is received in nm
         obj.angle = angle
-        obj.axis = axis
         obj.enabled=enabled
 
         r,g,b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
@@ -85,6 +82,29 @@ class RaysPointPart(WBPart):
             obj.ViewObject.ShapeColor = (r,g,b,0.)
 
 
+
+    def pyoptools_repr(self,obj):
+        dist=obj.distribution
+        nr=obj.nr
+        na=obj.na
+        wl=obj.wl.getValueAs("µm").Value
+        ang=obj.angle.getValueAs("rad").Value
+
+        X,Y,Z = obj.Placement.Base
+        RZ,RY,RX = obj.Placement.Rotation.toEuler()
+
+        if dist=="polar":
+            r=rs_lib.point_source_p(origin=(X,Y,Z),direction=(radians(RX),radians(RY),radians(RZ)),span=ang,
+                                      num_rays=(nr,na),wavelength=wl, label="")
+        elif dist=="cartesian":
+            print "cartesian ray distribution, not implemented yet"
+        elif dist=="random":
+            print "random ray distribution, not implemented yet"
+        else:
+            print "Warning ray distribution {} not recognized".format(dist)
+
+        return r
+
     def execute(self,obj):
         import Part,FreeCAD
 
@@ -98,7 +118,7 @@ class RaysPointPart(WBPart):
         if dist == "polar":
             print obj.angle , type(obj.angle)
             r=5*tan(obj.angle.getValueAs("rad").Value)
-            d=Part.makeCone(0,r,5,FreeCAD.Vector(0,0,0),obj.axis)
+            d=Part.makeCone(0,r,5)
             #d.translate(FreeCAD.Base.Vector(0,0,-0.5))
         else: #Cartesian
             #Todo: Crear una piramide en lugar de un cono
@@ -106,33 +126,11 @@ class RaysPointPart(WBPart):
             d.translate(FreeCAD.Base.Vector(0,0,-0.5))
         obj.Shape = d
 
-    def pyoptools_repr(self,obj):
-        dist=obj.distribution
-        nr=obj.nr
-        na=obj.na
-        wl=obj.wl.getValueAs("µm").Value
-        ang=obj.angle.getValueAs("rad").Value
 
-        DX,DY,DZ=obj.axis
-        X,Y,Z = obj.Placement.Base
-
-        if dist=="polar":
-            r=rs_lib.point_source_p(origin=(X,Y,Z),direction=(DX,DY,DZ),span=ang,
-                                      num_rays=(nr,na),wavelength=wl, label="")
-        elif dist=="cartesian":
-            print "cartesian ray distribution, not implemented yet"
-        elif dist=="random":
-            print "random ray distribution, not implemented yet"
-        else:
-            print "Warning ray distribution {} not recognized".format(dist)
-
-        return r
-
-
-def InsertRPoint(nr=6, na=6,distribution="polar",wavelenght=633,angle=30, axis =FreeCAD.Vector((0,0,1)),ID="S", enabled = True):
+def InsertRPoint(nr=6, na=6,distribution="polar",wavelenght=633,angle=30,ID="S", enabled = True):
     import FreeCAD
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",ID)
-    RaysPointPart(myObj,nr,na,distribution,wavelenght,angle,axis,enabled)
+    RaysPointPart(myObj,nr,na,distribution,wavelenght,angle,enabled)
     myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj
