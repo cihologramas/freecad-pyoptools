@@ -28,7 +28,12 @@ class ReportsMenu:
         opobjs = filter(lambda x:hasattr(x,"cType"),objs)
 
         #Buscar los sensores
-        sensors = filter(lambda x: x.cType=="Sensor",opobjs)
+        a_sensors = filter(lambda x: x.cType=="Sensor",opobjs)
+
+        #Mirar cuales estan activos
+
+        sensors =filter(lambda x:x.enabled, a_sensors)
+
 
         #Sacar los labels de los sensores
         slabels = map(lambda x:x.Label,sensors)
