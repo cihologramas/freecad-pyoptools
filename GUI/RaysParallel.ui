@@ -61,14 +61,14 @@
    <item row="1" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Direction</string>
+      <string>Orientation</string>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QDoubleSpinBox" name="Dx">
+      <widget class="QDoubleSpinBox" name="Xrot">
        <property name="minimum">
         <double>-100000.000000000000000</double>
        </property>
@@ -78,7 +78,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="Dy">
+      <widget class="QDoubleSpinBox" name="Yrot">
        <property name="minimum">
         <double>-100000.000000000000000</double>
        </property>
@@ -88,15 +88,15 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="Dz">
+      <widget class="QDoubleSpinBox" name="Zrot">
        <property name="minimum">
-        <double>-100000.000000000000000</double>
+        <double>-360.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>100000.000000000000000</double>
+        <double>360.000000000000000</double>
        </property>
        <property name="value">
-        <double>1.000000000000000</double>
+        <double>0.000000000000000</double>
        </property>
       </widget>
      </item>

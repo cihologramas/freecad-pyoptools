@@ -140,7 +140,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="Reference"/>
+          <widget class="QComboBox" name="Reference">
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

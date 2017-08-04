@@ -101,7 +101,7 @@ class RectMirrorPart(WBPart):
 
     def execute(self,obj):
 
-        d=Part.makeBox(obj.Width.Value,obj.Height.Value,obj.Thk.Value,FreeCAD.Base.Vector(-obj.SX.Value/2.,-obj.SY.Value/2.,0))
+        d=Part.makeBox(obj.Width.Value,obj.Height.Value,obj.Thk.Value,FreeCAD.Base.Vector(-obj.Width.Value/2.,-obj.Height.Value/2.,0))
         obj.Shape = d
 
 def InsertRectM(Ref=100,Th=10,SX=50,SY=50,ID="L",matcat="",matref=""):
