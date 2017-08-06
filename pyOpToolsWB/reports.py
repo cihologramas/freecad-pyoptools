@@ -62,4 +62,5 @@ class ReportsMenu:
                 fig=Plot.figure()
                 fig.axes.plot(X,Y,"o")
                 fig.axes.axis("equal")
+                fig.axes.set_title(n)
                 fig.update()

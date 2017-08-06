@@ -97,7 +97,8 @@ class RaysPointPart(WBPart):
             r=rs_lib.point_source_p(origin=(X,Y,Z),direction=(radians(RX),radians(RY),radians(RZ)),span=ang,
                                       num_rays=(nr,na),wavelength=wl, label="")
         elif dist=="cartesian":
-            print "cartesian ray distribution, not implemented yet"
+            r=rs_lib.point_source_c(origin=(X,Y,Z),direction=(radians(RX),radians(RY),radians(RZ)),span=(ang,ang),
+                                    num_rays=(nr,na),wavelength=wl, label="")
         elif dist=="random":
             print "random ray distribution, not implemented yet"
         else:
@@ -121,9 +122,9 @@ class RaysPointPart(WBPart):
             d=Part.makeCone(0,r,5)
             #d.translate(FreeCAD.Base.Vector(0,0,-0.5))
         else: #Cartesian
-            #Todo: Crear una piramide en lugar de un cono
-            d=Part.makeCone(0,10,10,dir)
-            d.translate(FreeCAD.Base.Vector(0,0,-0.5))
+            #Todo: Change to piramis instead of a cone
+            r=5*tan(obj.angle.getValueAs("rad").Value)
+            d=Part.makeCone(0,r,5)
         obj.Shape = d
 
 

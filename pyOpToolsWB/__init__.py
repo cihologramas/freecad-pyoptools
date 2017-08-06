@@ -38,3 +38,6 @@ FreeCADGui.addCommand('Optimize',OptimizeMenu())
 
 from thicklens import ThickLensMenu
 FreeCADGui.addCommand('ThickLens',ThickLensMenu())
+
+from diffractiongratting import DiffractionGrattingMenu
+FreeCADGui.addCommand('DiffractionGratting',DiffractionGrattingMenu())
