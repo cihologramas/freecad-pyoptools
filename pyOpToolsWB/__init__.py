@@ -41,3 +41,6 @@ FreeCADGui.addCommand('ThickLens',ThickLensMenu())
 
 from diffractiongratting import DiffractionGrattingMenu
 FreeCADGui.addCommand('DiffractionGratting',DiffractionGrattingMenu())
+
+from aperture import ApertureMenu
+FreeCADGui.addCommand('Aperture',ApertureMenu())
