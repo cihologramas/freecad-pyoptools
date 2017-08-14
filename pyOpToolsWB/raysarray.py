@@ -180,25 +180,20 @@ class RaysArrayPart(WBPart):
 
         if dist == "polar":
             r=5*tan(radians(obj.angle))
-            d = None
+            d=[]
             for x in linspace(-obj.xSize/2,obj.xSize/2,obj.Nx):
                 for y in linspace(-obj.ySize/2,obj.ySize/2,obj.Ny):
-                    if d is None:
-                        d=Part.makeCone(0,r,5,FreeCAD.Vector(x,y,0))
-                    else:
-                        d=d.fuse(Part.makeCone(0,r,5,FreeCAD.Vector(x,y,0)))
+                    d.append(Part.makeCone(0,r,5,FreeCAD.Vector(x,y,0)))
         else: #Todo: Cambiar cono a piramide
             r=5*tan(radians(obj.angle))
-            d = None
+            d = []
             for x in linspace(-obj.xSize/2,obj.xSize/2,obj.Nx):
                 for y in linspace(-obj.ySize/2,obj.ySize/2,obj.Ny):
-                    if d is None:
-                        d=Part.makeCone(0,r,5,FreeCAD.Vector(x,y,0))
-                    else:
-                        d=d.fuse(Part.makeCone(0,r,5,FreeCAD.Vector(x,y,0)))
+                    d.append(Part.makeCone(0,r,5,FreeCAD.Vector(x,y,0)))
 
 
-        obj.Shape = d
+        obj.Shape = Part.makeCompound(d)
+
 
 
 
