@@ -46,7 +46,7 @@ class PropagateMenu:
 
         for ray in PP.S.prop_ray:
             #lines = Part.Wire(get_prop_shape(ray))
-            llines = llines + get_prop_shape(ray)
+            llines = get_prop_shape(ray)
             wl=ray.wavelength
             raydict[wl]=llines+raydict.get(wl,[])
 
@@ -81,13 +81,24 @@ def get_prop_shape(ray):
         L1=[]
     return L1
 
+
+
 class PropagatePart(WBPart):
     def __init__(self, obj):
+        from time import time
+
         WBPart.__init__(self,obj,"Propagation")
 
+
         self.S,rays = getActiveSystem()
+
+        print "*",len(rays)
+
+        t=time()
         self.S.ray_add(rays)
+
         self.S.propagate()
+        print time()-t
 
     def execute(self,obj):
         pass
