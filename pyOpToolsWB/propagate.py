@@ -73,11 +73,12 @@ def get_prop_shape(ray):
     else:
         P2 = FreeCAD.Base.Vector(tuple(ray.pos + 10. * ray.dir))
 
-    L1 = [Part.makeLine(P1,P2)]
-
-    for i in ray.childs:
-        L1=L1+get_prop_shape(i)
-
+    if ray.intensity!=0:
+        L1 = [Part.makeLine(P1,P2)]
+        for i in ray.childs:
+            L1=L1+get_prop_shape(i)
+    else:
+        L1=[]
     return L1
 
 class PropagatePart(WBPart):

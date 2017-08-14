@@ -30,10 +30,13 @@ class ThickLensGUI(WBCommandGUI):
         Yrot=self.form.Yrot.value()
         Zrot=self.form.Zrot.value()
 
+        PupP = self.form.PupPos.value()
+        PupD = self.form.PupD.value()
 
+        PupEn = self.form.RefSurf1.isChecked() or self.form.RefSurf2.isChecked()
+        PupRS = self.form.RefSurf1.isChecked()
 
-
-        obj=InsertTL(Th,D,PP1,PP2,f,showpp,showft,ID="L")
+        obj=InsertTL(Th,D,PP1,PP2,f,PupP,PupD,PupEn,PupRS,showpp,showft,ID="L")
         m=FreeCAD.Matrix()
         m.rotateX(radians(Xrot))
         m.rotateY(radians(Yrot))
@@ -55,7 +58,7 @@ class ThickLensMenu(WBCommandMenu):
                 "Pixmap": ""}
 
 class ThickLensPart(WBPart):
-    def __init__(self,obj,Th=10,D=50,PP1=0,PP2=0,f=100,SPP=False,SFRT=False):
+    def __init__(self,obj,Th=10,D=50,PP1=0,PP2=0,f=100,PupP=0, PupD=10,PupRS=False,PupEn=False, SPP=False,SFRT=False):
 
         WBPart.__init__(self,obj,"ThickLens")
         obj.Proxy = self
@@ -64,6 +67,11 @@ class ThickLensPart(WBPart):
         obj.addProperty("App::PropertyLength","D","Shape","Lens diameter")
         obj.addProperty("App::PropertyDistance","PP1P","Shape","Principal plane 1 position")
         obj.addProperty("App::PropertyDistance","PP2P","Shape","Principal plane 2 position")
+        obj.addProperty("App::PropertyDistance","PupP","Shape","Pupil position")
+        obj.addProperty("App::PropertyDistance","PupD","Shape","Pupil diameter")
+        obj.addProperty("App::PropertyBool","PupRS","Shape","Use surface 1 as the reference surface, if not selected use surface 2")
+        obj.addProperty("App::PropertyBool","PupEn","Shape","Enable pupil simulation")
+
         obj.addProperty("App::PropertyDistance","f","Shape","lens Focal length")
         obj.addProperty("App::PropertyBool","SPP","Other","Show principal planes")
         obj.addProperty("App::PropertyBool","SFRT","Other","Show full ray trace")
@@ -74,6 +82,17 @@ class ThickLensPart(WBPart):
         obj.SPP=SPP
         obj.SFRT=SFRT
         obj.f=f
+        obj.PupEn=PupEn
+        obj.PupRS=PupRS
+
+
+        obj.ViewObject.Transparency = 50
+
+        obj.PupP=PupP
+        obj.PupD=PupD
+        obj.PupEn=PupEn
+        obj.PupRS=PupRS
+
 
         obj.ViewObject.Transparency = 50
         obj.ViewObject.ShapeColor = (1.,0.,0.,0.)
@@ -81,8 +100,17 @@ class ThickLensPart(WBPart):
 
     def pyoptools_repr(self,obj):
 
+        if not obj.PupEn:
+            pupil=None
+        else:
+            pup_pos=obj.PupP.Value
+            pup_shape = Circular(radius=obj.PupD.Value/2.,)
+            pup_rs = obj.PupRS
+            pupil = pup_pos,pup_shape,pup_rs
+
         return IdealThickLens(Circular(radius=obj.D.Value/2.), obj.Thk.Value,
-                              (obj.PP1P.Value,obj.PP2P.Value),f=obj.f.Value,complete_trace=obj.SFRT)
+                              (obj.PP1P.Value,obj.PP2P.Value),f=obj.f.Value,complete_trace=obj.SFRT,
+                              pupils=pupil)
 
 
     def execute(self,obj):
@@ -92,16 +120,24 @@ class ThickLensPart(WBPart):
         p1=Part.makeCylinder(obj.D.Value/2.,0.01,FreeCAD.Base.Vector(0,0,obj.PP1P.Value-obj.Thk.Value/2))
         p2=Part.makeCylinder(obj.D.Value/2.,0.01,FreeCAD.Base.Vector(0,0,obj.Thk.Value/2+obj.PP2P.Value))
 
-        if obj.SPP:
-            obj.Shape = Part.makeCompound([d,p1,p2])
-        else:
-            obj.Shape = d
+        puppos = obj.PupP.Value-obj.Thk.Value/2 if obj.PupRS else obj.PupP.Value+obj.Thk.Value/2
+        pup=Part.makeCylinder(obj.PupD.Value/2.,0.01,FreeCAD.Base.Vector(0,0,puppos))
 
-#(Th,D,PP1,PP2,showpp,showft,ID="L")
-def InsertTL(Th=10,D=50,PP1=2,PP2=-2,f=100, SPP=False, SFRT=False, ID="L"):
+
+        if obj.SPP:
+            oblist=[d,p1,p2]
+        else:
+            oblist=[d]
+        if obj.PupEn:
+            oblist=oblist+[pup]
+
+        obj.Shape = Part.makeCompound(oblist)
+
+#(self,obj,Th=10,D=50,PP1=0,PP2=0,f=100,Pup1P=0, Pup1D=10,Pup1En=False,Pup2P=0, Pup2D=10,Pup2En=False, SPP=False,SFRT=False):
+def InsertTL(Th=10,D=50,PP1=2,PP2=-2,f=100, PupP= 0,PupD=10,PupRS=True,PupEn=False,SPP=False, SFRT=False, ID="L"):
     import FreeCAD
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",ID)
-    ThickLensPart(myObj,Th,D,PP1,PP2,f,SPP,SFRT)
+    ThickLensPart(myObj,Th,D,PP1,PP2,f,PupP,PupD,PupRS,PupEn,SPP,SFRT)
     myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj
