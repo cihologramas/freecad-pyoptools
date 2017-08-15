@@ -8,6 +8,8 @@ from pyoptoolshelpers import getActiveSystem
 from pyoptools.raytrace.system import System
 
 from pyoptools.misc.pmisc.misc import wavelength2RGB
+from pyoptools.raytrace.calc import parallel_propagate
+
 
 class PropagateMenu:
     def __init__(self):
@@ -85,20 +87,13 @@ def get_prop_shape(ray):
 
 class PropagatePart(WBPart):
     def __init__(self, obj):
-        from time import time
 
         WBPart.__init__(self,obj,"Propagation")
 
 
         self.S,rays = getActiveSystem()
-
-        print "*",len(rays)
-
-        t=time()
         self.S.ray_add(rays)
-
         self.S.propagate()
-        print time()-t
 
     def execute(self,obj):
         pass
