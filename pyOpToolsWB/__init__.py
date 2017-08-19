@@ -44,3 +44,9 @@ FreeCADGui.addCommand('DiffractionGratting',DiffractionGrattingMenu())
 
 from aperture import ApertureMenu
 FreeCADGui.addCommand('Aperture',ApertureMenu())
+
+from pentaprism import PentaPrismMenu
+FreeCADGui.addCommand('PentaPrism',PentaPrismMenu())
+
+from doveprism import DovePrismMenu
+FreeCADGui.addCommand('DovePrism',DovePrismMenu())

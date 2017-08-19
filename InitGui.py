@@ -44,6 +44,7 @@ class pyOpToolsWorkbench ( Workbench ):
         self.appendMenu("Add Components", ["SphericalLens","DoubletLens","ThickLens",
                                            "RoundMirror", "RectangularMirror",
                                            "Aperture","DiffractionGratting",
+                                           "PentaPrism","DovePrism",
                                            "CatalogComponent","Sensor","RaysParallel",
                                            "RaysPoint","RaysArray"])
         self.appendMenu("Simulate", ["Propagate", "Reports","Optimize"])
