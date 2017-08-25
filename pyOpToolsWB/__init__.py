@@ -50,3 +50,6 @@ FreeCADGui.addCommand('PentaPrism',PentaPrismMenu())
 
 from doveprism import DovePrismMenu
 FreeCADGui.addCommand('DovePrism',DovePrismMenu())
+
+from bscube import BSCubeMenu
+FreeCADGui.addCommand('BSCube',BSCubeMenu())
