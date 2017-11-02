@@ -3,6 +3,9 @@ import FreeCADGui
 from sphericallens import SphericalLensMenu
 FreeCADGui.addCommand('SphericalLens',SphericalLensMenu())
 
+from cylindricallens import CylindricalLensMenu
+FreeCADGui.addCommand('CylindricalLens',CylindricalLensMenu())
+
 from roundmirror import RoundMirrorMenu
 FreeCADGui.addCommand('RoundMirror',RoundMirrorMenu())
 

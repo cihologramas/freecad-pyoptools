@@ -41,7 +41,8 @@ class pyOpToolsWorkbench ( Workbench ):
 
     def Initialize(self):
 
-        self.appendMenu("Add Components", ["SphericalLens","DoubletLens","ThickLens",
+        self.appendMenu("Add Components", ["SphericalLens","CylindricalLens",
+                                           "DoubletLens","ThickLens",
                                            "RoundMirror", "RectangularMirror",
                                            "BSCube",
                                            "Aperture","DiffractionGratting",
