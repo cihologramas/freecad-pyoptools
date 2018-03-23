@@ -8,6 +8,7 @@ def getActiveSystem():
     objs = FreeCAD.ActiveDocument.Objects
     rays=[]
     complist=[]
+    
     for obj in objs:
         #Todos los componentes de pyoptools tienen attributo cType
         if not hasattr(obj,"cType"):
@@ -22,6 +23,11 @@ def getActiveSystem():
         # Hay que buscar una mejor forma de hacer esto, es decir como no tener
         # que pasar obj en los parametros
         e=obj.Proxy.pyoptools_repr(obj)
+        # Esto es para poder imprimir en la consola de FreeCAD
+        #try:
+        # FreeCAD.Console.PrintMessage(str(e.material) + "\n")
+        #except:
+        #    pass
         if isinstance(e,list):
             rays.extend(e)
         else:

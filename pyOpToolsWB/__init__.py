@@ -56,3 +56,6 @@ FreeCADGui.addCommand('DovePrism',DovePrismMenu())
 
 from bscube import BSCubeMenu
 FreeCADGui.addCommand('BSCube',BSCubeMenu())
+
+from powelllens import PowellLensMenu
+FreeCADGui.addCommand('PowellLens',PowellLensMenu())

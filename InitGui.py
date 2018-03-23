@@ -44,7 +44,7 @@ class pyOpToolsWorkbench ( Workbench ):
         self.appendMenu("Add Components", ["SphericalLens","CylindricalLens",
                                            "DoubletLens","ThickLens",
                                            "RoundMirror", "RectangularMirror",
-                                           "BSCube",
+                                           "BSCube", "PowellLens",
                                            "Aperture","DiffractionGratting",
                                            "PentaPrism","DovePrism",
                                            "CatalogComponent","Sensor","RaysParallel",
