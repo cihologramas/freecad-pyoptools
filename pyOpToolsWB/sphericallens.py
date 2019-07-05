@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from wbcommand import *
+from .wbcommand import *
 
 import Part
 

@@ -12,7 +12,7 @@ def getActiveSystem():
     for obj in objs:
         #Todos los componentes de pyoptools tienen attributo cType
         if not hasattr(obj,"cType"):
-            print "Object {} not recognized by pyoptools, ignored.".format(obj.Label)
+            print("Object {} not recognized by pyoptools, ignored.".format(obj.Label))
             continue
         if not obj.enabled:
             continue

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from wbcommand import *
+from .wbcommand import *
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
 from math import radians
 import Part,FreeCAD
-from Units import Quantity
+from FreeCAD import Units
 
 class DiffractionGrattingGUI(WBCommandGUI):
     def __init__(self):
@@ -98,7 +98,7 @@ class DiffractionGrattingPart(WBPart):
         obj.matref=matref
         obj.M=M
 
-        obj.GP= Quantity("{} nm".format(Gp)) # The gratting period is passed in nm
+        obj.GP= Units.Quantity("{} nm".format(Gp)) # The gratting period is passed in nm
         obj.Ang= Ang
 
         obj.ViewObject.Transparency = 50
@@ -113,7 +113,7 @@ class DiffractionGrattingPart(WBPart):
         else:
             material=getattr(matlib.material,matcat)[matref]
 
-        print obj.M
+        print(obj.M)
 
         lpmm=1./obj.GP.getValueAs("mm").Value
         rm=comp_lib.RectGratting((obj.Width.Value,obj.Height.Value,obj.Thk.Value),obj.Reflectivity/100.,lpmm=lpmm,angle=obj.Ang.getValueAs("rad").Value,
@@ -125,7 +125,7 @@ class DiffractionGrattingPart(WBPart):
 
         d=Part.makeBox(obj.Width.Value,obj.Height.Value,obj.Thk.Value,FreeCAD.Base.Vector(-obj.Width.Value/2.,-obj.Height.Value/2.,0))
         obj.Shape = d
-        print obj.M
+        print(obj.M)
 
 def InsertDiffG(Ref=100,Th=10,SX=50,SY=50,Ang=0, GP=1000.,M=[1], ID="L",matcat="",matref=""):
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",ID)

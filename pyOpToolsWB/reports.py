@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-import FreeCAD, Plot
-from propagate import PropagatePart
+import FreeCAD #, Plot
+#TODO: Plot no esta funcionando en Freecad 18 ni 19. Se inhabilita 
+
+from .propagate import PropagatePart
 
 class ReportsMenu:
     def __init__(self):
@@ -59,8 +61,8 @@ class ReportsMenu:
                         X.append(p[0])
                         Y.append(p[1])
                         #COL.append(col)
-                fig=Plot.figure()
-                fig.axes.plot(X,Y,"o")
-                fig.axes.axis("equal")
-                fig.axes.set_title(n)
-                fig.update()
+                #fig=Plot.figure()
+                #fig.axes.plot(X,Y,"o")
+                #fig.axes.axis("equal")
+                #fig.axes.set_title(n)
+                #fig.update()

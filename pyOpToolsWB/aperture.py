@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from wbcommand import *
+from .wbcommand import *
 
 import Part
-from Units import Quantity
+from FreeCAD import Units
 
 import pyoptools.raytrace.comp_lib as comp_lib
 from pyoptools.raytrace.shape import Circular
@@ -54,8 +54,8 @@ class AperturePart(WBPart):
 
         obj.addProperty("App::PropertyLength","InD","Shape","Aperture internal diameter")
         obj.addProperty("App::PropertyLength","OutD","Shape","Aperture external diameter")
-        obj.InD= Quantity("{} mm".format(InD))
-        obj.OutD= Quantity("{} mm".format(OutD))
+        obj.InD= Units.Quantity("{} mm".format(InD))
+        obj.OutD= Units.Quantity("{} mm".format(OutD))
         obj.ViewObject.ShapeColor = (1.,1.,1.,0.)
 
     def execute(self,obj):

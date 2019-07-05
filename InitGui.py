@@ -57,7 +57,7 @@ class pyOpToolsWorkbench ( Workbench ):
 
         # do something here if needed...
         Msg ("MyWorkbench.Activated()\n")
-        print FreeCAD.ActiveDocument
+        print(FreeCAD.ActiveDocument)
     def Deactivated(self):
         # do something here if needed...
         Msg ("MyWorkbench.Deactivated()\n")

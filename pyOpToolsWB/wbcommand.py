@@ -52,4 +52,4 @@ class WBPart:
 
 
     def pyoptools_repr(self, obj):
-        print "pyOpTools representation of Object {} not implemented".format(obj.cType)
+        print("pyOpTools representation of Object {} not implemented".format(obj.cType))

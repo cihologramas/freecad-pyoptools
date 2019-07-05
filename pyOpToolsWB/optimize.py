@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from wbcommand import *
+from .wbcommand import *
 import FreeCAD
-from pyoptoolshelpers import getActiveSystem
+from .pyoptoolshelpers import getActiveSystem
 from numpy import std,array,sqrt
 from scipy.optimize import minimize
 
@@ -66,7 +66,7 @@ class OptimizeGUI(WBCommandGUI):
 
 
 def opt_col(d,el="",sen="",ax="Z"):
-    print d
+    print(d)
     S,rays=getActiveSystem()
     C,P,D= S.complist[el]
 
@@ -85,7 +85,7 @@ def opt_col(d,el="",sen="",ax="Z"):
     return std(D)
 
 def opt_spot(d,el="",sen="",ax="Z"):
-    print d
+    print(d)
     S,rays=getActiveSystem()
     C,P,D= S.complist[el]
 

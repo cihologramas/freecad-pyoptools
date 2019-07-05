@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from wbcommand import *
+from .wbcommand import *
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
 from pyoptools.raytrace.system.idealcomponent import IdealThickLens

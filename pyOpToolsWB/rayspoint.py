@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from wbcommand import *
+from .wbcommand import *
 from pyoptools.misc.pmisc.misc import wavelength2RGB
 import pyoptools.raytrace.ray.ray_source as rs_lib
 from math import tan, radians
-from Units import Quantity
+from FreeCAD import Units
 
 class RaysPointGUI(WBCommandGUI):
     def __init__(self):
@@ -63,7 +63,7 @@ class RaysPointPart(WBPart):
         obj.nr=nr
         obj.na=na
         obj.distribution=distribution.lower()
-        obj.wl = Quantity("{} nm".format(wavelenght)) # wavelenght is received in nm
+        obj.wl = Units.Quantity("{} nm".format(wavelenght)) # wavelenght is received in nm
         obj.angle = angle
         obj.enabled=enabled
 
@@ -100,9 +100,9 @@ class RaysPointPart(WBPart):
             r=rs_lib.point_source_c(origin=(X,Y,Z),direction=(radians(RX),radians(RY),radians(RZ)),span=(ang,ang),
                                     num_rays=(nr,na),wavelength=wl, label="")
         elif dist=="random":
-            print "random ray distribution, not implemented yet"
+            print ("random ray distribution, not implemented yet")
         else:
-            print "Warning ray distribution {} not recognized".format(dist)
+            print ("Warning ray distribution {} not recognized".format(dist))
 
         return r
 
@@ -114,10 +114,10 @@ class RaysPointPart(WBPart):
 
         if dist not in ["polar","cartesian"]:
             obj.distribution="polar"
-            print "Ray Distribution not understood, changing it to polar"
+            print ("Ray Distribution not understood, changing it to polar")
 
         if dist == "polar":
-            print obj.angle , type(obj.angle)
+            print (obj.angle , type(obj.angle))
             r=5*tan(obj.angle.getValueAs("rad").Value)
             d=Part.makeCone(0,r,5)
             #d.translate(FreeCAD.Base.Vector(0,0,-0.5))

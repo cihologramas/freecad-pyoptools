@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from wbcommand import *
+from .wbcommand import *
 from pyoptools.misc.pmisc.misc import wavelength2RGB
 import pyoptools.raytrace.ray.ray_source as rs_lib
 from math import tan, radians
@@ -161,9 +161,9 @@ class RaysArrayPart(WBPart):
                         r=r+rs_lib.point_source_c(origin=(X+xr,Y+yr,Z+zr),direction=dire,span=(radians(ang),radians(ang))\
                                                   ,num_rays=(nr,na),wavelength=wl/1000., label="")
             elif dist=="random":
-                print "random ray distribution, not implemented yet"
+                print("random ray distribution, not implemented yet")
             else:
-                print "Warning ray distribution {} not recognized".format(dist)
+                print("Warning ray distribution {} not recognized".format(dist))
 
         return r
 
@@ -176,7 +176,7 @@ class RaysArrayPart(WBPart):
 
         if dist not in ["polar","cartesian"]:
             obj.distribution="polar"
-            print "Ray Distribution not understood, changing it to polar"
+            print("Ray Distribution not understood, changing it to polar")
 
         if dist == "polar":
             r=5*tan(radians(obj.angle))

@@ -2,8 +2,8 @@
 import FreeCAD, Part
 
 from math import radians
-from wbcommand import *
-from pyoptoolshelpers import getActiveSystem
+from .wbcommand import *
+from .pyoptoolshelpers import getActiveSystem
 
 from pyoptools.raytrace.system import System
 

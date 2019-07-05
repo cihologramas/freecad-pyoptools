@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from wbcommand import *
+from .wbcommand import *
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
-from sphericallens import buildlens
+from .sphericallens import buildlens
 from math import radians
 
 class DoubletLensGUI(WBCommandGUI):

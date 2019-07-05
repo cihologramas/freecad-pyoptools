@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from PySide import QtGui
-from wbcommand import *
+from .wbcommand import *
 from pyoptools.raytrace.library import library
 from pyoptools.raytrace.mat_lib.material import find_material
-from sphericallens import InsertSL
-from doubletlens import InsertDL
+from .sphericallens import InsertSL
+from .doubletlens import InsertDL
 from math import radians
 
 class CatalogComponentGUI(WBCommandGUI):
@@ -52,7 +52,7 @@ class CatalogComponentGUI(WBCommandGUI):
             comp_mat = lib.parser.get(reference,"material")
             matlibs=find_material(comp_mat)
             if len(matlibs)==0:
-                print "material {} not found".format(comp_mat)
+                print("material {} not found".format(comp_mat))
                 ok=False
 
         elif comp_type == "Doublet":
@@ -62,13 +62,13 @@ class CatalogComponentGUI(WBCommandGUI):
             matlibs2=find_material(comp_mat2)
 
             if len(matlibs1)==0:
-                print "material {} not found".format(comp_mat1)
+                print("material {} not found".format(comp_mat1))
                 ok=False
             if len(matlibs2)==0:
-                print "material {} not found".format(comp_mat2)
+                print("material {} not found".format(comp_mat2))
                 ok=False
         else:
-            print "Component Type {} not found".format(comp_type)
+            print("Component Type {} not found".format(comp_type))
             ok=False
 
         return ok

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from wbcommand import *
+from .wbcommand import *
 from pyoptools.misc.pmisc.misc import wavelength2RGB
 import pyoptools.raytrace.ray.ray_source as rs_lib
-from Units import Quantity
+from FreeCAD import Units
 from math import radians
 
 class RaysParallelGUI(WBCommandGUI):
@@ -69,7 +69,7 @@ class RaysParPart(WBPart):
         obj.nr=nr
         obj.na=na
         obj.distribution=distribution.lower()
-        obj.wl = Quantity("{} nm".format(wavelenght)) # wavelenght is received in nm
+        obj.wl = Units.Quantity("{} nm".format(wavelenght)) # wavelenght is received in nm
 
         obj.D = D
         obj.enabled=enabled
@@ -107,11 +107,11 @@ class RaysParPart(WBPart):
                                          radius=R, num_rays=(nr,na),wavelength=wl,
                                          label="")
             elif dist=="cartesian":
-                print "cartesian ray distribution, not implemented yet"
+                print ("cartesian ray distribution, not implemented yet")
             elif dist=="random":
-                print "random ray distribution, not implemented yet"
+                print ("random ray distribution, not implemented yet")
             else:
-                print "Warning ray distribution {} not recognized".format(dist)
+                print ("Warning ray distribution {} not recognized".format(dist))
         return r
 
 
@@ -123,7 +123,7 @@ class RaysParPart(WBPart):
 
         if dist not in ["polar","cartesian"]:
             obj.distribution="polar"
-            print "Ray Distribution not understood, changing it to polar"
+            print ("Ray Distribution not understood, changing it to polar")
 
         if dist == "polar":
             r=obj.D.Value/2.
