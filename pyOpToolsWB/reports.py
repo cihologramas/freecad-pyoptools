@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-import FreeCAD #, Plot
+import FreeCAD
+from .pyopPlot import *
+
 #TODO: Plot no esta funcionando en Freecad 18 ni 19. Se inhabilita 
 
 from .propagate import PropagatePart
@@ -27,26 +29,25 @@ class ReportsMenu:
 
 
         #Eliminar los grupos y los rayos
-        opobjs = filter(lambda x:hasattr(x,"cType"),objs)
+        opobjs = list(filter(lambda x:hasattr(x,"cType"),objs))
 
         #Buscar los sensores
-        a_sensors = filter(lambda x: x.cType=="Sensor",opobjs)
+        a_sensors = list(filter(lambda x: x.cType=="Sensor",opobjs))
 
         #Mirar cuales estan activos
 
-        sensors =filter(lambda x:x.enabled, a_sensors)
+        sensors = list(filter(lambda x:x.enabled, a_sensors))
 
 
         #Sacar los labels de los sensores
-        slabels = map(lambda x:x.Label,sensors)
+        slabels = list(map(lambda x:x.Label,sensors))
 
         #Buscar las propagaciones
-        props = filter(lambda x: x.cType=="Propagation",opobjs)
+        props = list(filter(lambda x: x.cType=="Propagation",opobjs))
 
         #Sacar los sistemas opticos de las propagaciones
-        ss = map(lambda x: x.Proxy.S, props)
-
-
+        ss = list(map(lambda x: x.Proxy.S, props))
+        
         for s in ss:
             for n in slabels:
                 ccd = s[n][0]
@@ -61,8 +62,8 @@ class ReportsMenu:
                         X.append(p[0])
                         Y.append(p[1])
                         #COL.append(col)
-                #fig=Plot.figure()
-                #fig.axes.plot(X,Y,"o")
-                #fig.axes.axis("equal")
-                #fig.axes.set_title(n)
-                #fig.update()
+                fig=figure()
+                fig.axes.plot(X,Y,"o")
+                fig.axes.axis("equal")
+                fig.axes.set_title(n)
+                fig.update()
