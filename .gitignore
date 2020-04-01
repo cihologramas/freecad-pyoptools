@@ -5,7 +5,11 @@ __pycache__/
 
 # C extensions
 *.so
+*.syncthing*
+
+#other files
 *~
+
 # Distribution / packaging
 .Python
 env/

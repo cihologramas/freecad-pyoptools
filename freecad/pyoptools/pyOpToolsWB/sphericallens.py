@@ -6,9 +6,10 @@ import Part
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
 from math import radians
-
+from freecad.pyoptools import ICONPATH
 
 class SphericalLensGUI(WBCommandGUI):
+ 
     def __init__(self):
 
         WBCommandGUI.__init__(self,'SphericalLens.ui')
@@ -24,7 +25,6 @@ class SphericalLensGUI(WBCommandGUI):
             self.form.Value.setEnabled(True)
         else:
             self.form.Value.setEnabled(False)
-
 
         while self.form.Reference.count():
             self.form.Reference.removeItem(0)
@@ -58,6 +58,7 @@ class SphericalLensGUI(WBCommandGUI):
         FreeCADGui.Control.closeDialog()
 
 class SphericalLensMenu(WBCommandMenu):
+
     def __init__(self):
         WBCommandMenu.__init__(self, SphericalLensGUI)
 

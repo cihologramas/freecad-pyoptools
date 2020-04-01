@@ -1,5 +1,7 @@
 import FreeCADGui
 
+print(dir(FreeCADGui))
+
 from .sphericallens import SphericalLensMenu
 FreeCADGui.addCommand('SphericalLens',SphericalLensMenu())
 

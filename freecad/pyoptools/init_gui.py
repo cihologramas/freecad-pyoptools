@@ -1,72 +1,71 @@
-# -*- coding: utf-8 -*-
-import FreeCAD, FreeCADGui
+import os
+import FreeCADGui as Gui
+from freecad.pyoptools import ICONPATH
 
 
-import pyOpToolsWB #Importar los commandos y registrarlos
+class PyOpToolsWorkbench(Gui.Workbench):
+    """
+    class which gets initiated at startup of the gui
+    """
 
-
-
-
-class pyOpToolsWorkbench ( Workbench ):
-    "pyOpTools object"
-    Icon = """
- 			/* XPM */
- 			static const char *test_icon[]={
- 			"16 16 2 1",
- 			"a c #000000",
- 			". c None",
- 			"................",
- 			"........#.......",
- 			".......###......",
- 			".....#######....",
- 			"...##..###..##..",
- 			".......###......",
- 			".......###......",
- 			".......###......",
- 			".......###......",
- 			".......###......",
- 			".......###......",
- 			"...##..###..##..",
- 			".....#######....",
- 			".......###......",
- 			"........#.......",
- 			"................",
- 			"................"};
- 			"""
-    MenuText = "pyOpTools"
-    ToolTip = "pyOpTools workbench"
+    MenuText = "pyoptools workbench"
+    ToolTip = "pyoptools worlbench"
+    Icon = os.path.join(ICONPATH, "pyoptools.png")
+    toolbox = []
 
     def GetClassName(self):
         return "Gui::PythonWorkbench"
 
     def Initialize(self):
+        """
+        This function is called at the first activation of the workbench.
+        here is the place to import all the commands
+        """
+        from . import pyOpToolsWB
 
-        self.appendMenu("Add Components", ["SphericalLens","CylindricalLens",
-                                           "DoubletLens","ThickLens",
-                                           "RoundMirror", "RectangularMirror",
-                                           "BSCube", "PowellLens",
-                                           "Aperture","DiffractionGratting",
-                                           "PentaPrism","DovePrism",
-                                           "CatalogComponent","Sensor","RaysParallel",
-                                           "RaysPoint","RaysArray"])
-        self.appendMenu("Simulate", ["Propagate", "Reports","Optimize"])
+        self.appendMenu(["Add Components"], "CatalogComponent")
 
-        Log ("Loading MyModule... done\n")
+        self.appendMenu(["Add Components", "Lenses"],
+                        ["SphericalLens",
+                         "CylindricalLens",
+                         "DoubletLens",
+                         "ThickLens",
+                         "PowellLens"])
+
+        self.appendMenu(["Add Components", "Mirrors"],
+                        ["RoundMirror",
+                         "RectangularMirror"])
+
+        self.appendMenu(["Add Components", "Prisms"],
+                        ["PentaPrism",
+                         "DovePrism"])
+
+        self.appendMenu(["Add Components", "Beam Splitters"],
+                        ["BSCube"])
+
+        self.appendMenu(["Add Components", "Ray Sources"],
+                        ["RaysParallel",
+                         "RaysPoint",
+                         "RaysArray"])
+        self.appendMenu(["Add Components"], "Aperture")
+        self.appendMenu(["Add Components"], "DiffractionGratting")
+        self.appendMenu(["Add Components"], "Sensor")
+
+        self.appendMenu(["Simulate"],
+                        ["Propagate",
+                         "Reports",
+                         "Optimize"])
 
     def Activated(self):
+        '''
+        code which should be computed when a user switch to this workbench
+        '''
+        pass
 
-        # do something here if needed...
-        Msg ("MyWorkbench.Activated()\n")
-        print(FreeCAD.ActiveDocument)
     def Deactivated(self):
-        # do something here if needed...
-        Msg ("MyWorkbench.Deactivated()\n")
+        '''
+        code which should be computed when this workbench is deactivated
+        '''
+        pass
 
-
-
-
-
-
-
-
-FreeCADGui.addWorkbench(pyOpToolsWorkbench)
+Gui.addWorkbench(PyOpToolsWorkbench())
