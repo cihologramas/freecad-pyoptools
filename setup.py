@@ -5,7 +5,7 @@ import os
 # Packages using the same name here cannot be installed together
 
 version_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 
-                            "freecad", "freecad.pyoptools", "version.py")
+                            "version.py")
 with open(version_path) as fp:
     exec(fp.read())
 
@@ -13,7 +13,7 @@ setup(name='freecad.pyoptools',
       version=str(__version__),
       packages=['freecad',
                 'freecad.pyoptools'],
-      maintainer="Ricardo Amézquita",
+      maintainer="Ricardo Amézquita Orozco",
       maintainer_email="ramezquitao@cihologramas.com",
       #url="https://github.com/FreeCAD/Workbench-Starterkit",
       description="Workbenck for pyOpTools",
