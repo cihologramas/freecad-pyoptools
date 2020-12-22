@@ -1,14 +1,14 @@
 Creating a new optical model
 ============================
 
-After the workbench is activated, two new menus will appear in FreeCAD menubar,
+After the workbench is activated, two new menus will appear in FreeCAD menu-bar,
 the `Add Components` menu, and the `Simulate Menu`.
 
 
 Add Components
 --------------
 
-The add components menu has a set of submenus that allow to add optical several
+The add components menu has a set of sub-menus that allow to add optical several
 types of optical components to the 3D space where the simulation by raytracing
 will be performed. All the windows from the `Add Component` have 2 options in
 common that allow to position the component in the 3D space:
@@ -17,7 +17,7 @@ Position :
     This option allows the component to be placed at any place in the 3D
     space. The coordinates are given in millimeters, and correspond to the
     point where the component's origin will be placed. The location of the
-    component's origin is dependant on the component definition, and must be
+    component's origin is dependent on the component definition, and must be
     checked in the pyoptools library.
 
 Orientation:
@@ -80,12 +80,12 @@ Curv S2:
     negative will create for convex.
 
 Material:
-   Select the material used to buoild the lens from diferent material catalogs.
+   Select the material used to build the lens from different material catalogs.
    Also if `Value` catalog is selected, a constant refraction index can be used.
 
 Cylindrical Lens
 ~~~~~~~~~~~~~~~~
-Creates a rectancular shaped cylindrical lens.
+Creates a rectangular shaped cylindrical lens.
 
 Height:
     Height of the lens
@@ -166,7 +166,7 @@ Thick Lens
 
 Model used to simulate an ideal thick lens. Graphically the thick lens is
 represented as a cylinder to give an idea of the lens enclosure size the 2 ends
-of the cylinder will be called `surface 1` and `surface 2`, aditionally the
+of the cylinder will be called `surface 1` and `surface 2`, additionally the
 model will have some planes that represent the `Principal Planes` position, and
 the pupil position and size.
 
@@ -185,7 +185,7 @@ Position Principal Plane 2:
     Position of the principal plane referenced to the cylinder's `surface 2`.
     If 0, the principal plane will be on top of the `surface 2`
 
-Focal Lenght:
+Focal Length:
     Thick lens effective focal length.
 
 Pupil reference surface:
@@ -197,20 +197,20 @@ Pupil position:
     Distance between the pupil and its reference surface.
 
 Pupil diameter:
-    Diameter of the pupil apperture.
+    Diameter of the pupil aperture.
 
 Show pupils and principal planes:
-   If selected, the pupils and principal planes wuill be shown in the model.
+   If selected, the pupils and principal planes will be shown in the model.
 
 Show full raytrace:
    If selected, the rays will be drawn from the source, into the first
    intersected principal plane, then to the second principal plane, and then
    out from the second principal plane. Depending on the location of the
    principal planes, it is possible the rays seem to travel backward. Also have
-   in mind that the principal planes can be auside the enclosure, so the rays
-   migth seem do be difracted by an outside element.
+   in mind that the principal planes can be outside the enclosure, so the rays
+   might seem do be diffracted by an outside element.
 
-   If not selected, the rays wil be drawn into the first enclosure surface, to
+   If not selected, the rays will be drawn into the first enclosure surface, to
    the second enclosure surface, and out from it.
 
 Powel Lens
@@ -263,7 +263,7 @@ Aperture
 ^^^^^^^^^
 
 
-Difraction Gratting
+Diffraction Gratting
 ^^^^^^^^^^^^^^^^^^^
 
 Sensor
