@@ -30,6 +30,7 @@ class PyOpToolsWorkbench(Gui.Workbench):
                          "CylindricalLens",
                          "DoubletLens",
                          "ThickLens",
+                         "LensData",
                          "PowellLens"])
 
         self.appendMenu(["Add Components", "Mirrors"],

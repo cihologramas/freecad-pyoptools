@@ -61,3 +61,6 @@ FreeCADGui.addCommand('BSCube',BSCubeMenu())
 
 from .powelllens import PowellLensMenu
 FreeCADGui.addCommand('PowellLens',PowellLensMenu())
+
+from .lensdata import LensDataMenu
+FreeCADGui.addCommand('LensData', LensDataMenu())

@@ -55,7 +55,7 @@ class CatalogComponentGUI(WBCommandGUI):
                 print("material {} not found".format(comp_mat))
                 ok=False
 
-        elif comp_type == "Doublet":
+        elif comp_type in ["Doublet", "AirSpacedDoublet"]:
             comp_mat1 = lib.parser.get(reference,"material_l1")
             matlibs1=find_material(comp_mat1)
             comp_mat2 = lib.parser.get(reference,"material_l2")
@@ -137,6 +137,23 @@ class CatalogComponentGUI(WBCommandGUI):
                 matcat1 = find_material(mat1)[0]
                 matcat2 = find_material(mat2)[0]
                 obj = InsertDL(c1,c2,th1,c2,c3,th2,diam,0,"L", matcat1,mat1,matcat2,mat2)
+
+            elif comptype == "AirSpacedDoublet":
+                mat1 =  lib.parser.get(reference,"material_l1")
+                mat2 =  lib.parser.get(reference,"material_l2")
+                th1 =  lib.parser.getfloat(reference,"thickness_l1")
+                th2 =  lib.parser.getfloat(reference,"thickness_l2")
+                airgap = lib.parser.getfloat(reference,"air_gap")
+
+                diam = 2.* lib.parser.getfloat(reference,"radius")
+                c1 =  lib.parser.getfloat(reference,"curvature_s1")
+                c2 =  lib.parser.getfloat(reference,"curvature_s2")
+                c3 =  lib.parser.getfloat(reference,"curvature_s3")
+                c4 =  lib.parser.getfloat(reference,"curvature_s4")
+                matcat1 = find_material(mat1)[0]
+                matcat2 = find_material(mat2)[0]
+                obj = InsertDL(c1,c2,th1,c3,c4,th2,diam,airgap,"L", matcat1,mat1,matcat2,mat2)
+
 
             if obj is not None:
                 m=FreeCAD.Matrix()
