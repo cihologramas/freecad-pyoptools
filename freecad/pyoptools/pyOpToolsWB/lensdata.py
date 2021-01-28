@@ -10,6 +10,9 @@ from freecad.pyoptools import ICONPATH
 from PySide2 import QtWidgets
 from PySide2.QtCore import QLocale
 
+from .sphericallens import buildlens
+from math import isnan
+
 class LensDataGUI(WBCommandGUI):
 
     def __init__(self):
@@ -64,11 +67,15 @@ class LensDataGUI(WBCommandGUI):
         item = QtWidgets.QTableWidgetItem(semid)
         self.form.surfTable.setItem(i, 3, item)
 
-        matcat = self.form.Catalog.currentText()
-        if matcat == "Value":
-            matref = self.form.Value.cleanText()
+        if self.form.NG.isChecked():
+            matcat = ""
+            matref = ""
         else:
-            matref = self.form.Reference.currentText()
+            matcat = self.form.Catalog.currentText()
+            if matcat == "Value":
+                matref = self.form.Value.cleanText()
+            else:
+                matref = self.form.Reference.currentText()
 
         item = QtWidgets.QTableWidgetItem(matcat)
         self.form.surfTable.setItem(i, 4, item)
@@ -93,6 +100,13 @@ class LensDataGUI(WBCommandGUI):
 
         lo = QLocale()
 
+        X = self.form.Xpos.value()
+        Y = self.form.Ypos.value()
+        Z = self.form.Zpos.value()
+        Xrot = self.form.Xrot.value()
+        Yrot = self.form.Yrot.value()
+        Zrot = self.form.Zrot.value()
+
         for r in range(self.form.surfTable.rowCount()):
             surfType.append(self.form.surfTable.item(r, 0).text())
             radius.append(lo.toFloat(self.form.surfTable.item(r, 1).text())[0])
@@ -104,13 +118,13 @@ class LensDataGUI(WBCommandGUI):
         datalist = (surfType, radius, thick, semid, matcat, matref)
 
         obj = InsertLD(datalist, ID="L")
-#        m=FreeCAD.Matrix()
-#        m.rotateX(radians(Xrot))
-#        m.rotateY(radians(Yrot))
-#        m.rotateZ(radians(Zrot))
-#        m.move((X,Y,Z))
-#        p1 = FreeCAD.Placement(m)
-#        obj.Placement = p1
+        m = FreeCAD.Matrix()
+        m.rotateX(radians(Xrot))
+        m.rotateY(radians(Yrot))
+        m.rotateZ(radians(Zrot))
+        m.move((X, Y, Z))
+        p1 = FreeCAD.Placement(m)
+        obj.Placement = p1
         FreeCADGui.Control.closeDialog()
 
 class LensDataMenu(WBCommandMenu):
@@ -161,7 +175,7 @@ class LensDataPart(WBPart):
                         "Shape",
                         "List with the material references")
         obj.matcat = matcat
-        
+
         obj.addProperty("App::PropertyStringList",
                         "matref",
                         "Shape",
@@ -172,26 +186,63 @@ class LensDataPart(WBPart):
 
         obj.ViewObject.ShapeColor = (1., 1., 0., 0.)
 
-    def execute(self,obj):
-        pass
-        #obj.Shape = buildlens(obj.CS1,obj.CS2,obj.D.Value,obj.Thk.Value)
+    def execute(self, obj):
+        Type = obj.Type
+        Radius = obj.Radius
+        Thick = obj.Thick
+        SemiDiam = obj.SemiDiam
+        matcat = obj.matcat
+        matref = obj.matref
 
-    def pyoptools_repr(self,obj):
-        #radius= obj.D.Value/2.
-        #thickness=obj.Thk.Value
-        #curvature_s1=obj.CS1
-        #curvature_s2=obj.CS2
-        #matcat=obj.matcat
-        #matref=obj.matref
-        #if matcat=="Value":
-        #    material=float(matref.replace(",","."))
-        #else:
-        #    material=getattr(matlib.material,matcat)[matref]
+        l = list(zip(Type, Radius, Thick, SemiDiam, matcat, matref))
+        lenses = []
 
-        #return comp_lib.SphericalLens(radius=radius, thickness=thickness,
-        #                          curvature_s1=curvature_s1, curvature_s2=curvature_s2,
-        #                          material = material)
-        pass
+        # In the total lens thicknes, we do not take into account the last
+        # surface thickness, as this one represent the image position
+        TT = sum(Thick[:-1])
+        p = - TT/2
+
+        # TODO: Whe are not checking that the last material is "" (meaning air)
+        for n in range(1, len(l)):
+            t0, r0, th0, s0, mc0, mt0 = l[n-1]
+            t1, r1, th1, s1, mc1, mt1 = l[n]
+
+            if isnan(r0) or r0 == 0:
+                c0 = 0
+            else:
+                c0 = 1/r0
+
+            if isnan(r1) or r1 == 0:
+                c1 = 0
+            else:
+                c1 = 1/r1
+            if mt0 != "":
+                L = buildlens(c0, c1, 2*s0, th0)
+                L.translate(FreeCAD.Base.Vector(0, 0, p+th0/2))
+                lenses.append(L)
+            p = p+th0
+
+        L = lenses[0]
+
+        for l in lenses[1:]:
+            L = L.fuse(l)
+
+        obj.Shape = L
+
+
+
+
+    def pyoptools_repr(self, obj):
+        Type = obj.Type
+        Radius = obj.Radius
+        Thick = obj.Thick
+        SemiDiam = obj.SemiDiam
+        matcat = obj.matcat
+        matref = obj.matref
+
+        l = list(zip(Type, Radius, Thick, SemiDiam, matcat, matref))
+
+        return comp_lib.MultiLens(l)
 
 
 def InsertLD(datalist, ID="L"):
@@ -203,33 +254,3 @@ def InsertLD(datalist, ID="L"):
     myObj.ViewObject.Proxy = 0
     FreeCAD.ActiveDocument.recompute()
     return myObj
-
-def buildlens(CS1,CS2,D,CT):
-    pass
-    #d=Part.makeCylinder(D/2.,CT+D)
-    #d.translate(FreeCAD.Base.Vector(0,0,-(CT+D)/2))
-
-    #if CS1==0:
-    #    R1=1e6
-    #else:
-    #    R1=1./CS1
-    #f1=Part.makeSphere(abs(R1))
-    #f1.translate(FreeCAD.Base.Vector(0,0,R1-CT/2))
-
-    #if CS2 ==0:
-    #    R2 = 1e6
-    #else:
-    #    R2=1./CS2
-    #f2=Part.makeSphere(abs(R2))
-    #f2.translate(FreeCAD.Base.Vector(0,0,R2+CT/2))
-
-    #if R1>0:
-    #    t=d.common(f1)
-    #else:
-    #    t=d.cut(f1)
-    #if R2>0:
-    #    t=t.cut(f2)
-    #else:
-    #    t=t.common(f2)
-
-    #return t

@@ -257,7 +257,7 @@
         <double>2000.000000000000000</double>
        </property>
        <property name="value">
-        <double>0.010000000000000</double>
+        <double>12.699999999999999</double>
        </property>
       </widget>
      </item>
@@ -321,6 +321,13 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="NG">
+         <property name="text">
+          <string>No Glass</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
