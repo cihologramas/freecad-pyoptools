@@ -39,7 +39,8 @@ class PyOpToolsWorkbench(Gui.Workbench):
 
         self.appendMenu(["Add Components", "Prisms"],
                         ["PentaPrism",
-                         "DovePrism"])
+                         "DovePrism",
+                         "RightAnglePrism"])
 
         self.appendMenu(["Add Components", "Beam Splitters"],
                         ["BSCube"])

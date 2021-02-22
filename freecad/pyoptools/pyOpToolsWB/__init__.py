@@ -1,6 +1,6 @@
 import FreeCADGui
 
-print(dir(FreeCADGui))
+#print(dir(FreeCADGui))
 
 from .sphericallens import SphericalLensMenu
 FreeCADGui.addCommand('SphericalLens',SphericalLensMenu())
@@ -55,6 +55,10 @@ FreeCADGui.addCommand('PentaPrism',PentaPrismMenu())
 
 from .doveprism import DovePrismMenu
 FreeCADGui.addCommand('DovePrism',DovePrismMenu())
+
+from .rightangleprism import RightAnglePrismMenu
+FreeCADGui.addCommand('RightAnglePrism', RightAnglePrismMenu())
+
 
 from .bscube import BSCubeMenu
 FreeCADGui.addCommand('BSCube',BSCubeMenu())
