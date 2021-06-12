@@ -93,8 +93,11 @@ class RaysParPart(WBPart):
 
 
     def pyoptools_repr(self,obj):
-        X,Y,Z = obj.Placement.Base
-        RZ,RY,RX = obj.Placement.Rotation.toEuler()
+
+        pla = obj.getGlobalPlacement()
+    
+        X,Y,Z = pla.Base
+        RZ,RY,RX = pla.Rotation.toEuler()
         dist=obj.distribution
         nr=obj.nr
         na=obj.na

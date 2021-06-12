@@ -135,13 +135,14 @@ class RaysArrayPart(WBPart):
 
 
     def pyoptools_repr(self,obj):
-        X,Y,Z = obj.Placement.Base
-        dist=obj.distribution.lower()
+        pla = obj.getGlobalPlacement()
+        X,Y,Z = pla.Base
+        dist = obj.distribution.lower()
         nr=obj.nr
         na=obj.na
         ang = obj.angle
         wl=obj.wavelenght
-        RZ,RY,RX = obj.Placement.Rotation.toEuler()
+        RZ, RY, RX = pla.Rotation.toEuler()
         rm = rot_mat((radians(RX),radians(RY),radians(RZ)))
         dire=((radians(RX),radians(RY),radians(RZ)))
 

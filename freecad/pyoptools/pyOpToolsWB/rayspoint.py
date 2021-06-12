@@ -90,8 +90,9 @@ class RaysPointPart(WBPart):
         wl=obj.wl.getValueAs("µm").Value
         ang=obj.angle.getValueAs("rad").Value
 
-        X,Y,Z = obj.Placement.Base
-        RZ,RY,RX = obj.Placement.Rotation.toEuler()
+        pla = obj.getGlobalPlacement()
+        X,Y,Z = pla.Base
+        RZ,RY,RX = pla.Rotation.toEuler()
 
         if dist=="polar":
             r=rs_lib.point_source_p(origin=(X,Y,Z),direction=(radians(RX),radians(RY),radians(RZ)),span=ang,
