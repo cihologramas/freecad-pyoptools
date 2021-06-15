@@ -1,7 +1,5 @@
 import FreeCADGui
 
-#print(dir(FreeCADGui))
-
 from .sphericallens import SphericalLensMenu
 FreeCADGui.addCommand('SphericalLens',SphericalLensMenu())
 
@@ -22,6 +20,9 @@ FreeCADGui.addCommand('RaysParallel',RaysParallelMenu())
 
 from .raysarray import RaysArrayMenu
 FreeCADGui.addCommand('RaysArray',RaysArrayMenu())
+
+from .ray import RayMenu
+FreeCADGui.addCommand('Ray',RayMenu())
 
 from .propagate import PropagateMenu
 FreeCADGui.addCommand('Propagate',PropagateMenu())

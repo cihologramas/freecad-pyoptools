@@ -48,7 +48,8 @@ class PyOpToolsWorkbench(Gui.Workbench):
         self.appendMenu(["Add Components", "Ray Sources"],
                         ["RaysParallel",
                          "RaysPoint",
-                         "RaysArray"])
+                         "RaysArray",
+                         "Ray"])
         self.appendMenu(["Add Components"], "Aperture")
         self.appendMenu(["Add Components"], "DiffractionGratting")
         self.appendMenu(["Add Components"], "Sensor")
