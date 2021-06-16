@@ -14,20 +14,23 @@ from math import inf, degrees
 
 def center_rot(drot, sen, el):
     """Auxiliar function to be used in an optimization algorithm
-    
-    drot: Vector with the 3 euler angles
-    sen:  Sensor to be used to measure
-    el: Element to be rotated
 
-    After rotating the el component to the drot angles, the system is
-    propagated, and the distance of the ray hit to the center of sen is
-    returned.
+    Parameters
+    ----------
+    drot : tuple of floats
+        Vector with the 3 euler angles used to reposition the element el.
+    sen: str
+        Label that identifies the sensor to be used to measure.
+    el: str
+        Label that identifies the element to be rotated.
 
-    This function modifies the freecad system before obtaining the pyoptools
-    system and as far as some small tests were made, is too slow. It is better
-    to use the center_rot_pot()
+    The element ``el`` is positioned using the angles specified by ``drot``,
+    and then the system is propagated. The distance of the intersection point
+    from the first ray in ``sen.hil_list`` to ``sen`` origin is returned.
 
-
+    This function modifies the freecad-pyoptool objects before obtaining the
+    pyoptools ``System`` and as far as some small tests were made, is too slow.
+    It is better to use the center_rot_pot() for any optimization.
     """
     myObj = FreeCAD.ActiveDocument.getObjectsByLabel(el)[0]
 
@@ -50,22 +53,25 @@ def center_rot(drot, sen, el):
     return dot(hit, hit)**.5
 
 
-def center_rot_pot(drot, S, sen, el):
-    """Auxiliar function to be used in an optimization algorithm that receives
+def center_rot_pot(drot, S, R, sen, el):
+    """Auxiliar function to be used in an optimization algorithm
 
-    drot: Vector with the 3 euler angles
-    S: pyoptools system
-    sen:  Label of the sensor to be used to measure the ray_hit
-    el: Label of the element to be rotated
+    Parameters
+    ----------
 
-    After rotating the el component to the drot angles, the system is
-    propagated, and the distance of the ray hit to the center of sen is
-    returned.
+    drot : tuple of floats
+        Vector with the 3 euler angles used to reposition the element el.
+    S: pyoptools System
+    sen: str
+        Label that identifies the sensor to be used to measure.
+    el: str
+        Label that identifies the element to be rotated.
 
-    This function uses only pyoptools, and is much faster than center_rot()
-
-
+    The element ``el`` is positioned using the angles specified by ``drot``,
+    and then the ``S`` system is propagated. The distance of the intersection
+    point from the first ray in ``sen.hil_list`` to ``sen`` origin is returned.
     """
+
     S.reset()
     C, P, D = S.complist[el]
 
@@ -84,15 +90,13 @@ def center_rot_pot(drot, S, sen, el):
 
 
 S, R = getActiveSystem()
-
+# S.ray_add(R)
 C, P, D = S["M1002"]
-
-
-DR = minimize(center_rot_pot, D, (S, "SEN001", "M1002"), method="TNC")
+DR = minimize(center_rot_pot, D, (S, R, "SEN001", "M1002"), method="TNC")
 
 print(DR)
 
-DR=DR.x
+DR = DR.x
 
 myObj = FreeCAD.ActiveDocument.getObjectsByLabel("M1002")[0]
 
