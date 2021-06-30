@@ -2,35 +2,12 @@ import FreeCAD
 import FreeCADGui
 # from .wbcommand import *
 from pyOpToolsWB.wbcommand import *
+from pyOpToolsWB.qthelpers import outputDialog
 from pyOpToolsWB.pyoptoolshelpers import getActiveSystem
 from PySide import QtCore, QtGui
 from scipy.optimize import minimize
 from numpy import dot
 from math import inf, degrees
-
-
-def outputDialog(msg, yn=False):
-    """ Auxiliar funcion to create a dialog in pyside.
-
-    Parameters
-    ----------
-    msg: Str
-        String with the message to show.
-    yn: Bool
-        If True, the dialog will show Yes and No buttons, if False, only an
-        accept button.
-
-    Returns
-    -------
-    True if Yes button was present and pressed. False otherwise.
-    """
-
-    diag = QtGui.QMessageBox(QtGui.QMessageBox.Information, 'Output', msg)
-    diag.setWindowModality(QtCore.Qt.ApplicationModal)
-    if yn:
-        diag.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-    return diag.exec_() == QtGui.QMessageBox.Yes
-
 
 def center_rot(drot, sen, el):
     """Auxiliar function to be used in an optimization algorithm

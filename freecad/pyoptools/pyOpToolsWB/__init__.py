@@ -26,6 +26,7 @@ FreeCADGui.addCommand('Ray',RayMenu())
 
 from .propagate import PropagateMenu
 FreeCADGui.addCommand('Propagate',PropagateMenu())
+FreeCADGui.addCommand('btnPropagate',PropagateMenu())
 
 from .catalogcomponent import CatalogComponentMenu
 FreeCADGui.addCommand('CatalogComponent',CatalogComponentMenu())
@@ -69,3 +70,6 @@ FreeCADGui.addCommand('PowellLens',PowellLensMenu())
 
 from .lensdata import LensDataMenu
 FreeCADGui.addCommand('LensData', LensDataMenu())
+
+from .utils import wipe
+FreeCADGui.addCommand('btnWipe', wipe.WipeMenu())

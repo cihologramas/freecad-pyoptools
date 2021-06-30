@@ -23,6 +23,8 @@ class PyOpToolsWorkbench(Gui.Workbench):
         """
         from . import pyOpToolsWB
 
+        self.appendToolbar("Propagation",["btnPropagate","btnWipe"])
+
         self.appendMenu(["Add Components"], "CatalogComponent")
 
         self.appendMenu(["Add Components", "Lenses"],
