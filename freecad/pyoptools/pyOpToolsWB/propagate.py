@@ -38,35 +38,9 @@ class PropagateMenu:
 
         doc=FreeCAD.activeDocument()
 
-        #Se agrupan los rayos para poder eliminarlos facil
-        grp=doc.addObject("App::DocumentObjectGroup", "Rays")
-        llines=[]
-
-        #Crear un diccionario para agrupar los rayos por longitud de onda
-
-        raydict={}
-
-        for ray in PP.S.prop_ray:
-            #lines = Part.Wire(get_prop_shape(ray))
-            llines = get_prop_shape(ray)
-            wl=ray.wavelength
-            raydict[wl]=llines+raydict.get(wl,[])
-
-        for wl in raydict.keys():
-            lines = Part.makeCompound(raydict[wl])
-            myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython","Ray")
-            myObj.Shape=lines
-            r,g,b = wavelength2RGB(wl)
-            myObj.ViewObject.LineColor = (r,g,b,0.)
-            myObj.ViewObject.Proxy = 0
-            grp.addObject(myObj)
-
+        PropagatePart(myObj)
         FreeCAD.ActiveDocument.recompute()
 
-
-
-
-        FreeCAD.ActiveDocument.recompute()
 
 def get_prop_shape(ray):
     P1 = FreeCAD.Base.Vector(tuple(ray.pos))
@@ -96,7 +70,20 @@ class PropagatePart(WBPart):
         self.S.propagate()
 
     def execute(self,obj):
-        pass
+        raydict={}
+        raylist=[]
+        colorlist=[]
+        for ray in self.S.prop_ray:
+            llines = get_prop_shape(ray)
+            wl=ray.wavelength
+            raydict[wl]=llines+raydict.get(wl,[])
+            raylist=raylist+llines
+            r,g,b = wavelength2RGB(wl)
+            colorlist=colorlist+[(r,g,b,0.)]*len(llines)
+        lines = Part.makeCompound(raylist)
+        obj.Shape = lines
+        obj.ViewObject.LineColorArray=colorlist
+        obj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
 
     def pyoptools_repr(self,obj):
         # Solo para que no se estrelle
