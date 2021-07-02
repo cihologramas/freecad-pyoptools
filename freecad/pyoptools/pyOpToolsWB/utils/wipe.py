@@ -29,12 +29,5 @@ class WipeMenu:
                         print("removing Propagation")
                         todelete.append(obj.Label)
                         continue
-                if obj.isDerivedFrom("App::DocumentObjectGroup"):
-                    print("InGro")
-                    for iobj in obj.Group:
-                        if "Ray" in iobj.Label:  # Hay que hacer esto mejor
-                            todelete.append(iobj.Label)
-                            todelete.append(obj.Label)
-                            break
             for obj in todelete:
                 FreeCAD.ActiveDocument.removeObject(obj)
