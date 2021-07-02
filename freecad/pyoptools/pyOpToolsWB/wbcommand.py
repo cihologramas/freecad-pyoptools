@@ -8,7 +8,9 @@ def getFilePath(relativefilename, targetfile):
 class WBCommandGUI:
     def __init__(self,gui):
         fn = getFilePath(__file__, gui)
-        self.form = FreeCADGui.PySideUic.loadUi(fn)
+        fn1 = getFilePath(__file__, "positionWidget.ui")
+        self.form = [FreeCADGui.PySideUic.loadUi(fn),
+                     FreeCADGui.PySideUic.loadUi(fn1)]
 
 class WBCommandMenu:
     def __init__(self,gui):
