@@ -1,4 +1,6 @@
+import FreeCAD
 from PySide import QtCore, QtGui
+import os
 
 def outputDialog(msg, yn=False):
     """ Auxiliar funcion to create a dialog in pyside.
@@ -21,3 +23,11 @@ def outputDialog(msg, yn=False):
     if yn:
         diag.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
     return diag.exec_() == QtGui.QMessageBox.Yes
+
+
+def getUIFilePath(targetfile):
+    """Helper function to find UI files"""
+
+    return os.path.join(FreeCAD.ConfigGet("UserAppData"), "Mod",
+                        "freecad-pyoptools", "freecad", "pyoptools",
+                        "GUI",targetfile)

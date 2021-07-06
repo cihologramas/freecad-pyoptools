@@ -1,14 +1,50 @@
 # -*- coding: utf-8 -*-
-import os
-import FreeCAD,FreeCADGui
+import FreeCAD
+import FreeCADGui
+from pyOpToolsWB.qthelpers import getUIFilePath
+from PySide import QtGui
 
-def getFilePath(relativefilename, targetfile):
-    return os.path.join(os.path.join(os.path.split(os.path.dirname(relativefilename))[0], "GUI"),targetfile)
+
+class widgetMix(QtGui.QDialog):
+    def __init__(self, parent=None):
+        super(widgetMix, self).__init__(parent)
+        #self.setWindowTitle("My Form")
+        self.layout = QtGui.QVBoxLayout()
+        self.setLayout(self.layout)
+        self.widgets = []
+
+    def addWidget(self, w):
+        self.layout.addWidget(w)
+        self.widgets.append(w)
+
+    def __getattr__(self, name):
+        for w in self.widgets:
+            try:
+                return getattr(w, name)
+            except AttributeError:
+                pass
+        raise AttributeError
+
 
 class WBCommandGUI:
-    def __init__(self,gui):
-        fn = getFilePath(__file__, gui)
-        self.form = FreeCADGui.PySideUic.loadUi(fn)
+    def __init__(self, gui):
+
+        if isinstance(gui, str):
+            fn = getUIFilePath(gui)
+            self.form = FreeCADGui.PySideUic.loadUi(fn)
+        elif isinstance(gui, list):
+            self.form = widgetMix()
+            for w in gui:
+                if isinstance(w, str):
+                    fn = getUIFilePath(w)
+                    nw = FreeCADGui.PySideUic.loadUi(fn)
+                    self.form.addWidget(nw)
+                elif isinstance(w, QtGui.QWidget):
+                    self.form.addWidget(w)
+                else:
+                    raise ValueError
+        else:
+            raise ValueError
 
 class WBCommandMenu:
     def __init__(self,gui):
