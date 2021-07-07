@@ -72,7 +72,7 @@ class RaysArrayGUI(WBCommandGUI):
         nr = self.form.nr.value()
         na = self.form.na.value()
         distribution = self.form.RayDistribution.currentText()
-        wavelenght = self.form.wavelenght.value()
+        wavelength = self.form.wavelength.value()
         enabled = self.form.Enabled.isChecked()
 
         angle = self.form.ang.value()
@@ -85,7 +85,7 @@ class RaysArrayGUI(WBCommandGUI):
 
         m.move((X,Y,Z))
 
-        obj=InsertRArray(Sx,Sy,Nx,Ny, nr,na, angle, distribution,wavelenght,"S",enabled)
+        obj=InsertRArray(Sx,Sy,Nx,Ny, nr,na, angle, distribution,wavelength,"S",enabled)
 
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
@@ -106,19 +106,19 @@ class RaysArrayMenu(WBCommandMenu):
 
 
 class RaysArrayPart(WBPart):
-    def __init__(self,obj,Sx = 5,Sy = 5,Nx = 5 ,Ny= 5,nr=6,na=6,angle=10,distribution="polar",wavelenght=633,enabled=True):
+    def __init__(self,obj,Sx = 5,Sy = 5,Nx = 5 ,Ny= 5,nr=6,na=6,angle=10,distribution="polar",wavelength=633,enabled=True):
         WBPart.__init__(self,obj,"RaysArray",enabled)
 
         obj.addProperty("App::PropertyInteger","nr").nr = nr
         obj.addProperty("App::PropertyInteger","na").na = na
         obj.addProperty("App::PropertyFloat","angle").angle = angle
         obj.addProperty("App::PropertyString","distribution").distribution = distribution
-        obj.addProperty("App::PropertyFloat","wavelenght").wavelenght = wavelenght
+        obj.addProperty("App::PropertyFloat","wavelength").wavelength = wavelength
         obj.addProperty("App::PropertyFloat","xSize").xSize = Sx
         obj.addProperty("App::PropertyFloat","ySize").ySize = Sy
         obj.addProperty("App::PropertyInteger","Nx").Nx = Nx
         obj.addProperty("App::PropertyInteger","Ny").Ny = Ny
-        r,g,b = wavelength2RGB(wavelenght/1000.)
+        r,g,b = wavelength2RGB(wavelength/1000.)
 
         obj.ViewObject.ShapeColor = (r,g,b,0.)
 
@@ -128,8 +128,8 @@ class RaysArrayPart(WBPart):
         # To keep all the housekeeping that WBPart do, this method replaces
         # the standard onChanged
 
-        if prop == "wavelenght":
-            r,g,b = wavelength2RGB(obj.wavelenght/1000.)
+        if prop == "wavelength":
+            r,g,b = wavelength2RGB(obj.wavelength/1000.)
             obj.ViewObject.ShapeColor = (r,g,b,0.)
 
 
@@ -141,7 +141,7 @@ class RaysArrayPart(WBPart):
         nr=obj.nr
         na=obj.na
         ang = obj.angle
-        wl=obj.wavelenght
+        wl=obj.wavelength
         RZ, RY, RX = pla.Rotation.toEuler()
         rm = rot_mat((radians(RX),radians(RY),radians(RZ)))
         dire=((radians(RX),radians(RY),radians(RZ)))
@@ -198,10 +198,10 @@ class RaysArrayPart(WBPart):
 
 
 
-def InsertRArray(Sx=5,Sy=5,Nx=5,Ny=5, nr =10,na=10, angle=5, distribution="polar",wavelenght=633,ID = "S",enabled = True):
+def InsertRArray(Sx=5,Sy=5,Nx=5,Ny=5, nr =10,na=10, angle=5, distribution="polar",wavelength=633,ID = "S",enabled = True):
     import FreeCAD
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",ID)
-    RaysArrayPart(myObj,Sx,Sy,Nx,Ny,nr,na,angle,distribution,wavelenght,enabled)
+    RaysArrayPart(myObj,Sx,Sy,Nx,Ny,nr,na,angle,distribution,wavelength,enabled)
     myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj

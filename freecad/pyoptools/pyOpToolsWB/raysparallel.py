@@ -24,7 +24,7 @@ class RaysParallelGUI(WBCommandGUI):
         nr = self.form.nr.value()
         na = self.form.na.value()
         distribution = self.form.RayDistribution.currentText()
-        wavelenght = self.form.wavelenght.value()
+        wavelength = self.form.wavelength.value()
         enabled = self.form.Enabled.isChecked()
 
         D = self.form.D.value()
@@ -35,7 +35,7 @@ class RaysParallelGUI(WBCommandGUI):
         m.rotateZ(radians(Zrot))
 
         m.move((X,Y,Z))
-        obj=InsertRPar(nr,na, distribution,wavelenght,D,"S",enabled)
+        obj=InsertRPar(nr,na, distribution,wavelength,D,"S",enabled)
 
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
@@ -56,7 +56,7 @@ class RaysParallelMenu(WBCommandMenu):
 
 
 class RaysParPart(WBPart):
-    def __init__(self,obj,nr=6,na=6,distribution="polar",wavelenght=633, D=5,enabled=True):
+    def __init__(self,obj,nr=6,na=6,distribution="polar",wavelength=633, D=5,enabled=True):
         WBPart.__init__(self,obj,"RaysPar",enabled)
 
         obj.addProperty("App::PropertyIntegerConstraint","nr","Shape","Number of rays (radial)").nr=(0,0,10000,1)
@@ -69,7 +69,7 @@ class RaysParPart(WBPart):
         obj.nr=nr
         obj.na=na
         obj.distribution=distribution.lower()
-        obj.wl = Units.Quantity("{} nm".format(wavelenght)) # wavelenght is received in nm
+        obj.wl = Units.Quantity("{} nm".format(wavelength)) # wavelength is received in nm
 
         obj.D = D
         obj.enabled=enabled
@@ -140,10 +140,10 @@ class RaysParPart(WBPart):
 
 
 
-def InsertRPar(nr=6, na=6,distribution="polar",wavelenght=633,D=5,ID="S",enabled = True):
+def InsertRPar(nr=6, na=6,distribution="polar",wavelength=633,D=5,ID="S",enabled = True):
     import FreeCAD
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",ID)
-    RaysParPart(myObj,nr,na,distribution,wavelenght,D,enabled)
+    RaysParPart(myObj,nr,na,distribution,wavelength,D,enabled)
     myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj
