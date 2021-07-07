@@ -1,4 +1,4 @@
-# Macro to delete oll the propagations and rays, to clean the workspace
+# Macro to delete all the propagations and rays, to clean the workspace
 import FreeCAD, FreeCADGui
 from pyOpToolsWB.qthelpers import outputDialog
 from math import radians

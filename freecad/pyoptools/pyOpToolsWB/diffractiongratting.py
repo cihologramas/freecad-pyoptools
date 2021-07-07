@@ -73,7 +73,7 @@ class DiffractionGrattingMenu(WBCommandMenu):
     def GetResources(self):
         return {"MenuText": "Diffraction Gratting",
                 #"Accel": "Ctrl+M",
-                "ToolTip": "Add Difraction Gratting",
+                "ToolTip": "Add Diffraction Gratting",
                 "Pixmap": ""}
 
 class DiffractionGrattingPart(WBPart):

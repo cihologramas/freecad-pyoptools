@@ -68,7 +68,7 @@ class DovePrismPart(WBPart):
         WBPart.__init__(self,obj,"PentaPrism")
         obj.Proxy = self
         obj.addProperty("App::PropertyLength","S","Shape","Dove Prism side size ")
-        obj.addProperty("App::PropertyLength","L","Shape","Dove Prism lenght size ")
+        obj.addProperty("App::PropertyLength","L","Shape","Dove Prism length size ")
         obj.addProperty("App::PropertyString","matcat","Material","Material catalog")
         obj.addProperty("App::PropertyString","matref","Material","Material reference")
         obj.S=S

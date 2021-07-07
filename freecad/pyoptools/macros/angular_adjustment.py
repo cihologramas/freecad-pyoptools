@@ -10,7 +10,7 @@ from numpy import dot
 from math import inf, degrees
 
 def center_rot(drot, sen, el):
-    """Auxiliar function to be used in an optimization algorithm
+    """Auxiliary function to be used in an optimization algorithm
 
     Parameters
     ----------
@@ -51,7 +51,7 @@ def center_rot(drot, sen, el):
 
 
 def center_rot_pot(drot, S, R, sen, el):
-    """Auxiliar function to be used in an optimization algorithm
+    """Auxiliary function to be used in an optimization algorithm
 
     Parameters
     ----------

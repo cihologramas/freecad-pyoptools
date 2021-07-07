@@ -8,7 +8,7 @@ has not been tested under such OS.
 Requirements
 ------------
 
-It requires a working `FreeCAD <http://freecadweb.org>`_ instalation with
+It requires a working `FreeCAD <http://freecadweb.org>`_ installation with
 `Python 3 <http://www.python.org>`_ support, and `pyOpTools
 <https://github.com/cihologramas/pyoptools>`_.
 
@@ -22,4 +22,4 @@ means cloning the repo into ~/.FreeCAD/Mod directory::
   git clone https://github.com/cihologramas/freecad-pyoptools
 
 After this, a `pyoptools workbench` should appear in the workbench list of your
-FreeCAD instalation.
+FreeCAD installation.

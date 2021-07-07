@@ -3,7 +3,7 @@ from PySide import QtCore, QtGui
 import os
 
 def outputDialog(msg, yn=False):
-    """ Auxiliar funcion to create a dialog in pyside.
+    """ Auxiliary function to create a dialog in pyside.
 
     Parameters
     ----------
