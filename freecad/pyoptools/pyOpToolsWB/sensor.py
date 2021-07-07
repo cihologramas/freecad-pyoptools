@@ -65,10 +65,10 @@ class SensorPart(WBPart):
         d=Part.makePlane(obj.Width.Value,obj.Height.Value,FreeCAD.Base.Vector(-obj.Width.Value/2.,-obj.Height.Value/2.,0))
         obj.Shape = d
 
-def InsertSen(height=100, widht =100,ID="SEN"):
+def InsertSen(height=100, width =100,ID="SEN"):
     import FreeCAD
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",ID)
-    SensorPart(myObj,height,widht)
+    SensorPart(myObj,height,width)
     myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj
