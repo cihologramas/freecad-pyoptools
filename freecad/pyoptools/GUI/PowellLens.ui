@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>604</width>
-    <height>428</height>
+    <width>400</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Spherical Lens</string>
+   <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -23,112 +23,27 @@
       <enum>QFormLayout::ExpandingFieldsGrow</enum>
      </property>
      <item row="0" column="0">
-      <widget class="QLabel" name="label_10">
-       <property name="text">
-        <string>Position (mm)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
-        <widget class="QDoubleSpinBox" name="Xpos">
-         <property name="minimum">
-          <double>-1000000.000000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>1000000.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDoubleSpinBox" name="Ypos">
-         <property name="minimum">
-          <double>-1000000.000000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>1000000.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDoubleSpinBox" name="Zpos">
-         <property name="minimum">
-          <double>-1000000.000000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>1000000.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>Orientation (RX,RY,RZ):</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QDoubleSpinBox" name="Xrot">
-         <property name="minimum">
-          <double>-1000000.000000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>1000000.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDoubleSpinBox" name="Yrot">
-         <property name="minimum">
-          <double>-1000000.000000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>1000000.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>0.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDoubleSpinBox" name="Zrot">
-         <property name="minimum">
-          <double>-1000000.000000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>1000000.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="2" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Diameter (mm)</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="0" column="1">
       <widget class="QDoubleSpinBox" name="D">
        <property name="value">
         <double>8.890000000000001</double>
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="1" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>Center Thickness (mm)</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="1" column="1">
       <widget class="QDoubleSpinBox" name="CT">
        <property name="decimals">
         <number>3</number>
@@ -138,14 +53,14 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Curvature R  (mm)</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
+     <item row="2" column="1">
       <widget class="QDoubleSpinBox" name="R">
        <property name="decimals">
         <number>7</number>
@@ -161,14 +76,40 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Conic Constant K</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QDoubleSpinBox" name="K">
+       <property name="decimals">
+        <number>7</number>
+       </property>
+       <property name="minimum">
+        <double>-100000.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>100000.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.001000000000000</double>
+       </property>
+       <property name="value">
+        <double>-4.302000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Material</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="1">
+     <item row="4" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -223,32 +164,6 @@
         </layout>
        </item>
       </layout>
-     </item>
-     <item row="5" column="1">
-      <widget class="QDoubleSpinBox" name="K">
-       <property name="decimals">
-        <number>7</number>
-       </property>
-       <property name="minimum">
-        <double>-100000.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>100000.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.001000000000000</double>
-       </property>
-       <property name="value">
-        <double>-4.302000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Conic Constant K</string>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>
