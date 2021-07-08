@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Classes used to define an apperture."""
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
-from pyOpToolsWB.widgets.placementWidget import placementWidget
+from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 import FreeCAD
 import FreeCADGui
 import Part

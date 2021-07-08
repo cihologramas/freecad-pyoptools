@@ -3,7 +3,7 @@
 import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
-from pyOpToolsWB.widgets.placementWidget import placementWidget
+from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 from PySide import QtGui
 from pyoptools.raytrace.library import library
 from pyoptools.raytrace.mat_lib.material import find_material

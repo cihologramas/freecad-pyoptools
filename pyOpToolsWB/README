@@ -1,0 +1,7 @@
+Packages and modules needed fot the conversion from the migration from the legacy
+workbench to the namespace workbench.
+
+Be carefull, some information may get lost is the conversion is not correct and
+the file is saved
+
+https://wiki.freecadweb.org/Scripted_objects_migration

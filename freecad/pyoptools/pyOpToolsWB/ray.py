@@ -3,7 +3,7 @@
 import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
-from pyOpToolsWB.widgets.placementWidget import placementWidget
+from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 
 from pyoptools.misc.pmisc.misc import wavelength2RGB
 from pyoptools.raytrace.ray import Ray

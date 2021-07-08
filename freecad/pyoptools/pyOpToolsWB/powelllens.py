@@ -3,8 +3,8 @@
 import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
-from pyOpToolsWB.widgets.placementWidget import placementWidget
-from pyOpToolsWB.widgets.materialWidget import materialWidget
+from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
+from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
 
 import Part
 

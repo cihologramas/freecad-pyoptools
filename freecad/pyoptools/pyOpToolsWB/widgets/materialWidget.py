@@ -1,6 +1,6 @@
 import FreeCADGui
 from PySide import QtGui
-from pyOpToolsWB.qthelpers import getUIFilePath
+from freecad.pyoptools.pyOpToolsWB.qthelpers import getUIFilePath
 import pyoptools.raytrace.mat_lib as matlib
 
 

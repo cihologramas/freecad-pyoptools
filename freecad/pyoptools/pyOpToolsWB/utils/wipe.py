@@ -1,5 +1,5 @@
 import FreeCAD
-from pyOpToolsWB.qthelpers import outputDialog
+from freecad.pyoptools.pyOpToolsWB.qthelpers import outputDialog
 def uno():
     pass
 

@@ -3,12 +3,12 @@
 import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
-from pyOpToolsWB.widgets.placementWidget import placementWidget
+from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 
 import Part
 
 import pyoptools.raytrace.comp_lib as comp_lib
-from pyOpToolsWB.widgets.materialWidget import materialWidget
+from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
 
 import pyoptools.raytrace.mat_lib as matlib
 from math import radians

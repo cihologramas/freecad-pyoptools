@@ -4,7 +4,7 @@
 
 import FreeCAD
 import FreeCADGui
-from pyOpToolsWB.qthelpers import getUIFilePath
+from freecad.pyoptools.pyOpToolsWB.qthelpers import getUIFilePath
 from PySide import QtGui
 
 

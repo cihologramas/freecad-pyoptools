@@ -1,6 +1,6 @@
 import FreeCADGui
 from PySide import QtGui, QtCore
-from pyOpToolsWB.qthelpers import getUIFilePath
+from freecad.pyoptools.pyOpToolsWB.qthelpers import getUIFilePath
 from pivy import coin
 import FreeCAD
 import Part
