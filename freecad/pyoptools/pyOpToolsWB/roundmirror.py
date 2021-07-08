@@ -2,8 +2,10 @@
 """Classes used to define a round mirror."""
 import FreeCAD
 import FreeCADGui
+import Part
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from pyOpToolsWB.widgets.placementWidget import placementWidget
+from pyOpToolsWB.widgets.materialWidget import materialWidget
 
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
@@ -13,22 +15,8 @@ from math import radians
 class RoundMirrorGUI(WBCommandGUI):
     def __init__(self):
         pw = placementWidget()
-        WBCommandGUI.__init__(self, [pw, "RoundMirror.ui"])
-
-        self.form.Catalog.addItem("Value", [])
-        for i in matlib.material.liblist:
-            self.form.Catalog.addItem(i[0], sorted(i[1].keys()))
-        self.form.Catalog.currentIndexChanged.connect(self.catalogChange)
-
-    def catalogChange(self, *args):
-        if args[0] == 0:
-            self.form.Value.setEnabled(True)
-        else:
-            self.form.Value.setEnabled(False)
-
-        while self.form.Reference.count():
-            self.form.Reference.removeItem(0)
-        self.form.Reference.addItems(self.form.Catalog.itemData(args[0]))
+        mw = materialWidget()
+        WBCommandGUI.__init__(self, [pw, mw, "RoundMirror.ui"])
 
     def accept(self):
         Th = self.form.Thickness.value()
@@ -117,7 +105,6 @@ class RoundMirrorPart(WBPart):
         return rm
 
     def execute(self, obj):
-        import Part, FreeCAD
 
         d = Part.makeCylinder(
             obj.D.Value / 2.0, obj.Thk.Value, FreeCAD.Base.Vector(0, 0, 0)
@@ -129,7 +116,6 @@ class RoundMirrorPart(WBPart):
 
 
 def InsertRM(Ref=100, Th=10, D=50, ID="L", matcat="", matref=""):
-    import FreeCAD
 
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", ID)
     RoundMirrorPart(myObj, Ref, Th, D, matcat, matref)

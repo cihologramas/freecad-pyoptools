@@ -4,8 +4,9 @@ import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from pyOpToolsWB.widgets.placementWidget import placementWidget
+from pyOpToolsWB.widgets.materialWidget import materialWidget
 
-import Part, FreeCAD
+import Part
 
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
@@ -17,23 +18,8 @@ class PowellLensGUI(WBCommandGUI):
     def __init__(self):
 
         pw = placementWidget()
-        WBCommandGUI.__init__(self, [pw, "PowellLens.ui"])
-
-        self.form.Catalog.addItem("Value", [])
-        for i in matlib.material.liblist:
-            self.form.Catalog.addItem(i[0], sorted(i[1].keys()))
-
-        self.form.Catalog.currentIndexChanged.connect(self.catalogChange)
-
-    def catalogChange(self, *args):
-        if args[0] == 0:
-            self.form.Value.setEnabled(True)
-        else:
-            self.form.Value.setEnabled(False)
-
-        while self.form.Reference.count():
-            self.form.Reference.removeItem(0)
-        self.form.Reference.addItems(self.form.Catalog.itemData(args[0]))
+        mw = materialWidget()
+        WBCommandGUI.__init__(self, [pw, mw, "PowellLens.ui"])
 
     def accept(self):
         R = self.form.R.value()
@@ -93,7 +79,10 @@ class PowellLensPart(WBPart):
             "App::PropertyPrecision", "K", "Shape", "Powell Lens Conicity "
         ).K = (0, -10, 10, 1e-3)
         obj.addProperty(
-            "App::PropertyLength", "CT", "Shape", "Powell Lens Center Thickness"
+            "App::PropertyLength",
+            "CT",
+            "Shape",
+            "Powell Lens Center Thickness",
         )
         obj.addProperty(
             "App::PropertyLength", "D", "Shape", "Powell Lens Diameter"

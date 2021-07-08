@@ -2,34 +2,21 @@
 """Classes used to define a rectangular mirror."""
 import FreeCAD
 import FreeCADGui
+import Part
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from pyOpToolsWB.widgets.placementWidget import placementWidget
+from pyOpToolsWB.widgets.materialWidget import materialWidget
 
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
 from math import radians
-import Part, FreeCAD
 
 
 class RectMirrorGUI(WBCommandGUI):
     def __init__(self):
         pw = placementWidget()
-        WBCommandGUI.__init__(self, [pw, "RectMirror.ui"])
-
-        self.form.Catalog.addItem("Value", [])
-        for i in matlib.material.liblist:
-            self.form.Catalog.addItem(i[0], sorted(i[1].keys()))
-        self.form.Catalog.currentIndexChanged.connect(self.catalogChange)
-
-    def catalogChange(self, *args):
-        if args[0] == 0:
-            self.form.Value.setEnabled(True)
-        else:
-            self.form.Value.setEnabled(False)
-
-        while self.form.Reference.count():
-            self.form.Reference.removeItem(0)
-        self.form.Reference.addItems(self.form.Catalog.itemData(args[0]))
+        mw = materialWidget()
+        WBCommandGUI.__init__(self, [pw, mw, "RectMirror.ui"])
 
     def accept(self):
         Th = self.form.Thickness.value()
@@ -75,7 +62,9 @@ class RectMirrorMenu(WBCommandMenu):
 
 
 class RectMirrorPart(WBPart):
-    def __init__(self, obj, Ref=100, Th=10, SX=50, SY=50, matcat="", matref=""):
+    def __init__(
+        self, obj, Ref=100, Th=10, SX=50, SY=50, matcat="", matref=""
+    ):
 
         WBPart.__init__(self, obj, "RectangularMirror")
         obj.Proxy = self
@@ -88,7 +77,9 @@ class RectMirrorPart(WBPart):
         obj.addProperty(
             "App::PropertyLength", "Thk", "Shape", "Mirror Thickness"
         )
-        obj.addProperty("App::PropertyLength", "Width", "Shape", "Mirror width")
+        obj.addProperty(
+            "App::PropertyLength", "Width", "Shape", "Mirror width"
+        )
         obj.addProperty(
             "App::PropertyLength", "Height", "Shape", "Mirror height"
         )

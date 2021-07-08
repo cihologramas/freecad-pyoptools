@@ -2,33 +2,21 @@
 """Classes used to define a right angle prism."""
 import FreeCAD
 import FreeCADGui
+import Part
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from pyOpToolsWB.widgets.placementWidget import placementWidget
+from pyOpToolsWB.widgets.materialWidget import materialWidget
 
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
-from math import radians, tan
+from math import radians
 
 
 class RightAnglePrismGUI(WBCommandGUI):
     def __init__(self):
         pw = placementWidget()
-        WBCommandGUI.__init__(self, [pw, "RightAnglePrism.ui"])
-
-        self.form.Catalog.addItem("Value", [])
-        for i in matlib.material.liblist:
-            self.form.Catalog.addItem(i[0], sorted(i[1].keys()))
-        self.form.Catalog.currentIndexChanged.connect(self.catalogChange)
-
-    def catalogChange(self, *args):
-        if args[0] == 0:
-            self.form.Value.setEnabled(True)
-        else:
-            self.form.Value.setEnabled(False)
-
-        while self.form.Reference.count():
-            self.form.Reference.removeItem(0)
-        self.form.Reference.addItems(self.form.Catalog.itemData(args[0]))
+        mw = materialWidget()
+        WBCommandGUI.__init__(self, [pw, mw, "RightAnglePrism.ui"])
 
     def accept(self):
         S = self.form.S.value()
@@ -136,7 +124,6 @@ class RightAnglePrismPart(WBPart):
         return rm
 
     def execute(self, obj):
-        import Part, FreeCAD
 
         l2 = obj.S.Value / 2.0
 

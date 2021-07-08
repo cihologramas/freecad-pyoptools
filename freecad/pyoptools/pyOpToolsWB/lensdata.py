@@ -8,6 +8,8 @@ from pyOpToolsWB.widgets.placementWidget import placementWidget
 import Part
 
 import pyoptools.raytrace.comp_lib as comp_lib
+from pyOpToolsWB.widgets.materialWidget import materialWidget
+
 import pyoptools.raytrace.mat_lib as matlib
 from math import radians
 from freecad.pyoptools import ICONPATH
@@ -22,25 +24,18 @@ class LensDataGUI(WBCommandGUI):
     def __init__(self):
 
         pw = placementWidget()
+        self.mw = materialWidget()
+        self.mw.ui.label.setText("")
         WBCommandGUI.__init__(self, [pw, "LensData.ui"])
 
-        self.form.Catalog.addItem("Value", [])
-        for i in matlib.material.liblist:
-            self.form.Catalog.addItem(i[0], sorted(i[1].keys()))
+        # In LensData.ui there is a layout called material that will be used as
+        # holder for the material Widget.
+        # TODO: Enable how to insert custom widgets in designer directly
 
-        self.form.Catalog.currentIndexChanged.connect(self.catalogChange)
+        self.form.Material.addWidget(self.mw)
+
         self.form.addSurf.clicked.connect(self.addSurface)
         self.form.delSurf.clicked.connect(self.delSurface)
-
-    def catalogChange(self, *args):
-        if args[0] == 0:
-            self.form.Value.setEnabled(True)
-        else:
-            self.form.Value.setEnabled(False)
-
-        while self.form.Reference.count():
-            self.form.Reference.removeItem(0)
-        self.form.Reference.addItems(self.form.Catalog.itemData(args[0]))
 
     def addSurface(self, *args):
 
@@ -76,11 +71,11 @@ class LensDataGUI(WBCommandGUI):
             matcat = ""
             matref = ""
         else:
-            matcat = self.form.Catalog.currentText()
+            matcat = self.mw.Catalog.currentText()
             if matcat == "Value":
-                matref = self.form.Value.cleanText()
+                matref = self.mw.Value.cleanText()
             else:
-                matref = self.form.Reference.currentText()
+                matref = self.mw.Reference.currentText()
 
         item = QtWidgets.QTableWidgetItem(matcat)
         self.form.surfTable.setItem(i, 4, item)

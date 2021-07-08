@@ -4,6 +4,7 @@ import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from pyOpToolsWB.widgets.placementWidget import placementWidget
+from pyOpToolsWB.widgets.materialWidget import materialWidget
 import Part
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
@@ -13,23 +14,8 @@ from math import radians
 class CylindricalLensGUI(WBCommandGUI):
     def __init__(self):
         pw = placementWidget()
-        WBCommandGUI.__init__(self, [pw, "CylindricalLens.ui"])
-
-        self.form.Catalog.addItem("Value", [])
-        for i in matlib.material.liblist:
-            self.form.Catalog.addItem(i[0], sorted(i[1].keys()))
-
-        self.form.Catalog.currentIndexChanged.connect(self.catalogChange)
-
-    def catalogChange(self, *args):
-        if args[0] == 0:
-            self.form.Value.setEnabled(True)
-        else:
-            self.form.Value.setEnabled(False)
-
-        while self.form.Reference.count():
-            self.form.Reference.removeItem(0)
-        self.form.Reference.addItems(self.form.Catalog.itemData(args[0]))
+        mw = materialWidget()
+        WBCommandGUI.__init__(self, [pw, mw, "CylindricalLens.ui"])
 
     def accept(self):
         CS1 = self.form.CS1.value()
@@ -49,7 +35,9 @@ class CylindricalLensGUI(WBCommandGUI):
         else:
             matref = self.form.Reference.currentText()
 
-        obj = InsertCL(CS1, CS2, CT, W, H, ID="L", matcat=matcat, matref=matref)
+        obj = InsertCL(
+            CS1, CS2, CT, W, H, ID="L", matcat=matcat, matref=matref
+        )
         m = FreeCAD.Matrix()
         m.rotateX(radians(Xrot))
         m.rotateY(radians(Yrot))

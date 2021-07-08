@@ -4,6 +4,7 @@ import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from pyOpToolsWB.widgets.placementWidget import placementWidget
+from pyOpToolsWB.widgets.materialWidget import materialWidget
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
 from .sphericallens import buildlens
@@ -14,37 +15,18 @@ class DoubletLensGUI(WBCommandGUI):
     def __init__(self):
 
         pw = placementWidget()
-        WBCommandGUI.__init__(self, [pw, "DoubletLens.ui"])
+        mw1 = materialWidget()
+        mw2 = materialWidget()
 
-        self.form.Catalog1.addItem("Value", [])
-        self.form.Catalog2.addItem("Value", [])
-        for i in matlib.material.liblist:
-            self.form.Catalog1.addItem(i[0], sorted(i[1].keys()))
-            self.form.Catalog2.addItem(i[0], sorted(i[1].keys()))
-        self.form.Catalog1.currentIndexChanged.connect(self.catalog1Change)
-        self.form.Catalog2.currentIndexChanged.connect(self.catalog2Change)
+        mw1.ui.label.setText("Material Lens 1")
+        mw2.ui.label.setText("Material Lens 2")
+
+        WBCommandGUI.__init__(
+            self, [pw, {"mat1": mw1, "mat2": mw2}, "DoubletLens.ui"]
+        )
+
         self.form.ILD.valueChanged.connect(self.ILDChange)
         self.form.CS2_1.valueChanged.connect(self.CS2_1Change)
-
-    def catalog1Change(self, *args):
-        if args[0] == 0:
-            self.form.Value1.setEnabled(True)
-        else:
-            self.form.Value1.setEnabled(False)
-
-        while self.form.Reference1.count():
-            self.form.Reference1.removeItem(0)
-        self.form.Reference1.addItems(self.form.Catalog1.itemData(args[0]))
-
-    def catalog2Change(self, *args):
-        if args[0] == 0:
-            self.form.Value2.setEnabled(True)
-        else:
-            self.form.Value2.setEnabled(False)
-
-        while self.form.Reference2.count():
-            self.form.Reference2.removeItem(0)
-        self.form.Reference2.addItems(self.form.Catalog2.itemData(args[0]))
 
     def ILDChange(self, *args):
         d = args[0]
@@ -78,17 +60,17 @@ class DoubletLensGUI(WBCommandGUI):
         Yrot = self.form.Yrot.value()
         Zrot = self.form.Zrot.value()
 
-        matcat1 = self.form.Catalog1.currentText()
+        matcat1 = self.form.mat1.Catalog.currentText()
         if matcat1 == "Value":
-            matref1 = str(self.form.Value1.value())
+            matref1 = str(self.form.mat1.Value.value())
         else:
-            matref1 = self.form.Reference1.currentText()
+            matref1 = self.form.mat1.Reference.currentText()
 
-        matcat2 = self.form.Catalog2.currentText()
+        matcat2 = self.form.mat2.Catalog.currentText()
         if matcat2 == "Value":
-            matref2 = str(self.form.Value2.value())
+            matref2 = str(self.form.mat2.Value.value())
         else:
-            matref2 = self.form.Reference2.currentText()
+            matref2 = self.form.mat2.Reference.currentText()
 
         obj = InsertDL(
             CS1_1,
