@@ -1,21 +1,27 @@
 # -*- coding: utf-8 -*-
+"""Classes used to define a single ray."""
+import FreeCAD
+import FreeCADGui
+from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
+from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 
-from .wbcommand import *
 from pyoptools.misc.pmisc.misc import wavelength2RGB
 from pyoptools.raytrace.ray import Ray
 from math import tan, radians
 from FreeCAD import Units
 import FreeCAD
 
+
 class RayGUI(WBCommandGUI):
     def __init__(self):
-        WBCommandGUI.__init__(self, 'Ray.ui')
+        pw = placementWidget()
+        WBCommandGUI.__init__(self, [pw, "Ray.ui"])
 
     def accept(self):
 
-        X = self.form.Ox.value()
-        Y = self.form.Oy.value()
-        Z = self.form.Oz.value()
+        X = self.form.Xpos.value()
+        Y = self.form.Ypos.value()
+        Z = self.form.Zpos.value()
 
         Xrot = self.form.Xrot.value()
         Yrot = self.form.Yrot.value()
@@ -38,30 +44,34 @@ class RayGUI(WBCommandGUI):
 
         FreeCADGui.Control.closeDialog()
 
+
 class RayMenu(WBCommandMenu):
     def __init__(self):
         WBCommandMenu.__init__(self, RayGUI)
 
     def GetResources(self):
-        return {"MenuText": "Add Ray Source",
-                #"Accel": "Ctrl+M",
-                "ToolTip": "Add Ray Source",
-                "Pixmap": ""}
+        return {
+            "MenuText": "Add Ray Source",
+            # "Accel": "Ctrl+M",
+            "ToolTip": "Add Ray Source",
+            "Pixmap": "",
+        }
 
 
 class RayPart(WBPart):
     def __init__(self,obj, wavelength=633, enabled=True):
         WBPart.__init__(self,obj,"Ray")
         obj.Proxy = self
-        obj.addProperty("App::PropertyLength", "wl", "Options",
-                        "Wavelength of the source")
+        obj.addProperty(
+            "App::PropertyLength", "wl", "Options", "Wavelength of the source"
+        )
 
         # wavelength is received in nm
         obj.wl = Units.Quantity("{} nm".format(wavelength))
         obj.enabled = enabled
 
         r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
-        obj.ViewObject.ShapeColor = (r, g, b, 0.)
+        obj.ViewObject.ShapeColor = (r, g, b, 0.0)
 
     def propertyChanged(self, obj, prop):
 
@@ -70,7 +80,7 @@ class RayPart(WBPart):
 
         if prop == "wl":
             r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
-            obj.ViewObject.ShapeColor = (r, g, b, 0.)
+            obj.ViewObject.ShapeColor = (r, g, b, 0.0)
 
     def pyoptools_repr(self, obj):
 
@@ -81,14 +91,15 @@ class RayPart(WBPart):
 
         r_vec = pla.Rotation.multVec(FreeCAD.Base.Vector(0, 0, 1))
 
-        return [Ray(pos=(X, Y, Z), dir=(r_vec.x, r_vec.y, r_vec.z),
-                    wavelength=wl)]
+        return [
+            Ray(pos=(X, Y, Z), dir=(r_vec.x, r_vec.y, r_vec.z), wavelength=wl)
+        ]
 
     def execute(self, obj):
         import Part
 
         d1 = Part.makeCylinder(0.25, 10)
-        d2 = Part.makeCone(.5, 0, 1)
+        d2 = Part.makeCone(0.5, 0, 1)
         d2.translate(FreeCAD.Base.Vector(0, 0, 10))
 
         d = d1.fuse(d2)
@@ -98,6 +109,7 @@ class RayPart(WBPart):
 
 def InsertRay(wavelength=633, ID="R", enabled=True):
     import FreeCAD
+
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", ID)
     RayPart(myObj, wavelength, enabled)
 

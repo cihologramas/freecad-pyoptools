@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
-from .wbcommand import *
+"""Classes used to define a lens from a data list."""
+import FreeCAD
+import FreeCADGui
+from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
+from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 
 import Part
 
 import pyoptools.raytrace.comp_lib as comp_lib
+from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
+
 import pyoptools.raytrace.mat_lib as matlib
 from math import radians
 from freecad.pyoptools import ICONPATH
@@ -13,36 +19,30 @@ from PySide2.QtCore import QLocale
 from .sphericallens import buildlens
 from math import isnan
 
-class LensDataGUI(WBCommandGUI):
 
+class LensDataGUI(WBCommandGUI):
     def __init__(self):
 
-        WBCommandGUI.__init__(self,'LensData.ui')
+        pw = placementWidget()
+        self.mw = materialWidget()
+        self.mw.ui.label.setText("")
+        WBCommandGUI.__init__(self, [pw, "LensData.ui"])
 
-        self.form.Catalog.addItem("Value", [])
-        for i in matlib.material.liblist:
-            self.form.Catalog.addItem(i[0], sorted(i[1].keys()))
+        # In LensData.ui there is a layout called material that will be used as
+        # holder for the material Widget.
+        # TODO: Enable how to insert custom widgets in designer directly
 
-        self.form.Catalog.currentIndexChanged.connect(self.catalogChange)
+        self.form.Material.addWidget(self.mw)
+
         self.form.addSurf.clicked.connect(self.addSurface)
-        self.form.delSurf .clicked.connect(self.delSurface)
-
-    def catalogChange(self, *args):
-        if args[0] == 0:
-            self.form.Value.setEnabled(True)
-        else:
-            self.form.Value.setEnabled(False)
-
-        while self.form.Reference.count():
-            self.form.Reference.removeItem(0)
-        self.form.Reference.addItems(self.form.Catalog.itemData(args[0]))
+        self.form.delSurf.clicked.connect(self.delSurface)
 
     def addSurface(self, *args):
 
         if not self.form.surfTable.selectedIndexes():
             i = self.form.surfTable.rowCount()
         else:
-            i = self.form.surfTable.currentRow()+1
+            i = self.form.surfTable.currentRow() + 1
 
         self.form.surfTable.insertRow(i)
         self.form.surfTable.selectRow(i)
@@ -71,11 +71,11 @@ class LensDataGUI(WBCommandGUI):
             matcat = ""
             matref = ""
         else:
-            matcat = self.form.Catalog.currentText()
+            matcat = self.mw.Catalog.currentText()
             if matcat == "Value":
-                matref = self.form.Value.cleanText()
+                matref = self.mw.Value.cleanText()
             else:
-                matref = self.form.Reference.currentText()
+                matref = self.mw.Reference.currentText()
 
         item = QtWidgets.QTableWidgetItem(matcat)
         self.form.surfTable.setItem(i, 4, item)
@@ -90,7 +90,7 @@ class LensDataGUI(WBCommandGUI):
             self.form.surfTable.removeRow(i)
 
     def accept(self):
-    
+
         surfType = []
         radius = []
         thick = []
@@ -127,16 +127,18 @@ class LensDataGUI(WBCommandGUI):
         obj.Placement = p1
         FreeCADGui.Control.closeDialog()
 
-class LensDataMenu(WBCommandMenu):
 
+class LensDataMenu(WBCommandMenu):
     def __init__(self):
         WBCommandMenu.__init__(self, LensDataGUI)
 
     def GetResources(self):
-        return {"MenuText": "LensData",
-                #"Accel": "Ctrl+M",
-                "ToolTip": "Add Lenses from data editor",
-                "Pixmap": ""}
+        return {
+            "MenuText": "LensData",
+            # "Accel": "Ctrl+M",
+            "ToolTip": "Add Lenses from data editor",
+            "Pixmap": "",
+        }
 
 
 class LensDataPart(WBPart):
@@ -146,45 +148,57 @@ class LensDataPart(WBPart):
 
         WBPart.__init__(self, obj, "LensData")
 
-        obj.addProperty("App::PropertyStringList",
-                        "Type",
-                        "Shape",
-                        "List with the surfaces types")
+        obj.addProperty(
+            "App::PropertyStringList",
+            "Type",
+            "Shape",
+            "List with the surfaces types",
+        )
         obj.Type = surfType
 
-        obj.addProperty("App::PropertyFloatList",
-                        "Radius",
-                        "Shape",
-                        "List with the surfaces radius")
+        obj.addProperty(
+            "App::PropertyFloatList",
+            "Radius",
+            "Shape",
+            "List with the surfaces radius",
+        )
         obj.Radius = radius
 
-        obj.addProperty("App::PropertyFloatList",
-                        "Thick",
-                        "Shape",
-                        "List with the material thickness")
+        obj.addProperty(
+            "App::PropertyFloatList",
+            "Thick",
+            "Shape",
+            "List with the material thickness",
+        )
         obj.Thick = thick
 
-        obj.addProperty("App::PropertyFloatList",
-                        "SemiDiam",
-                        "Shape",
-                        "List with the surfaces semi diameters")
+        obj.addProperty(
+            "App::PropertyFloatList",
+            "SemiDiam",
+            "Shape",
+            "List with the surfaces semi diameters",
+        )
         obj.SemiDiam = semid
 
-        obj.addProperty("App::PropertyStringList",
-                        "matcat",
-                        "Shape",
-                        "List with the material references")
+        obj.addProperty(
+            "App::PropertyStringList",
+            "matcat",
+            "Shape",
+            "List with the material references",
+        )
         obj.matcat = matcat
 
-        obj.addProperty("App::PropertyStringList",
-                        "matref",
-                        "Shape",
-                        "List with the material references")
+        obj.addProperty(
+            "App::PropertyStringList",
+            "matref",
+            "Shape",
+            "List with the material references",
+        )
         obj.matref = matref
 
         obj.ViewObject.Transparency = 50
 
-        obj.ViewObject.ShapeColor = (1., 1., 0., 0.)
+        obj.ViewObject.ShapeColor = (1.0, 1.0, 0.0, 0.0)
 
     def execute(self, obj):
         Type = obj.Type
@@ -200,27 +214,27 @@ class LensDataPart(WBPart):
         # In the total lens thickness, we do not take into account the last
         # surface thickness, as this one represent the image position
         TT = sum(Thick[:-1])
-        p = - TT/2
+        p = -TT / 2
 
         # TODO: We are not checking that the last material is "" (meaning air)
         for n in range(1, len(l)):
-            t0, r0, th0, s0, mc0, mt0 = l[n-1]
+            t0, r0, th0, s0, mc0, mt0 = l[n - 1]
             t1, r1, th1, s1, mc1, mt1 = l[n]
 
             if isnan(r0) or r0 == 0:
                 c0 = 0
             else:
-                c0 = 1/r0
+                c0 = 1 / r0
 
             if isnan(r1) or r1 == 0:
                 c1 = 0
             else:
-                c1 = 1/r1
+                c1 = 1 / r1
             if mt0 != "":
-                L = buildlens(c0, c1, 2*s0, th0)
-                L.translate(FreeCAD.Base.Vector(0, 0, p+th0/2))
+                L = buildlens(c0, c1, 2 * s0, th0)
+                L.translate(FreeCAD.Base.Vector(0, 0, p + th0 / 2))
                 lenses.append(L)
-            p = p+th0
+            p = p + th0
 
         L = lenses[0]
 
@@ -228,9 +242,6 @@ class LensDataPart(WBPart):
             L = L.fuse(l)
 
         obj.Shape = L
-
-
-
 
     def pyoptools_repr(self, obj):
         Type = obj.Type
@@ -247,6 +258,7 @@ class LensDataPart(WBPart):
 
 def InsertLD(datalist, ID="L"):
     import FreeCAD
+
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", ID)
     LensDataPart(myObj, datalist)
 

@@ -1,28 +1,22 @@
 # -*- coding: utf-8 -*-
-from .wbcommand import *
+"""Classes used to define a right angle prism."""
+import FreeCAD
+import FreeCADGui
+import Part
+from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
+from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
+from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
+
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
-from math import radians,tan
+from math import radians
 
 
 class RightAnglePrismGUI(WBCommandGUI):
     def __init__(self):
-        WBCommandGUI.__init__(self, 'RightAnglePrism.ui')
-
-        self.form.Catalog.addItem("Value", [])
-        for i in matlib.material.liblist:
-            self.form.Catalog.addItem(i[0], sorted(i[1].keys()))
-        self.form.Catalog.currentIndexChanged.connect(self.catalogChange)
-
-    def catalogChange(self, *args):
-        if args[0] == 0:
-            self.form.Value.setEnabled(True)
-        else:
-            self.form.Value.setEnabled(False)
-
-        while self.form.Reference.count():
-            self.form.Reference.removeItem(0)
-        self.form.Reference.addItems(self.form.Catalog.itemData(args[0]))
+        pw = placementWidget()
+        mw = materialWidget()
+        WBCommandGUI.__init__(self, [pw, mw, "RightAnglePrism.ui"])
 
     def accept(self):
         S = self.form.S.value()
@@ -41,8 +35,15 @@ class RightAnglePrismGUI(WBCommandGUI):
         rlb = self.form.RefLegB.value()
         rhy = self.form.RefHypo.value()
 
-        obj = InsertRAP(S, ID="RAP1", matcat=matcat, matref=matref, rla=rla,
-                        rlb=rlb, rhy=rhy)
+        obj = InsertRAP(
+            S,
+            ID="RAP1",
+            matcat=matcat,
+            matref=matref,
+            rla=rla,
+            rlb=rlb,
+            rhy=rhy,
+        )
         m = FreeCAD.Matrix()
         m.rotateX(radians(Xrot))
         m.rotateY(radians(Yrot))
@@ -58,10 +59,12 @@ class RightAnglePrismMenu(WBCommandMenu):
         WBCommandMenu.__init__(self, RightAnglePrismGUI)
 
     def GetResources(self):
-        return {"MenuText": "Right Angle Prism",
-                #"Accel": "Ctrl+M",
-                "ToolTip": "Add Right Angle Prism",
-                "Pixmap": ""}
+        return {
+            "MenuText": "Right Angle Prism",
+            # "Accel": "Ctrl+M",
+            "ToolTip": "Add Right Angle Prism",
+            "Pixmap": "",
+        }
 
 
 class RightAnglePrismPart(WBPart):
@@ -69,18 +72,27 @@ class RightAnglePrismPart(WBPart):
 
         WBPart.__init__(self, obj, "RightAnglePrism")
         obj.Proxy = self
-        obj.addProperty("App::PropertyLength", "S", "Shape",
-                        "Right Angle Prism side size ")
-        obj.addProperty("App::PropertyString","matcat",
-                        "Material", "Material catalog")
-        obj.addProperty("App::PropertyString","matref",
-                        "Material", "Material reference")
-        obj.addProperty("App::PropertyFloat", "rla", "Reflectivity",
-                        "Leg A Reflectivity")
-        obj.addProperty("App::PropertyFloat", "rlb", "Reflectivity",
-                        "Leg B Reflectivity")
-        obj.addProperty("App::PropertyFloat", "rhy", "Reflectivity",
-                        "Hypotenuse Reflectivity")
+        obj.addProperty(
+            "App::PropertyLength", "S", "Shape", "Right Angle Prism side size "
+        )
+        obj.addProperty(
+            "App::PropertyString", "matcat", "Material", "Material catalog"
+        )
+        obj.addProperty(
+            "App::PropertyString", "matref", "Material", "Material reference"
+        )
+        obj.addProperty(
+            "App::PropertyFloat", "rla", "Reflectivity", "Leg A Reflectivity"
+        )
+        obj.addProperty(
+            "App::PropertyFloat", "rlb", "Reflectivity", "Leg B Reflectivity"
+        )
+        obj.addProperty(
+            "App::PropertyFloat",
+            "rhy",
+            "Reflectivity",
+            "Hypotenuse Reflectivity",
+        )
 
         obj.S = S
         obj.matcat = matcat
@@ -90,32 +102,30 @@ class RightAnglePrismPart(WBPart):
         obj.rhy = rhy
 
         obj.ViewObject.Transparency = 50
-        obj.ViewObject.ShapeColor = (.5,.5,.5,0.)
+        obj.ViewObject.ShapeColor = (0.5, 0.5, 0.5, 0.0)
 
-
-    def pyoptools_repr(self,obj):
+    def pyoptools_repr(self, obj):
         matcat = obj.matcat
         matref = obj.matref
-        rla = obj.rla/100.
-        rlb = obj.rlb/100.
-        rhy = obj.rhy/100.
+        rla = obj.rla / 100.0
+        rlb = obj.rlb / 100.0
+        rhy = obj.rhy / 100.0
         S = obj.S.Value
-        print(obj.S.Value,obj.S)
-        
-        if matcat=="Value":
-            material=float(matref.replace(",","."))
-        else:
-            material=getattr(matlib.material,matcat)[matref]
+        print(obj.S.Value, obj.S)
 
-        rm = comp_lib.RightAnglePrism(S, S, material=material,
-                                      reflectivity=rhy, reflega=rla,
-                                      reflegb=rlb)
+        if matcat == "Value":
+            material = float(matref.replace(",", "."))
+        else:
+            material = getattr(matlib.material, matcat)[matref]
+
+        rm = comp_lib.RightAnglePrism(
+            S, S, material=material, reflectivity=rhy, reflega=rla, reflegb=rlb
+        )
         return rm
 
-
     def execute(self, obj):
-        import Part, FreeCAD
-        l2 = obj.S.Value/2.
+
+        l2 = obj.S.Value / 2.0
 
         v1 = FreeCAD.Base.Vector(l2, -l2, l2)
         v2 = FreeCAD.Base.Vector(l2, -l2, -l2)
@@ -123,14 +133,18 @@ class RightAnglePrismPart(WBPart):
 
         l1 = Part.makePolygon([v1, v2, v3, v1])
         F = Part.Face(Part.Wire(l1.Edges))
-        d = F.extrude(FreeCAD.Base.Vector(0, 2*l2, 0))
+        d = F.extrude(FreeCAD.Base.Vector(0, 2 * l2, 0))
 
         obj.Shape = d
 
-def InsertRAP(S=50,ID="RAP",matcat="",matref="", rla=0, rlb=0, rhy=0):
+
+def InsertRAP(S=50, ID="RAP", matcat="", matref="", rla=0, rlb=0, rhy=0):
     import FreeCAD
+
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", ID)
     RightAnglePrismPart(myObj, S, matcat, matref, rla, rlb, rhy)
-    myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
+    myObj.ViewObject.Proxy = (
+        0  # this is mandatory unless we code the ViewProvider too
+    )
     FreeCAD.ActiveDocument.recompute()
     return myObj

@@ -1,67 +1,56 @@
 # -*- coding: utf-8 -*-
-from .wbcommand import *
+"""Classes used to define an array of rays."""
+import FreeCAD
+import FreeCADGui
+from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
+from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 from pyoptools.misc.pmisc.misc import wavelength2RGB
 import pyoptools.raytrace.ray.ray_source as rs_lib
 from math import tan, radians
-from numpy import linspace,dot,array,cos,sin
+from numpy import linspace, dot, array, cos, sin
 
 
 def rot_mat(r):
-    c=cos(r)
-    s=sin(r)
+    c = cos(r)
+    s = sin(r)
 
-    rx=array([[1. , 0., 0.],
-              [0. , c[0],-s[0]],
-              [0. , s[0], c[0]]])
+    rx = array([[1.0, 0.0, 0.0], [0.0, c[0], -s[0]], [0.0, s[0], c[0]]])
 
-    ry=array([[ c[1], 0., s[1]],
-              [ 0., 1., 0.],
-              [-s[1], 0., c[1]]])
+    ry = array([[c[1], 0.0, s[1]], [0.0, 1.0, 0.0], [-s[1], 0.0, c[1]]])
 
-
-    rz=array([[ c[2],-s[2], 0.],
-              [ s[2], c[2], 0.],
-              [ 0., 0., 1.]])
-    tm=dot(rz,dot(ry,rx))
+    rz = array([[c[2], -s[2], 0.0], [s[2], c[2], 0.0], [0.0, 0.0, 1.0]])
+    tm = dot(rz, dot(ry, rx))
     return tm
+
 
 def rot_mat_i(r):
 
-    c=cos(r)
-    s=sin(r)
+    c = cos(r)
+    s = sin(r)
 
-    rx=array([[ 1., 0., 0.],
-              [ 0., c[0], s[0]],
-              [ 0.,-s[0], c[0]]])
+    rx = array([[1.0, 0.0, 0.0], [0.0, c[0], s[0]], [0.0, -s[0], c[0]]])
 
-    ry=array([[ c[1], 0.,-s[1]],
-              [ 0., 1., 0.],
-              [ s[1], 0., c[1]]])
+    ry = array([[c[1], 0.0, -s[1]], [0.0, 1.0, 0.0], [s[1], 0.0, c[1]]])
 
+    rz = array([[c[2], s[2], 0.0], [-s[2], c[2], 0.0], [0.0, 0.0, 1.0]])
 
-    rz=array([[ c[2], s[2], 0.],
-              [-s[2], c[2], 0.],
-              [ 0., 0., 1.]])
-
-    return dot(rx,dot(ry,rz))
-
-
+    return dot(rx, dot(ry, rz))
 
 
 class RaysArrayGUI(WBCommandGUI):
     def __init__(self):
-        WBCommandGUI.__init__(self, 'RaysArray.ui')
+        pw = placementWidget()
+        WBCommandGUI.__init__(self, [pw, "RaysArray.ui"])
 
     def accept(self):
 
-        X=self.form.Ox.value()
-        Y=self.form.Oy.value()
-        Z=self.form.Oz.value()
+        X = self.form.Xpos.value()
+        Y = self.form.Ypos.value()
+        Z = self.form.Zpos.value()
 
         Ox = self.form.Xrot.value()
         Oy = self.form.Yrot.value()
         Oz = self.form.Zrot.value()
-
 
         Sx = self.form.SX.value()
         Sy = self.form.SX.value()
@@ -77,7 +66,7 @@ class RaysArrayGUI(WBCommandGUI):
 
         angle = self.form.ang.value()
 
-        m=FreeCAD.Matrix()
+        m = FreeCAD.Matrix()
 
         m.rotateX(radians(Ox))
         m.rotateY(radians(Oy))
@@ -91,18 +80,18 @@ class RaysArrayGUI(WBCommandGUI):
         obj.Placement = p1
         FreeCADGui.Control.closeDialog()
 
+
 class RaysArrayMenu(WBCommandMenu):
     def __init__(self):
         WBCommandMenu.__init__(self, RaysArrayGUI)
 
     def GetResources(self):
-        return {"MenuText": "Add Array of Sources",
-                #"Accel": "Ctrl+M",
-                "ToolTip": "Add Array of Sources",
-                "Pixmap": ""}
-
-
-
+        return {
+            "MenuText": "Add Array of Sources",
+            # "Accel": "Ctrl+M",
+            "ToolTip": "Add Array of Sources",
+            "Pixmap": "",
+        }
 
 
 class RaysArrayPart(WBPart):
@@ -122,7 +111,6 @@ class RaysArrayPart(WBPart):
 
         obj.ViewObject.ShapeColor = (r,g,b,0.)
 
-
     def propertyChanged(self, obj, prop):
 
         # To keep all the housekeeping that WBPart do, this method replaces
@@ -133,69 +121,76 @@ class RaysArrayPart(WBPart):
             obj.ViewObject.ShapeColor = (r,g,b,0.)
 
 
-
-    def pyoptools_repr(self,obj):
+    def pyoptools_repr(self, obj):
         pla = obj.getGlobalPlacement()
-        X,Y,Z = pla.Base
+        X, Y, Z = pla.Base
         dist = obj.distribution.lower()
-        nr=obj.nr
-        na=obj.na
+        nr = obj.nr
+        na = obj.na
         ang = obj.angle
-        wl=obj.wavelength
+        wl = obj.wavelength
+
         RZ, RY, RX = pla.Rotation.toEuler()
-        rm = rot_mat((radians(RX),radians(RY),radians(RZ)))
-        dire=((radians(RX),radians(RY),radians(RZ)))
+        rm = rot_mat((radians(RX), radians(RY), radians(RZ)))
+        dire = (radians(RX), radians(RY), radians(RZ))
 
-        r=[]
+        r = []
         if obj.enabled:
-            if dist=="polar":
-                for x in linspace(-obj.xSize/2,obj.xSize/2,obj.Nx):
-                    for y in linspace(-obj.ySize/2,obj.ySize/2,obj.Ny):
-                        xr,yr,zr =dot(rm,array((x,y,0),dtype="float64"))
-                        r=r+rs_lib.point_source_p(origin=(X+xr,Y+yr,Z+zr),direction=dire,span=radians(ang),
-                                      num_rays=(nr,na),wavelength=wl/1000., label="")
+            if dist == "polar":
+                for x in linspace(-obj.xSize / 2, obj.xSize / 2, obj.Nx):
+                    for y in linspace(-obj.ySize / 2, obj.ySize / 2, obj.Ny):
+                        xr, yr, zr = dot(rm, array((x, y, 0), dtype="float64"))
+                        r = r + rs_lib.point_source_p(
+                            origin=(X + xr, Y + yr, Z + zr),
+                            direction=dire,
+                            span=radians(ang),
+                            num_rays=(nr, na),
+                            wavelength=wl / 1000.0,
+                            label="",
+                        )
 
-            elif dist=="cartesian":
-                for x in linspace(-obj.xSize/2,obj.xSize/2,obj.Nx):
-                    for y in linspace(-obj.ySize/2,obj.ySize/2,obj.Ny):
-                        xr,yr,zr =dot(rm,array((x,y,0),dtype="float64"))
-                        r=r+rs_lib.point_source_c(origin=(X+xr,Y+yr,Z+zr),direction=dire,span=(radians(ang),radians(ang))\
-                                                  ,num_rays=(nr,na),wavelength=wl/1000., label="")
-            elif dist=="random":
+            elif dist == "cartesian":
+                for x in linspace(-obj.xSize / 2, obj.xSize / 2, obj.Nx):
+                    for y in linspace(-obj.ySize / 2, obj.ySize / 2, obj.Ny):
+                        xr, yr, zr = dot(rm, array((x, y, 0), dtype="float64"))
+                        r = r + rs_lib.point_source_c(
+                            origin=(X + xr, Y + yr, Z + zr),
+                            direction=dire,
+                            span=(radians(ang), radians(ang)),
+                            num_rays=(nr, na),
+                            wavelength=wl / 1000.0,
+                            label="",
+                        )
+            elif dist == "random":
                 print("random ray distribution, not implemented yet")
             else:
                 print("Warning ray distribution {} not recognized".format(dist))
 
         return r
 
-
-    def execute(self,obj):
-        import Part,FreeCAD
+    def execute(self, obj):
+        import Part, FreeCAD
 
         dist = obj.distribution.lower()
 
-
-        if dist not in ["polar","cartesian"]:
-            obj.distribution="polar"
+        if dist not in ["polar", "cartesian"]:
+            obj.distribution = "polar"
             print("Ray Distribution not understood, changing it to polar")
 
         if dist == "polar":
-            r=5*tan(radians(obj.angle))
-            d=[]
-            for x in linspace(-obj.xSize/2,obj.xSize/2,obj.Nx):
-                for y in linspace(-obj.ySize/2,obj.ySize/2,obj.Ny):
-                    d.append(Part.makeCone(0,r,5,FreeCAD.Vector(x,y,0)))
-        else: #Todo: Cambiar cono a piramide
-            r=5*tan(radians(obj.angle))
+            r = 5 * tan(radians(obj.angle))
             d = []
-            for x in linspace(-obj.xSize/2,obj.xSize/2,obj.Nx):
-                for y in linspace(-obj.ySize/2,obj.ySize/2,obj.Ny):
-                    d.append(Part.makeCone(0,r,5,FreeCAD.Vector(x,y,0)))
-
+            for x in linspace(-obj.xSize / 2, obj.xSize / 2, obj.Nx):
+                for y in linspace(-obj.ySize / 2, obj.ySize / 2, obj.Ny):
+                    d.append(Part.makeCone(0, r, 5, FreeCAD.Vector(x, y, 0)))
+        else:  # Todo: Cambiar cono a piramide
+            r = 5 * tan(radians(obj.angle))
+            d = []
+            for x in linspace(-obj.xSize / 2, obj.xSize / 2, obj.Nx):
+                for y in linspace(-obj.ySize / 2, obj.ySize / 2, obj.Ny):
+                    d.append(Part.makeCone(0, r, 5, FreeCAD.Vector(x, y, 0)))
 
         obj.Shape = Part.makeCompound(d)
-
-
 
 
 def InsertRArray(Sx=5,Sy=5,Nx=5,Ny=5, nr =10,na=10, angle=5, distribution="polar",wavelength=633,ID = "S",enabled = True):
