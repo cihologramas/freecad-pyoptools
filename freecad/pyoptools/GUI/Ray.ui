@@ -26,7 +26,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="wavelenght">
+        <widget class="QDoubleSpinBox" name="wavelength">
          <property name="maximum">
           <double>1000000.000000000000000</double>
          </property>
