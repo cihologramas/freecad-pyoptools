@@ -30,7 +30,7 @@ class RaysPointGUI(WBCommandGUI):
         nr = self.form.nr.value()
         na = self.form.na.value()
         distribution = self.form.RayDistribution.currentText()
-        wavelenght = self.form.wavelenght.value()
+        wavelength = self.form.wavelength.value()
         angle = self.form.ang.value()
         enabled = self.form.Enabled.isChecked()
 
@@ -41,7 +41,7 @@ class RaysPointGUI(WBCommandGUI):
 
         m.move((X, Y, Z))
         obj = InsertRPoint(
-            nr, na, distribution, wavelenght, angle, "S", enabled
+            nr, na, distribution, wavelength, angle, "S", enabled
         )
 
         p1 = FreeCAD.Placement(m)
@@ -64,48 +64,18 @@ class RaysPointMenu(WBCommandMenu):
 
 
 class RaysPointPart(WBPart):
-    def __init__(
-        self,
-        obj,
-        nr=6,
-        na=6,
-        distribution="polar",
-        wavelenght=633,
-        angle=30,
-        enabled=True,
-    ):
-        WBPart.__init__(self, obj, "RaysPoint")
+    def __init__(self,obj,nr=6,na=6,distribution="polar",wavelength=633, angle=30,enabled = True):
+        WBPart.__init__(self,obj,"RaysPoint")
         obj.Proxy = self
-        obj.addProperty(
-            "App::PropertyIntegerConstraint",
-            "nr",
-            "Shape",
-            "Number of rays (radial)",
-        ).nr = (0, 0, 10000, 1)
-        obj.addProperty(
-            "App::PropertyIntegerConstraint",
-            "na",
-            "Shape",
-            "Number of rays (angular)",
-        ).na = (0, 0, 10000, 1)
-        obj.addProperty(
-            "App::PropertyString",
-            "distribution",
-            "Options",
-            "Ray distribution (Polar for the moment)",
-        )
-        obj.addProperty(
-            "App::PropertyLength", "wl", "Options", "Wavelength of the source"
-        )
-        obj.addProperty(
-            "App::PropertyAngle", "angle", "Shape", "Source subtended angle"
-        )
-        obj.nr = nr
-        obj.na = na
-        obj.distribution = distribution.lower()
-        obj.wl = Units.Quantity(
-            "{} nm".format(wavelenght)
-        )  # wavelenght is received in nm
+        obj.addProperty("App::PropertyIntegerConstraint","nr","Shape","Number of rays (radial)").nr=(0,0,10000,1)
+        obj.addProperty("App::PropertyIntegerConstraint","na","Shape","Number of rays (angular)").na=(0,0,10000,1)
+        obj.addProperty("App::PropertyString","distribution","Options","Ray distribution (Polar for the moment)")
+        obj.addProperty("App::PropertyLength","wl","Options","Wavelength of the source")
+        obj.addProperty("App::PropertyAngle","angle","Shape","Source subtended angle")
+        obj.nr=nr
+        obj.na=na
+        obj.distribution=distribution.lower()
+        obj.wl = Units.Quantity("{} nm".format(wavelength)) # wavelength is received in nm
         obj.angle = angle
         obj.enabled = enabled
 
@@ -180,21 +150,10 @@ class RaysPointPart(WBPart):
         obj.Shape = d
 
 
-def InsertRPoint(
-    nr=6,
-    na=6,
-    distribution="polar",
-    wavelenght=633,
-    angle=30,
-    ID="S",
-    enabled=True,
-):
+def InsertRPoint(nr=6, na=6,distribution="polar",wavelength=633,angle=30,ID="S", enabled = True):
     import FreeCAD
-
-    myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", ID)
-    RaysPointPart(myObj, nr, na, distribution, wavelenght, angle, enabled)
-    myObj.ViewObject.Proxy = (
-        0  # this is mandatory unless we code the ViewProvider too
-    )
+    myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",ID)
+    RaysPointPart(myObj,nr,na,distribution,wavelength,angle,enabled)
+    myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj

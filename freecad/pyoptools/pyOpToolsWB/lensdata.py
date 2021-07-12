@@ -211,12 +211,12 @@ class LensDataPart(WBPart):
         l = list(zip(Type, Radius, Thick, SemiDiam, matcat, matref))
         lenses = []
 
-        # In the total lens thicknes, we do not take into account the last
+        # In the total lens thickness, we do not take into account the last
         # surface thickness, as this one represent the image position
         TT = sum(Thick[:-1])
         p = -TT / 2
 
-        # TODO: Whe are not checking that the last material is "" (meaning air)
+        # TODO: We are not checking that the last material is "" (meaning air)
         for n in range(1, len(l)):
             t0, r0, th0, s0, mc0, mt0 = l[n - 1]
             t1, r1, th1, s1, mc1, mt1 = l[n]

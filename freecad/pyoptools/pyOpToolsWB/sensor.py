@@ -83,11 +83,11 @@ class SensorPart(WBPart):
         obj.Shape = d
 
 
-def InsertSen(height=100, widht=100, ID="SEN"):
+def InsertSen(height=100, width=100, ID="SEN"):
     import FreeCAD
 
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", ID)
-    SensorPart(myObj, height, widht)
+    SensorPart(myObj, height, width)
     myObj.ViewObject.Proxy = (
         0  # this is mandatory unless we code the ViewProvider too
     )

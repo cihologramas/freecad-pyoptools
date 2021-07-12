@@ -26,8 +26,8 @@ class RayGUI(WBCommandGUI):
         Xrot = self.form.Xrot.value()
         Yrot = self.form.Yrot.value()
         Zrot = self.form.Zrot.value()
-
-        wavelenght = self.form.wavelenght.value()
+        
+        wavelength = self.form.wavelength.value()
         enabled = self.form.Enabled.isChecked()
 
         m = FreeCAD.Matrix()
@@ -36,8 +36,8 @@ class RayGUI(WBCommandGUI):
         m.rotateZ(radians(Zrot))
 
         m.move((X, Y, Z))
-
-        obj = InsertRay(wavelenght, "R", enabled)
+        
+        obj=InsertRay(wavelength, "R", enabled)
 
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
@@ -59,15 +59,15 @@ class RayMenu(WBCommandMenu):
 
 
 class RayPart(WBPart):
-    def __init__(self, obj, wavelenght=633, enabled=True):
-        WBPart.__init__(self, obj, "Ray")
+    def __init__(self,obj, wavelength=633, enabled=True):
+        WBPart.__init__(self,obj,"Ray")
         obj.Proxy = self
         obj.addProperty(
             "App::PropertyLength", "wl", "Options", "Wavelength of the source"
         )
 
-        # wavelenght is received in nm
-        obj.wl = Units.Quantity("{} nm".format(wavelenght))
+        # wavelength is received in nm
+        obj.wl = Units.Quantity("{} nm".format(wavelength))
         obj.enabled = enabled
 
         r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
@@ -107,11 +107,11 @@ class RayPart(WBPart):
         obj.Shape = d
 
 
-def InsertRay(wavelenght=633, ID="R", enabled=True):
+def InsertRay(wavelength=633, ID="R", enabled=True):
     import FreeCAD
 
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", ID)
-    RayPart(myObj, wavelenght, enabled)
+    RayPart(myObj, wavelength, enabled)
 
     # this is mandatory unless we code the ViewProvider too
     myObj.ViewObject.Proxy = 0
