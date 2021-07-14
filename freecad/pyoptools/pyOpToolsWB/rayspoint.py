@@ -2,6 +2,7 @@
 """Classes used to define a point source."""
 import FreeCAD
 import FreeCADGui
+import Part
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 
@@ -130,7 +131,6 @@ class RaysPointPart(WBPart):
         return r
 
     def execute(self, obj):
-        import Part, FreeCAD
 
         dist = obj.distribution.lower()
 
@@ -151,7 +151,6 @@ class RaysPointPart(WBPart):
 
 
 def InsertRPoint(nr=6, na=6,distribution="polar",wavelength=633,angle=30,ID="S", enabled = True):
-    import FreeCAD
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",ID)
     RaysPointPart(myObj,nr,na,distribution,wavelength,angle,enabled)
     myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
