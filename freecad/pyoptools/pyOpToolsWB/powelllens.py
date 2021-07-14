@@ -3,7 +3,9 @@
 import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
-from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
+from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import (
+    placementWidget,
+)
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
 
 import Part
@@ -128,6 +130,26 @@ class PowellLensPart(WBPart):
             R=curvature,
             material=material,
         )
+
+    def onDocumentRestored(self, obj):
+        """Method to migrate to newer objects type.
+
+        Used for the moment to solve some problems when reopening the files
+        https://forum.freecadweb.org/viewtopic.php?f=22&t=60174
+
+        Idea taken from:
+        https://wiki.freecadweb.org/Scripted_objects_migration
+        """
+        FreeCAD.Console.PrintWarning(
+            "Reconfiguring PropertyPrecision in powellens"
+        )
+        # When opening old files, the App::PropertyPrecision used in the
+        # curvature properties stop receiving negative numbers. To temporary
+        # solve this issue, the properties are re defines (ugly hack)
+        R = obj.R
+        obj.R = (R, -10, 10, 1e-3)
+        K = obj.K
+        obj.K = (K, -10, 10, 1e-3)
 
 
 def InsertSL(R=3.00, CT=7.62, K=-4.302, D=8.89, ID="PL", matcat="", matref=""):

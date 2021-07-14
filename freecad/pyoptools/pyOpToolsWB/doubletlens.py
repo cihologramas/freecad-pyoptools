@@ -3,7 +3,9 @@
 import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
-from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
+from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import (
+    placementWidget,
+)
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
@@ -297,6 +299,30 @@ class DoubletLensPart(WBPart):
             FreeCAD.Base.Vector(0, 0, TT / 2.0 - obj.Thk_2.Value / 2.0)
         )
         obj.Shape = L1.fuse(L2)
+
+    def onDocumentRestored(self, obj):
+        """Method to migrate to newer objects type.
+
+        Used for the moment to solve some problems when reopening the files
+        https://forum.freecadweb.org/viewtopic.php?f=22&t=60174
+
+        Idea taken from:
+        https://wiki.freecadweb.org/Scripted_objects_migration
+        """
+        FreeCAD.Console.PrintWarning(
+            "Reconfiguring PropertyPrecision in doubletlens"
+        )
+        # When opening old files, the App::PropertyPrecision used in the
+        # curvature properties stop receiving negative numbers. To temporary
+        # solve this issue, the properties are re defines (ugly hack)
+        CS1_1 = obj.CS1_1
+        CS2_1 = obj.CS2_1
+        CS1_2 = obj.CS1_2
+        CS2_2 = obj.CS2_2
+        obj.CS1_1 = (CS1_1, -10, 10, 1e-3)
+        obj.CS2_1 = (CS2_1, -10, 10, 1e-3)
+        obj.CS1_2 = (CS1_2, -10, 10, 1e-3)
+        obj.CS2_2 = (CS2_2, -10, 10, 1e-3)
 
 
 def InsertDL(

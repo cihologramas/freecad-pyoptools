@@ -5,7 +5,9 @@ import FreeCADGui
 import Part
 
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
-from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
+from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import (
+    placementWidget,
+)
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
 
 
@@ -119,6 +121,26 @@ class SphericalLensPart(WBPart):
             curvature_s2=curvature_s2,
             material=material,
         )
+
+    def onDocumentRestored(self, obj):
+        """Method to migrate to newer objects type.
+
+        Used for the moment to solve some problems when reopening the files
+        https://forum.freecadweb.org/viewtopic.php?f=22&t=60174
+
+        Idea taken from:
+        https://wiki.freecadweb.org/Scripted_objects_migration
+        """
+        FreeCAD.Console.PrintWarning(
+            "Reconfiguring PropertyPrecision in sphericallens"
+        )
+        # When opening old files, the App::PropertyPrecision used in the
+        # curvature properties stop receiving negative numbers. To temporary
+        # solve this issue, the properties are re defines (ugly hack)
+        CS1 = obj.CS1
+        obj.CS1 = (CS1, -10, 10, 1e-3)
+        CS2 = obj.CS2
+        obj.CS2 = (CS2, -10, 10, 1e-3)
 
 
 def InsertSL(CS1=0.01, CS2=-0.01, CT=10, D=50, ID="L", matcat="", matref=""):
