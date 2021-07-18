@@ -139,8 +139,14 @@ class RaysPointPart(WBPart):
             print("Ray Distribution not understood, changing it to polar")
 
         if dist == "polar":
-            print(obj.angle, type(obj.angle))
-            r = 5 * tan(obj.angle.getValueAs("rad").Value)
+            # For small angles there is a big time delay in the cone draw. for
+            # this reason the angle is limited to 5 degrees. This is only visual.
+
+            if obj.angle<5:
+                ang=radians(5)
+            else:
+                ang = obj.angle.getValueAs("rad").Value
+            r = 5 * tan(ang)
             d = Part.makeCone(0, r, 5)
             # d.translate(FreeCAD.Base.Vector(0,0,-0.5))
         else:  # Cartesian
