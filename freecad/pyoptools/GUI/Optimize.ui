@@ -89,7 +89,7 @@
      <item row="4" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Optimization Type</string>
+        <string>Optimization Type:</string>
        </property>
       </widget>
      </item>
@@ -113,6 +113,16 @@
         </widget>
        </item>
       </layout>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Solver:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QComboBox" name="Solver"/>
      </item>
     </layout>
    </item>
