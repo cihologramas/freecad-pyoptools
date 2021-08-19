@@ -9,7 +9,9 @@ from pyoptools.raytrace.library import library
 from pyoptools.raytrace.mat_lib.material import find_material
 from .sphericallens import InsertSL
 from .doubletlens import InsertDL
+from .cylindricallens import InsertCL
 from math import radians
+from ast import literal_eval
 
 
 class CatalogComponentGUI(WBCommandGUI):
@@ -59,7 +61,12 @@ class CatalogComponentGUI(WBCommandGUI):
             if len(matlibs) == 0:
                 print("material {} not found".format(comp_mat))
                 ok = False
-
+        elif comp_type == "CylindricalLens":
+            comp_mat = lib.parser.get(reference, "material")
+            matlibs = find_material(comp_mat)
+            if len(matlibs) == 0:
+                print("material {} not found".format(comp_mat))
+                ok = False
         elif comp_type in ["Doublet", "AirSpacedDoublet"]:
             comp_mat1 = lib.parser.get(reference, "material_l1")
             matlibs1 = find_material(comp_mat1)
@@ -132,6 +139,18 @@ class CatalogComponentGUI(WBCommandGUI):
 
                 matcat = find_material(mat)[0]
                 obj = InsertSL(c1, c2, th, diam, "L", matcat, mat)
+
+            if comptype == "CylindricalLens":
+                mat = lib.parser.get(reference, "material")
+                th = lib.parser.getfloat(reference, "thickness")
+                size = literal_eval(lib.parser.get(reference, "size"))
+
+                c1 = lib.parser.getfloat(reference, "curvature_s1")
+                c2 = lib.parser.getfloat(reference, "curvature_s2")
+
+                matcat = find_material(mat)[0]
+
+                obj = InsertCL(c1, c2, th, 2*size[1], 2*size[0], "L", matcat, mat)
 
             elif comptype == "Doublet":
                 mat1 = lib.parser.get(reference, "material_l1")
