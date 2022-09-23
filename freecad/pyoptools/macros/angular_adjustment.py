@@ -1,9 +1,9 @@
 import FreeCAD
 import FreeCADGui
 # from .wbcommand import *
-from pyOpToolsWB.wbcommand import *
-from pyOpToolsWB.qthelpers import outputDialog
-from pyOpToolsWB.pyoptoolshelpers import getActiveSystem
+from freecad.pyoptools.pyOpToolsWB.wbcommand import *
+from freecad.pyoptools.pyOpToolsWB.qthelpers import outputDialog
+from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getActiveSystem
 from PySide import QtCore, QtGui
 from scipy.optimize import minimize
 from numpy import dot

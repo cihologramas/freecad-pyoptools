@@ -38,7 +38,9 @@ def getActiveSystem():
         except AttributeError:
             outputDialog(
                 "Object {} can not be read. Check if the conversion\n"
-                "file is correct."
+                "file is correct.".format(
+                    obj.Label
+                    )
             )
 
         if isinstance(e, list):
