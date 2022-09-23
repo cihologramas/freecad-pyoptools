@@ -112,6 +112,20 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QRadioButton" name="XSize">
+         <property name="text">
+          <string>X Size</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="YSize">
+         <property name="text">
+          <string>Y Size</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item row="5" column="0">

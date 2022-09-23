@@ -76,12 +76,28 @@ class OptimizeGUI(WBCommandGUI):
                     ax, el, minimize(opt_col, d, (el, sen, ax), method=solver).x
                 )
             )
-        else:
+        elif self.form.SpotSize.isChecked():
             outputDialog(
                 "Optimum {} Position for element {} = {}".format(
                     ax,
                     el,
                     minimize(opt_spot, d, (el, sen, ax), method=solver).x,
+                )
+            )
+        elif self.form.XSize.isChecked():
+            outputDialog(
+                "Optimum {} Position for element {} = {}".format(
+                    ax,
+                    el,
+                    minimize(opt_x, d, (el, sen, ax), method=solver).x,
+                )
+            )
+        elif self.form.YSize.isChecked():
+            outputDialog(
+                "Optimum {} Position for element {} = {}".format(
+                    ax,
+                    el,
+                    minimize(opt_y, d, (el, sen, ax), method=solver).x,
                 )
             )
 
@@ -133,6 +149,60 @@ def opt_spot(d, el="", sen="", ax="Z"):
     X = X - X.mean()
     Y = Y - Y.mean()
     r = sqrt(X ** 2 + Y ** 2)
+    return r.mean()
+
+
+def opt_x(d, el="", sen="", ax="Z"):
+    print(d)
+    S, rays = getActiveSystem()
+    C, P, D = S.complist[el]
+
+    if ax == "X":
+        P[0] = d
+    elif ax == "Y":
+        P[1] = d
+    else:
+        P[2] = d
+    S.complist[el] = C, P, D
+
+    S.ray_add(rays)
+    S.propagate()
+
+    X, Y, D = S[sen][0].get_optical_path_data()
+
+    X = array(X)
+    Y = array(Y)
+
+    # Centrar en X y encontrar el radio X promedio
+    X = X - X.mean()
+    r = sqrt(X ** 2)
+    return r.mean()
+
+
+def opt_y(d, el="", sen="", ax="Z"):
+    print(d)
+    S, rays = getActiveSystem()
+    C, P, D = S.complist[el]
+
+    if ax == "X":
+        P[0] = d
+    elif ax == "Y":
+        P[1] = d
+    else:
+        P[2] = d
+    S.complist[el] = C, P, D
+
+    S.ray_add(rays)
+    S.propagate()
+
+    X, Y, D = S[sen][0].get_optical_path_data()
+
+    X = array(X)
+    Y = array(Y)
+
+    # Centrar en Y y encontrar el radio Y promedio
+    Y = Y - Y.mean()
+    r = sqrt(Y ** 2)
     return r.mean()
 
 
