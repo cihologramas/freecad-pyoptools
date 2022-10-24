@@ -70,37 +70,21 @@ class OptimizeGUI(WBCommandGUI):
             d = P[2]
 
         if self.form.Collimation.isChecked():
-
-            outputDialog(
-                "Optimum {} Position for element {} = {}".format(
-                    ax, el, minimize(opt_col, d, (el, sen, ax), method=solver).x
-                )
-            )
+            mini = minimize(opt_col, d, (el, sen, ax), method=solver)
+            
         elif self.form.SpotSize.isChecked():
-            outputDialog(
-                "Optimum {} Position for element {} = {}".format(
-                    ax,
-                    el,
-                    minimize(opt_spot, d, (el, sen, ax), method=solver).x,
-                )
-            )
+            mini =  minimize(opt_spot, d, (el, sen, ax), method=solver)
+            
         elif self.form.XSize.isChecked():
-            outputDialog(
-                "Optimum {} Position for element {} = {}".format(
-                    ax,
-                    el,
-                    minimize(opt_x, d, (el, sen, ax), method=solver).x,
-                )
-            )
+            mini = minimize(opt_x, d, (el, sen, ax), method=solver)
+            
         elif self.form.YSize.isChecked():
-            outputDialog(
-                "Optimum {} Position for element {} = {}".format(
-                    ax,
-                    el,
-                    minimize(opt_y, d, (el, sen, ax), method=solver).x,
-                )
-            )
-
+            mini = minimize(opt_y, d, (el, sen, ax), method=solver)
+            
+        outputDialog(
+                 "Optimum {} Position for element {} = {} \n function value = {}".format(
+                    ax, el, mini.x, mini.fun
+                ))
         FreeCADGui.Control.closeDialog()
 
 
