@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Classes used to define a difraction gratting."""
+"""Classes used to define a diffraction gratting."""
 import FreeCAD
 import FreeCADGui
 import Part
