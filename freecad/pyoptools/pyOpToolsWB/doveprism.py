@@ -9,7 +9,7 @@ from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
 from math import radians
-
+from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
 
 class DovePrismGUI(WBCommandGUI):
     def __init__(self):
@@ -75,13 +75,8 @@ class DovePrismPart(WBPart):
         obj.ViewObject.ShapeColor = (0.5, 0.5, 0.5, 0.0)
 
     def pyoptools_repr(self, obj):
-        matcat = obj.matcat
-        matref = obj.matref
-        if matcat == "Value":
-            material = float(matref.replace(",", "."))
-        else:
-            material = getattr(matlib.material, matcat)[matref]
-
+        
+        material = getMaterial(obj.matcat, obj.matref)
         rm = comp_lib.DovePrism(obj.S, obj.L, material=material)
         return rm
 

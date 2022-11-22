@@ -9,7 +9,7 @@ from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import (
     placementWidget,
 )
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
-
+from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
 
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
@@ -107,12 +107,8 @@ class SphericalLensPart(WBPart):
         thickness = obj.Thk.Value
         curvature_s1 = obj.CS1
         curvature_s2 = obj.CS2
-        matcat = obj.matcat
-        matref = obj.matref
-        if matcat == "Value":
-            material = float(matref.replace(",", "."))
-        else:
-            material = getattr(matlib.material, matcat)[matref]
+
+        material = getMaterial(obj.matcat, obj.matref)
 
         return comp_lib.SphericalLens(
             radius=radius,

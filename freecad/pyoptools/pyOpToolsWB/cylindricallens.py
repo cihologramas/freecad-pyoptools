@@ -11,7 +11,7 @@ import Part
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
 from math import radians
-
+from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
 
 class CylindricalLensGUI(WBCommandGUI):
     def __init__(self):
@@ -111,12 +111,8 @@ class CylindricalLensPart(WBPart):
         w = obj.W.Value
         curvature_s1 = obj.CS1
         curvature_s2 = obj.CS2
-        matcat = obj.matcat
-        matref = obj.matref
-        if matcat == "Value":
-            material = float(matref.replace(",", "."))
-        else:
-            material = getattr(matlib.material, matcat)[matref]
+
+        material = getMaterial(obj.matcat, obj.matref)
 
         return comp_lib.CylindricalLens(
             size=(h, w),

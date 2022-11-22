@@ -11,7 +11,7 @@ import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
 from .sphericallens import buildlens
 from math import radians
-
+from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
 
 class DoubletLensGUI(WBCommandGUI):
     def __init__(self):
@@ -227,19 +227,9 @@ class DoubletLensPart(WBPart):
         obj.ViewObject.ShapeColor = (1.0, 1.0, 0.0, 0.0)
 
     def pyoptools_repr(self, obj):
-        matcat1 = obj.matcat1
-        matref1 = obj.matref1
-        if matcat1 == "Value":
-            material1 = float(matref1.replace(",", "."))
-        else:
-            material1 = getattr(matlib.material, matcat1)[matref1]
 
-        matcat2 = obj.matcat2
-        matref2 = obj.matref2
-        if matcat2 == "Value":
-            material2 = float(matref2.replace(",", "."))
-        else:
-            material2 = getattr(matlib.material, matcat2)[matref2]
+        material1 = getMaterial(obj.matcat1, obj.matref1)
+        material2 = getMaterial(obj.matcat2, obj.matref2)
 
         if obj.ILD.Value == 0:
             radius = obj.D.Value / 2.0

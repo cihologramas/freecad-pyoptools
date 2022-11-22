@@ -4,7 +4,7 @@ from pyoptools.raytrace.system import System
 from freecad.pyoptools.pyOpToolsWB.qthelpers import outputDialog
 from math import radians, degrees, cos, atan2, asin, pi
 from numpy.linalg import inv
-
+import pyoptools.raytrace.mat_lib as matlib
 
 def getActiveSystem():
     """Return the pyoptools optical system representation.
@@ -100,3 +100,17 @@ def getActiveSystem():
     S = System(complist)
 
     return S, rays
+
+def getMaterial(matcat, matref):
+    """Returns a pyoptools valid material instance, 
+    """
+
+    if matcat == "Value":
+        material = float(matref.replace(",", "."))
+    elif matcat == "aliases":
+        material = matlib.material[matref]
+    else:
+        material = getattr(matlib.material, matcat)[matref]
+
+    return material 
+    

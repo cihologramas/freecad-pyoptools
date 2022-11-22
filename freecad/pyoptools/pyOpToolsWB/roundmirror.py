@@ -6,6 +6,7 @@ import Part
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
+from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
 
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
@@ -89,15 +90,8 @@ class RoundMirrorPart(WBPart):
         obj.ViewObject.ShapeColor = (0.5, 0.5, 0.5, 0.0)
 
     def pyoptools_repr(self, obj):
-        matcat = obj.matcat
-        matref = obj.matref
-        if matcat == "Value":
-            material = float(matref.replace(",", "."))
-        elif matcat == "aliases":
-            material = matlib.material[matref]
-        else:
-            material = getattr(matlib.material, matcat)[matref]
-        print(material, type(material))
+        
+        material = getMaterial(obj.matcat, obj.matref)
         rm = comp_lib.RoundMirror(
             obj.D.Value / 2.0,
             obj.Thk.Value,

@@ -11,7 +11,7 @@ from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
 from math import radians
-
+from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
 
 class DiffractionGrattingGUI(WBCommandGUI):
     def __init__(self):
@@ -141,14 +141,8 @@ class DiffractionGrattingPart(WBPart):
         obj.ViewObject.ShapeColor = (0.0, 1.0, 0.0, 0.0)
 
     def pyoptools_repr(self, obj):
-        matcat = obj.matcat
-        matref = obj.matref
-        if matcat == "Value":
-            material = float(matref.replace(",", "."))
-        else:
-            material = getattr(matlib.material, matcat)[matref]
-
-        print(obj.M)
+        
+        material = getMaterial(obj.matcat, obj.matref)
 
         lpmm = 1.0 / obj.GP.getValueAs("mm").Value
         rm = comp_lib.RectGratting(

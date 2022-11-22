@@ -7,6 +7,7 @@ from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import (
     placementWidget,
 )
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
+from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
 
 import Part
 
@@ -113,15 +114,8 @@ class PowellLensPart(WBPart):
         thickness = obj.CT.Value
         curvature = obj.R
         K = obj.K
-        matcat = obj.matcat
-        matref = obj.matref
-        if matcat == "Value":
-            # Esto es para poder imprimir en la consola de FreeCAD
-            # FreeCAD.Console.PrintMessage(str(obj.matref) + "\n")
-            material = float(matref.replace(",", "."))
-            # FreeCAD.Console.PrintMessage(str(material) + "\n")
-        else:
-            material = getattr(matlib.material, matcat)[matref]
+
+        material = getMaterial(obj.matcat, obj.matref)
 
         return comp_lib.PowellLens(
             radius=radius,

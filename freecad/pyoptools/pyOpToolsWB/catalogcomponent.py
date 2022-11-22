@@ -6,7 +6,7 @@ from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 from PySide import QtGui
 from pyoptools.raytrace.library import library
-from pyoptools.raytrace.mat_lib.material import find_material
+from pyoptools.raytrace.mat_lib import material
 from .sphericallens import InsertSL
 from .doubletlens import InsertDL
 from .cylindricallens import InsertCL
@@ -19,10 +19,12 @@ class CatalogComponentGUI(WBCommandGUI):
         pw = placementWidget()
         WBCommandGUI.__init__(self, [pw, "CatalogComponent.ui"])
 
-        for lib in dir(library):
-            c = getattr(library, lib)
-            if isinstance(c, library.Library):
-                self.form.Catalog.addItem(lib, sorted(c.parts()))
+        for catalog in library.catalogs():
+            c = getattr(library, catalog)
+            self.form.Catalog.addItem(catalog, sorted(c.parts()))
+
+        # Dictionary to cache the material availability
+        self.__material_available_cache__={}
 
         self.catalogChange(0)
         self.referenceChange(0)
@@ -30,53 +32,71 @@ class CatalogComponentGUI(WBCommandGUI):
         self.form.Catalog.currentIndexChanged.connect(self.catalogChange)
         self.form.Reference.currentIndexChanged.connect(self.referenceChange)
 
+       
+
     def catalogChange(self, *args):
 
-        while self.form.Reference.count():
-            self.form.Reference.removeItem(0)
+        self.form.Reference.clear()
+        self.form.Reference.addItems(self.form.Catalog.itemData(args[0]))
 
-        for reference in self.form.Catalog.itemData(args[0]):
-            red = QtGui.QPixmap(16, 16)
-            red.fill(QtGui.QColor("red"))
-            green = QtGui.QPixmap(16, 16)
-            green.fill(QtGui.QColor("green"))
+        # Colocar los cuadros verdes y rojos para marcar si una componente está
+        # disponible, se demora demasiado. Se comenta para no perder la idea
+        # pero hay que hacerla diferente
+        
+        #red = QtGui.QPixmap(16, 16)
+        #red.fill(QtGui.QColor("red"))
+        #green = QtGui.QPixmap(16, 16)
+        #green.fill(QtGui.QColor("green"))
 
-            if self.is_available(self.form.Catalog.currentText(), reference):
-                color = green
-            else:
-                color = red
-
-            self.form.Reference.addItem(color, reference)
+        #for reference in self.form.Catalog.itemData(args[0]):    
+        #    if self.is_available(self.form.Catalog.currentText(), reference):
+        #        color = green
+        #    else:
+        #        color = red
+        #    self.form.Reference.addItem(color, reference)
             # item.setStyleSheet("color: green")
 
+    def is_material_available(self,reference):
+        if reference in self.__material_available_cache__:
+            rv =  self.__material_available_cache__[reference]
+        else:
+            try:
+                mat = material[reference]
+                self.__material_available_cache__[reference] = True;
+                rv=True
+            except KeyError:
+                self.__material_available_cache__[reference] = False;
+                rv=False
+
+        return rv
+        
     def is_available(self, catalog, reference):
         # catalog = self.form.Catalog.currentText()
         # reference = self.form.Reference.currentText()
-        lib = getattr(library, catalog)
+        part_descriptor = getattr(library, catalog).descriptor(reference)
         ok = True
-        comp_type = lib.parser.get(reference, "type")
+        comp_type = part_descriptor["type"]
         if comp_type == "SphericalLens":
-            comp_mat = lib.parser.get(reference, "material")
-            matlibs = find_material(comp_mat)
-            if len(matlibs) == 0:
+            comp_mat = part_descriptor["material"]
+            if not self.is_material_available(comp_mat):
                 print("material {} not found".format(comp_mat))
                 ok = False
-        elif comp_type == "CylindricalLens":
-            comp_mat = lib.parser.get(reference, "material")
-            matlibs = find_material(comp_mat)
-            if len(matlibs) == 0:
-                print("material {} not found".format(comp_mat))
-                ok = False
-        elif comp_type in ["Doublet", "AirSpacedDoublet"]:
-            comp_mat1 = lib.parser.get(reference, "material_l1")
-            matlibs1 = find_material(comp_mat1)
-            comp_mat2 = lib.parser.get(reference, "material_l2")
-            matlibs2 = find_material(comp_mat2)
 
-            if len(matlibs1) == 0:
+        elif comp_type == "CylindricalLens":
+            comp_mat = part_descriptor["material"]
+            if not self.is_material_available(comp_mat):
+                print("material {} not found".format(comp_mat))
+                ok = False
+
+        elif comp_type in ["Doublet", "AirSpacedDoublet"]:
+            comp_mat1 = part_descriptor["material_l1"]
+            comp_mat2 = part_descriptor["material_l2"]
+
+            if not self.is_material_available(comp_mat1):
                 print("material {} not found".format(comp_mat1))
                 ok = False
-            if len(matlibs2) == 0:
+
+            if not self.is_material_available(comp_mat2):
                 print("material {} not found".format(comp_mat2))
                 ok = False
         else:
@@ -89,29 +109,32 @@ class CatalogComponentGUI(WBCommandGUI):
         catalog = self.form.Catalog.currentText()
         lib = getattr(library, catalog)
         reference = self.form.Reference.currentText()
-        # To avoid some errors raised when there is a catalog change.
-        # Todo: Find a better way to do this
-        try:
-            options = lib.parser.options(reference)
-
-            self.form.Info.clear()
-            for option in options:
-                self.form.Info.insertPlainText(
-                    "{} = {}\n".format(
-                        option, lib.parser.get(reference, option)
-                    )
+        ## To avoid some errors raised when there is a catalog change.
+        ## Todo: Find a better way to do this
+        ##try:
+        part_descriptor = getattr(library, catalog).descriptor(reference)
+        self.form.Info.clear()
+        for option in part_descriptor:
+            self.form.Info.insertPlainText(
+                "{} = {}\n".format(
+                    option, part_descriptor[option]
                 )
+            )
 
+        try:
             ok = self.is_available(catalog, reference)
-            if ok:
-                self.form.Status.setText("Component Available")
-                self.form.Status.setStyleSheet("color: green")
-            else:
-                self.form.Status.setText("Component not Available")
-                self.form.Status.setStyleSheet("color: red")
+        except KeyError:
+            ok=False
+            
+        if ok:
+            self.form.Status.setText("Component Available")
+            self.form.Status.setStyleSheet("color: green")
+        else:
+            self.form.Status.setText("Component not Available")
+            self.form.Status.setStyleSheet("color: red")
 
-        except:
-            pass
+        #except:
+        #    pass
 
     def accept(self):
         catalog = self.form.Catalog.currentText()
@@ -119,8 +142,8 @@ class CatalogComponentGUI(WBCommandGUI):
 
         if self.is_available(catalog, reference):
 
-            lib = getattr(library, catalog)
-            comptype = lib.parser.get(reference, "type")
+            part_descriptor = getattr(library, catalog).descriptor(reference)
+            comptype = part_descriptor["type"]
             X = self.form.Xpos.value()
             Y = self.form.Ypos.value()
             Z = self.form.Zpos.value()
@@ -131,38 +154,41 @@ class CatalogComponentGUI(WBCommandGUI):
             obj = None
 
             if comptype == "SphericalLens":
-                mat = lib.parser.get(reference, "material")
-                th = lib.parser.getfloat(reference, "thickness")
-                diam = 2.0 * lib.parser.getfloat(reference, "radius")
-                c1 = lib.parser.getfloat(reference, "curvature_s1")
-                c2 = lib.parser.getfloat(reference, "curvature_s2")
+                mat = part_descriptor["material"]
+                th = part_descriptor["thickness"]
+                diam = 2.0 * part_descriptor["radius"]
+                c1 = part_descriptor["curvature_s1"]
+                c2 = part_descriptor["curvature_s2"]
 
-                matcat = find_material(mat)[0]
+                matcat = material.find_material(mat)[0][0]
                 obj = InsertSL(c1, c2, th, diam, "L", matcat, mat)
 
             if comptype == "CylindricalLens":
-                mat = lib.parser.get(reference, "material")
-                th = lib.parser.getfloat(reference, "thickness")
-                size = literal_eval(lib.parser.get(reference, "size"))
+                mat = part_descriptor["material"]
+                th = part_descriptor["thickness"]
+                size = literal_eval(part_descriptor["size"])
 
-                c1 = lib.parser.getfloat(reference, "curvature_s1")
-                c2 = lib.parser.getfloat(reference, "curvature_s2")
+                c1 = part_descriptor["curvature_s1"]
+                c2 = part_descriptor["curvature_s2"]
 
-                matcat = find_material(mat)[0]
+                matcat = material.find_material(mat)[0][0]
 
                 obj = InsertCL(c1, c2, th, 2*size[1], 2*size[0], "L", matcat, mat)
 
             elif comptype == "Doublet":
-                mat1 = lib.parser.get(reference, "material_l1")
-                mat2 = lib.parser.get(reference, "material_l2")
-                th1 = lib.parser.getfloat(reference, "thickness_l1")
-                th2 = lib.parser.getfloat(reference, "thickness_l2")
-                diam = 2.0 * lib.parser.getfloat(reference, "radius")
-                c1 = lib.parser.getfloat(reference, "curvature_s1")
-                c2 = lib.parser.getfloat(reference, "curvature_s2")
-                c3 = lib.parser.getfloat(reference, "curvature_s3")
-                matcat1 = find_material(mat1)[0]
-                matcat2 = find_material(mat2)[0]
+                mat1 = part_descriptor["material_l1"]
+                mat2 = part_descriptor["material_l2"]
+                th1 = part_descriptor["thickness_l1"]
+                th2 = part_descriptor["thickness_l2"]
+                diam = 2.0 * part_descriptor["radius"]
+                c1 = part_descriptor["curvature_s1"]
+                c2 = part_descriptor["curvature_s2"]
+                c3 = part_descriptor["curvature_s3"]
+                matcat1 = material.find_material(mat1)[0][0]
+                matcat2 = material.find_material(mat2)[0][0]
+
+                print(material.find_material(mat1))
+                print(material.find_material(mat2))
                 obj = InsertDL(
                     c1,
                     c2,
@@ -180,19 +206,19 @@ class CatalogComponentGUI(WBCommandGUI):
                 )
 
             elif comptype == "AirSpacedDoublet":
-                mat1 = lib.parser.get(reference, "material_l1")
-                mat2 = lib.parser.get(reference, "material_l2")
-                th1 = lib.parser.getfloat(reference, "thickness_l1")
-                th2 = lib.parser.getfloat(reference, "thickness_l2")
-                airgap = lib.parser.getfloat(reference, "air_gap")
+                mat1 = part_descriptor["material_l1"]
+                mat2 = part_descriptor["material_l2"]
+                th1 = part_descriptor["thickness_l1"]
+                th2 = part_descriptor["thickness_l2"]
+                airgap = part_descriptor["air_gap"]
 
-                diam = 2.0 * lib.parser.getfloat(reference, "radius")
-                c1 = lib.parser.getfloat(reference, "curvature_s1")
-                c2 = lib.parser.getfloat(reference, "curvature_s2")
-                c3 = lib.parser.getfloat(reference, "curvature_s3")
-                c4 = lib.parser.getfloat(reference, "curvature_s4")
-                matcat1 = find_material(mat1)[0]
-                matcat2 = find_material(mat2)[0]
+                diam = 2.0 * part_descriptor["radius"]
+                c1 = part_descriptor["curvature_s1"]
+                c2 = part_descriptor["curvature_s2"]
+                c3 = part_descriptor["curvature_s3"]
+                c4 = part_descriptor["curvature_s4"]
+                matcat1 = material.find_material(mat1)[0][0]
+                matcat2 = material.find_material(mat2)[0][0]
                 obj = InsertDL(
                     c1,
                     c2,

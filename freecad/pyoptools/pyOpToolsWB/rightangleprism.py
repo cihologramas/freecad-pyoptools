@@ -6,6 +6,7 @@ import Part
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
+from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
 
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
@@ -105,19 +106,12 @@ class RightAnglePrismPart(WBPart):
         obj.ViewObject.ShapeColor = (0.5, 0.5, 0.5, 0.0)
 
     def pyoptools_repr(self, obj):
-        matcat = obj.matcat
-        matref = obj.matref
         rla = obj.rla / 100.0
         rlb = obj.rlb / 100.0
         rhy = obj.rhy / 100.0
         S = obj.S.Value
-        print(obj.S.Value, obj.S)
-
-        if matcat == "Value":
-            material = float(matref.replace(",", "."))
-        else:
-            material = getattr(matlib.material, matcat)[matref]
-
+        material = getMaterial(obj.matcat, obj.matref)
+        
         rm = comp_lib.RightAnglePrism(
             S, S, material=material, reflectivity=rhy, reflega=rla, reflegb=rlb
         )
