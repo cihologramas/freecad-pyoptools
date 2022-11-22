@@ -16,8 +16,9 @@ class materialWidget(QtGui.QWidget):
 
         self.ui.Catalog.addItem("Value", [])
 
-        for i in matlib.material.liblist:
-            self.ui.Catalog.addItem(i[0], sorted(i[1].keys()))
+        for i in matlib.material.get_glass_libraries():
+            mats=matlib.material.get_glass_materials_from_library(i)
+            self.ui.Catalog.addItem(i, sorted(mats))
 
         self.ui.Catalog.currentIndexChanged.connect(self.catalogChange)
 

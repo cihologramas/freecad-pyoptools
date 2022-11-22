@@ -93,9 +93,11 @@ class RoundMirrorPart(WBPart):
         matref = obj.matref
         if matcat == "Value":
             material = float(matref.replace(",", "."))
+        elif matcat == "aliases":
+            material = matlib.material[matref]
         else:
             material = getattr(matlib.material, matcat)[matref]
-
+        print(material, type(material))
         rm = comp_lib.RoundMirror(
             obj.D.Value / 2.0,
             obj.Thk.Value,
