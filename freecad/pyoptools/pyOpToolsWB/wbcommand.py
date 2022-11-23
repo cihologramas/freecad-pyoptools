@@ -35,12 +35,12 @@ class widgetMix(QtGui.QDialog):
         w : QWidget
             Widget to add to the widgetMix
         name : str or None
-            If not given (or none), the attributes of w will be accesible
+            If not given (or none), the attributes of w will be accessible
             directly from the widgetMix. Care must be taken as if multiple
             widgets with the same attributes are added, only the attribute from
-            the first widget added wil be accesible shadowing the others. This
+            the first widget added will be accessible shadowing the others. This
             can be solved by giving the widget a "name", so it will be
-            accesible as "widgetMix.name".
+            accessible as "widgetMix.name".
 
         TODO:
         -----
@@ -55,7 +55,7 @@ class widgetMix(QtGui.QDialog):
             self.extra_attribs[name] = w
 
     def __getattr__(self, name):
-        """Get the attrubutes from the registered widgets."""
+        """Get the attributes from the registered widgets."""
         # Check first in the widgets regostared with no name
         for w in self.widgets:
             try:

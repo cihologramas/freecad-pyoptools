@@ -21,7 +21,7 @@
        <item>
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Wavelenght (nm)</string>
+          <string>Wavelength (nm)</string>
          </property>
         </widget>
        </item>

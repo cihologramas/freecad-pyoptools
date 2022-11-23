@@ -41,7 +41,7 @@ def getActiveSystem():
 
         RMA31 = rotmat.A31
 
-        # Sometimes because of numericar aproximations RMA31 can be
+        # Sometimes because of numerical approximations RMA31 can be
         # bigger than 1 ie. 1.0000000000000002
         if RMA31 > 1:
             RMA31 = 1.
