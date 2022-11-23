@@ -144,6 +144,8 @@ class CatalogComponentGUI(WBCommandGUI):
 
             part_descriptor = getattr(library, catalog).descriptor(reference)
             comptype = part_descriptor["type"]
+            glass_catalogs =  part_descriptor["glass_catalogs"].lower()
+            
             X = self.form.Xpos.value()
             Y = self.form.Ypos.value()
             Z = self.form.Zpos.value()
@@ -160,7 +162,12 @@ class CatalogComponentGUI(WBCommandGUI):
                 c1 = part_descriptor["curvature_s1"]
                 c2 = part_descriptor["curvature_s2"]
 
-                matcat = material.find_material(mat)[0][0]
+                matcat = material.find_material(mat, exact=True, unalias=True)[0][0]
+
+                if matcat not in glass_catalogs:
+                    raise ValueError("Trying to use a wront glass catalog"
+                                     f" {matcat} not in {glass_catalogs}")
+                                     
                 obj = InsertSL(c1, c2, th, diam, "L", matcat, mat)
 
             if comptype == "CylindricalLens":
@@ -171,7 +178,12 @@ class CatalogComponentGUI(WBCommandGUI):
                 c1 = part_descriptor["curvature_s1"]
                 c2 = part_descriptor["curvature_s2"]
 
-                matcat = material.find_material(mat)[0][0]
+                matcat = material.find_material(mat, exact=True, unalias=True)[0][0]
+
+                if matcat not in glass_catalogs:
+                    raise ValueError("Trying to use a wront glass catalog"
+                                     f" {matcat} not in {glass_catalogs}")
+                
 
                 obj = InsertCL(c1, c2, th, 2*size[1], 2*size[0], "L", matcat, mat)
 
@@ -184,11 +196,16 @@ class CatalogComponentGUI(WBCommandGUI):
                 c1 = part_descriptor["curvature_s1"]
                 c2 = part_descriptor["curvature_s2"]
                 c3 = part_descriptor["curvature_s3"]
-                matcat1 = material.find_material(mat1)[0][0]
-                matcat2 = material.find_material(mat2)[0][0]
+                matcat1 = material.find_material(mat1, exact=True, unalias=True)[0][0]
+                matcat2 = material.find_material(mat2, exact=True, unalias=True)[0][0]
 
-                print(material.find_material(mat1))
-                print(material.find_material(mat2))
+                if matcat1 not in glass_catalogs:
+                    raise ValueError("Trying to use a wront glass catalog"
+                                     f" {matcat1} not in {glass_catalogs}")
+                if matcat2 not in glass_catalogs:
+                    raise ValueError("Trying to use a wront glass catalog"
+                                     f" {matcat2} not in {glass_catalogs}")
+                
                 obj = InsertDL(
                     c1,
                     c2,
@@ -217,8 +234,16 @@ class CatalogComponentGUI(WBCommandGUI):
                 c2 = part_descriptor["curvature_s2"]
                 c3 = part_descriptor["curvature_s3"]
                 c4 = part_descriptor["curvature_s4"]
-                matcat1 = material.find_material(mat1)[0][0]
-                matcat2 = material.find_material(mat2)[0][0]
+                matcat1 = material.find_material(mat1, exact=True, unalias=True)[0][0]
+                matcat2 = material.find_material(mat2, exact=True, unalias=True)[0][0]
+
+                if matcat1 not in glass_catalogs:
+                    raise ValueError("Trying to use a wront glass catalog"
+                                     f" {matcat1} not in {glass_catalogs}")
+                if matcat2 not in glass_catalogs:
+                    raise ValueError("Trying to use a wront glass catalog"
+                                     f" {matcat2} not in {glass_catalogs}")
+                                     
                 obj = InsertDL(
                     c1,
                     c2,
