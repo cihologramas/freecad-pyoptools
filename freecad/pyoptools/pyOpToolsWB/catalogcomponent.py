@@ -173,7 +173,7 @@ class CatalogComponentGUI(WBCommandGUI):
             if comptype == "CylindricalLens":
                 mat = part_descriptor["material"]
                 th = part_descriptor["thickness"]
-                size = literal_eval(part_descriptor["size"])
+                size = part_descriptor["size"]
 
                 c1 = part_descriptor["curvature_s1"]
                 c2 = part_descriptor["curvature_s2"]
