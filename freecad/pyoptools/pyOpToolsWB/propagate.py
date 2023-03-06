@@ -31,14 +31,11 @@ class PropagateMenu:
 
     def Activated(self):
 
-        myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython","PROP")
-        PP=PropagatePart(myObj)
+        myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",
+                                                 "PROP")
+        PropagatePart(myObj)
         myObj.ViewObject.Proxy = 0
 
-
-        doc=FreeCAD.activeDocument()
-
-        PropagatePart(myObj)
         FreeCAD.ActiveDocument.recompute()
 
 
@@ -61,11 +58,9 @@ def get_prop_shape(ray):
 
 class PropagatePart(WBPart):
     def __init__(self, obj):
+        WBPart.__init__(self, obj, "Propagation")
 
-        WBPart.__init__(self,obj,"Propagation")
-
-
-        self.S,rays = getActiveSystem()
+        self.S, rays = getActiveSystem()
         self.S.ray_add(rays)
         self.S.propagate()
 
