@@ -17,5 +17,5 @@ setup(name='freecad.pyoptools',
       maintainer_email="ramezquitao@cihologramas.com",
       #url="https://github.com/FreeCAD/Workbench-Starterkit",
       description="Workbenck for pyOpTools",
-      install_requires=['numpy'], # should be satisfied by FreeCAD's system dependencies already
+      #install_requires=['numpy'], # should be satisfied by FreeCAD's system dependencies already
       include_package_data=True)
