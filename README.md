@@ -9,8 +9,8 @@ installation for python3.
 
 ## Linux Installation
 
-Clone directly the git into the Mod dir in your FreeCAD root directory, that usually means cloning into ~/.FreeCAD/Mod
-directory.
+Clone directly the git repository into the Mod dir of FreeCAD. This usually
+means cloning the repo into ~/.local/share/FreeCAD/Mod directory.
 
 After that you just select the "pyOpTools" workbench in FreeCAD in the usual way. As seen in the following screenshot
 ![image](https://raw.githubusercontent.com/cihologramas/freecad-pyoptools/master/media/PyOpTools-workbench-selection.png)
