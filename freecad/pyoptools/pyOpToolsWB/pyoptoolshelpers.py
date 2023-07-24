@@ -17,7 +17,7 @@ def getActiveSystem():
     complist = []
 
     for obj in objs:
-        # Todos los componentes de pyoptools tienen attributo cType
+        # All pyoptools components have a cType attribute.
         if not hasattr(obj, "cType"):
             print(
                 "Object {} not recognized by pyoptools, ignored.".format(

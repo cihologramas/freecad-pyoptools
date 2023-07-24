@@ -210,6 +210,6 @@ class RotationGUI(WBCommandGUI):
 
         FreeCADGui.Control.closeDialog()
 
-print("Ojo, falta que use la fuente de rayos selexionada. En este momento esta usando las que esten activas")
+print("Warning, This tool does not use the selected ray source. Right now it uses all the active")
 panel = RotationGUI()
 FreeCADGui.Control.showDialog(panel)

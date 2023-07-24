@@ -165,7 +165,7 @@ class CatalogComponentGUI(WBCommandGUI):
                 matcat = material.find_material(mat, exact=True, unalias=True)[0][0]
 
                 if matcat not in glass_catalogs:
-                    raise ValueError("Trying to use a wront glass catalog"
+                    raise ValueError("Trying to use a wrong glass catalog"
                                      f" {matcat} not in {glass_catalogs}")
                                      
                 obj = InsertSL(c1, c2, th, diam, "L", matcat, mat)
@@ -181,7 +181,7 @@ class CatalogComponentGUI(WBCommandGUI):
                 matcat = material.find_material(mat, exact=True, unalias=True)[0][0]
 
                 if matcat not in glass_catalogs:
-                    raise ValueError("Trying to use a wront glass catalog"
+                    raise ValueError("Trying to use a wrong glass catalog"
                                      f" {matcat} not in {glass_catalogs}")
                 
 
@@ -200,10 +200,10 @@ class CatalogComponentGUI(WBCommandGUI):
                 matcat2 = material.find_material(mat2, exact=True, unalias=True)[0][0]
 
                 if matcat1 not in glass_catalogs:
-                    raise ValueError("Trying to use a wront glass catalog"
+                    raise ValueError("Trying to use a wrong glass catalog"
                                      f" {matcat1} not in {glass_catalogs}")
                 if matcat2 not in glass_catalogs:
-                    raise ValueError("Trying to use a wront glass catalog"
+                    raise ValueError("Trying to use a wrong glass catalog"
                                      f" {matcat2} not in {glass_catalogs}")
                 
                 obj = InsertDL(
@@ -238,10 +238,10 @@ class CatalogComponentGUI(WBCommandGUI):
                 matcat2 = material.find_material(mat2, exact=True, unalias=True)[0][0]
 
                 if matcat1 not in glass_catalogs:
-                    raise ValueError("Trying to use a wront glass catalog"
+                    raise ValueError("Trying to use a wrong glass catalog"
                                      f" {matcat1} not in {glass_catalogs}")
                 if matcat2 not in glass_catalogs:
-                    raise ValueError("Trying to use a wront glass catalog"
+                    raise ValueError("Trying to use a wrong glass catalog"
                                      f" {matcat2} not in {glass_catalogs}")
                                      
                 obj = InsertDL(

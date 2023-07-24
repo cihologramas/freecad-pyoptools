@@ -2,7 +2,7 @@
 
 Workbench to integrate pyoptools with freecad, that means basically optics ray tracing capabilities for FreeCAD.
 
-## Requirements
+## Prerequisite
 
 It requires a working [FreeCAD](https://freecadweb.org/) with python3 support,  and [pyoptools](https://github.com/cihologramas/pyoptools) 
 installation for python3.
