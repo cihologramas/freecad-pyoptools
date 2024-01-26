@@ -28,6 +28,8 @@ def outputDialog(msg, yn=False):
 def getUIFilePath(targetfile):
     """Helper function to find UI files"""
 
-    return os.path.join(FreeCAD.ConfigGet("UserAppData"), "Mod",
-                        "freecad-pyoptools", "freecad", "pyoptools",
+    ui_file_path = os.path.join(FreeCAD.ConfigGet("UserAppData"), "Mod",
+                        "pyOpToolsWorkbench", "freecad", "pyoptools",
                         "GUI",targetfile)
+    print(ui_file_path)
+    return ui_file_path
