@@ -31,5 +31,4 @@ def getUIFilePath(targetfile):
     ui_file_path = os.path.join(FreeCAD.ConfigGet("UserAppData"), "Mod",
                         "pyOpToolsWorkbench", "freecad", "pyoptools",
                         "GUI",targetfile)
-    print(ui_file_path)
     return ui_file_path
