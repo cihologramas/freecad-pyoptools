@@ -5,7 +5,7 @@
   <version>0.0.1</version>
   <date>2023-03-20</date>
   <maintainer email="ramezquitao@cihologramas.com">Ricardo Amézquita Orozco</maintainer>
-  <license file="LICENSE">GPL-3</license>
+  <license file="LICENSE">GPL-3.0-or-later</license>
   <url type="repository" branch="master">https://github.com/cihologramas/freecad-pyoptools</url>
   <url type="readme">https://github.com/cihologramas/freecad-pyoptools/blob/master/README.md</url> 
   <icon>freecad/pyoptools/resources/pyoptools.png</icon>
