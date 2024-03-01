@@ -8,6 +8,7 @@
   <license file="LICENSE">GPL-3</license>
   <url type="repository" branch="master">https://github.com/cihologramas/freecad-pyoptools</url>
   <url type="readme">https://github.com/cihologramas/freecad-pyoptools/blob/master/README.md</url> 
+  <depend>pyoptools</depend>
   <icon>freecad/pyoptools/resources/pyoptools.png</icon>
   <content>
     <workbench>
