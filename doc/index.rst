@@ -1,41 +1,60 @@
-.. FreeCAD-pyOpTools documentation master file, created by
-   sphinx-quickstart on Mon Dec 21 15:12:20 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to FreeCAD-pyOpTools's documentation!
+Welcome to FreeCAD-pyOpTools's Documentation!
 =============================================
 
-FreeCAD-pyOpTools is a workbench designed to include in FreCAD the optical
-raytracing capabilities present in the pyOpTools library. It is meant to be a
-tool to help in the process of designinig and simulating an optical
-systems, starting from the lenses layout, and including all the optomechanical
-elements required. It is not a rendering workbench.
+Overview
+--------
+FreeCAD-pyOpTools integrates the powerful optical raytracing capabilities of 
+the pyOpTools library into FreeCAD. This workbench is designed for anyone 
+involved in the design and simulation of optical systems, facilitating work
+with lens layouts and optomechanical elements. Note that this workbench focuses
+on simulation rather than rendering.
 
-This workbench as well as documentation are a work in process.
- 
-Linux Installation
-------------------
+.. note::
+   The development of the workbench and its documentation is ongoing. Users 
+   should anticipate updates that may change functionality or compatibility.
 
-Clone directly the git repository into the Mod dir of freecad. This usually
-means cloning the repo into ~/.FreeCAD/Mod directory.
+Getting Started
+---------------
 
-
-.. warning::
-   Please have in mind that this is a work in progress, so it may change
-   radically some day, and your simulations may not run anymore.
-   
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-   install
-   newmodel
+New users are encouraged to start with the Installation Guide, which provides 
+comprehensive instructions on setting up FreeCAD-pyOpTools on various 
+operating systems.
 
 
-Indices and tables
-==================
+- :doc:`installation` - This detailed guide outlines the installation process for various operating systems, including specific steps for AppImage users on Linux.
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+Additional Resources
+--------------------
+
+-   :doc:`citing_freecad_pyoptools` - This section provides guidance on how to appropriately cite the workbench in your academic work.
+
+
+
+..
+   Explore More
+   ------------
+   After installing the workbench, dive deeper into its capabilities and learn how to use its features through our comprehensive guides:
+
+   - `Creating a New Model <newmodel.rst>`_: Learn how to create your first optical system model.
+   - `Tutorials <tutorials.rst>`_: Enhance your skills with detailed tutorials covering various aspects of optical system design.
+   - `API Reference <api_reference.rst>`_: Explore the technical details of the workbench's functions and classes.
+
+   Indices and Tables
+   ------------------
+   - `General Index <genindex.rst>`_
+   - `Module Index <modindex.rst>`_
+   - `Search Page <search.rst>`_
+
+   Contribution
+   ------------
+   Contributions to both the FreeCAD-pyOpTools workbench and its documentation are welcome. See how you can contribute to improving this project:
+
+   - `Contribution Guidelines <contribution_guidelines.rst>`_: Guidelines for contributing to the FreeCAD-pyOpTools project.
+
+..
+   Indices and tables
+   ==================
+
+   * :ref:`genindex`
+   * :ref:`modindex`
+   * :ref:`search`
