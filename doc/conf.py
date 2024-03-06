@@ -20,8 +20,8 @@
 # -- Project information -----------------------------------------------------
 
 project = 'FreeCAD-pyOpTools'
-copyright = '2020, Ricardo Amézquit Orozco'
-author = 'Ricardo Amézquit Orozco'
+copyright = '2024, Ricardo Amézquita Orozco'
+author = 'Ricardo Amézquita Orozco'
 
 # The short X.Y version
 version = ''
