@@ -135,7 +135,7 @@ class RaysArrayPart(WBPart):
         dire = (radians(RX), radians(RY), radians(RZ))
 
         r = []
-        if obj.enabled:
+        if obj.Enabled:
             if dist == "polar":
                 for x in linspace(-obj.xSize / 2, obj.xSize / 2, obj.Nx):
                     for y in linspace(-obj.ySize / 2, obj.ySize / 2, obj.Ny):

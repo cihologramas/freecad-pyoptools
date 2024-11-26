@@ -22,14 +22,14 @@ class OptimizeGUI(WBCommandGUI):
     def __init__(self):
         WBCommandGUI.__init__(self, "Optimize.ui")
         objs = FreeCAD.ActiveDocument.Objects
-        opobjs = filter(lambda x: hasattr(x, "cType"), objs)
+        opobjs = filter(lambda x: hasattr(x, "ComponentType"), objs)
 
         for i in opobjs:
 
             # No incluir las fuentes solo los elementos
-            if i.cType not in ["RaysPoint", "RaysPar"]:
+            if i.ComponentType not in ["RaysPoint", "RaysPar"]:
                 self.form.Element.addItem(i.Label, i)
-            if i.cType == "Sensor":
+            if i.ComponentType == "Sensor":
                 self.form.Sensor.addItem(i.Label, i)
 
         # add some possible solvers supported by scipy.minimize

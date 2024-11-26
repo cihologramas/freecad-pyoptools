@@ -122,13 +122,13 @@ class RotationGUI(WBCommandGUI):
             self.form.txtRaysource.setText("")
             return False
 
-        if not hasattr(obj, "cType"):
+        if not hasattr(obj, "ComponentType"):
             outputDialog("Object {} not recognized by pyoptools, ignored.".format(obj.Label))
             self.form.txtRaysource.setText("")
             return False
 
-        if obj.cType != "Ray":
-            outputDialog("Please select a 'Ray' instance, not a '{}'".format(obj.cType))
+        if obj.ComponentType != "Ray":
+            outputDialog("Please select a 'Ray' instance, not a '{}'".format(obj.ComponentType))
             self.form.txtRaysource.setText("")
             return False
         return True
@@ -141,13 +141,13 @@ class RotationGUI(WBCommandGUI):
             self.form.txtSensor.setText("")
             return False
 
-        if not hasattr(obj, "cType"):
+        if not hasattr(obj, "ComponentType"):
             outputDialog("Object {} not recognized by pyoptools, ignored.".format(obj.Label))
             self.form.txtSensor.setText("")
             return False
 
-        if obj.cType != "Sensor":
-            outputDialog("Please select a 'Sensor' instance, not a '{}'".format(obj.cType))
+        if obj.ComponentType != "Sensor":
+            outputDialog("Please select a 'Sensor' instance, not a '{}'".format(obj.ComponentType))
             self.form.txtSensor.setText("")
             return False
         return True
@@ -160,7 +160,7 @@ class RotationGUI(WBCommandGUI):
             self.form.txtComponent.setText("")
             return False
 
-        if not hasattr(obj, "cType"):
+        if not hasattr(obj, "ComponentType"):
             outputDialog("Object {} not recognized by pyoptools, ignored.".format(obj.Label))
             self.form.txtSensor.setText("")
             return False

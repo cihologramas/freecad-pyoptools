@@ -16,10 +16,10 @@ class Gate:
     def allow(self, doc, obj, sub):
         """Method that detects FreeCAD objects are allowed for selection."""
 
-        # print(hasattr(obj,"cType"))
+        # print(hasattr(obj,"ComponentType"))
         # print(obj,type(obj))
         # print(sub,type(sub))
-        return hasattr(obj, "cType")
+        return hasattr(obj, "ComponentType")
 
 
 # Mirar si con esto la seleccion se puede hacer mejor

@@ -17,15 +17,15 @@ def getActiveSystem():
     complist = []
 
     for obj in objs:
-        # All pyoptools components have a cType attribute.
-        if not hasattr(obj, "cType"):
+        # All pyoptools components have a ComponentType attribute.
+        if not hasattr(obj, "ComponentType"):
             print(
                 "Object {} not recognized by pyoptools, ignored.".format(
                     obj.Label
                 )
             )
             continue
-        if not obj.enabled:
+        if not obj.Enabled:
             continue
 
         print("Object {} recognized by pyoptools".format(obj.Label))
@@ -82,7 +82,7 @@ def getActiveSystem():
         except AttributeError:
             outputDialog(
                 "Object {} can not be read. Check if the conversion\n"
-                "file is correct. Type {}".format(obj.Label, obj.cType)
+                "file is correct. Type {}".format(obj.Label, obj.ComponentType)
             )
 
         if isinstance(e, list):
