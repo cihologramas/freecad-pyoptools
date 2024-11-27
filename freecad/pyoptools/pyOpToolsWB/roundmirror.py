@@ -20,7 +20,7 @@ class RoundMirrorGUI(WBCommandGUI):
     def __init__(self):
         pw = placementWidget()
         mw = materialWidget()
-        WBCommandGUI.__init__(self, [pw, mw, "RoundMirror.ui"])
+        super().__init__([pw, mw, "RoundMirror.ui"])
 
     def accept(self):
         Th = self.form.Thickness.value()
@@ -51,7 +51,7 @@ class RoundMirrorGUI(WBCommandGUI):
 
 class RoundMirrorMenu(WBCommandMenu):
     def __init__(self):
-        WBCommandMenu.__init__(self, RoundMirrorGUI)
+        super().__init__(RoundMirrorGUI)
 
     def GetResources(self):
         return {
@@ -69,6 +69,7 @@ class RoundMirrorPart(WBPart):
 
     This class defines properties and methods associated with round mirror components, ensuring that they can be
     integrated into the FreeCAD environment with appropriate characteristics and behaviors.
+
     Properties:
     ----------
     Reflectivity : float
@@ -88,6 +89,8 @@ class RoundMirrorPart(WBPart):
     --------------
     Version 1:
         - Added FilterType property.
+        - The dynamically generated: CutoffWavelength, LowerCutoffWavelength,
+          UpperCutoffWavelength where also added.
     Version 0:
         - Initial version with basic properties and functionalities.
     """
@@ -112,7 +115,8 @@ class RoundMirrorPart(WBPart):
             Initial material reference (default is an empty string).
         """
 
-        WBPart.__init__(self, obj, "RoundMirror")
+        super().__init__(obj, "RoundMirror")
+
         obj.Proxy = self
         obj.addProperty(
             "App::PropertyPercent",
@@ -148,6 +152,7 @@ class RoundMirrorPart(WBPart):
 
     def onChanged(self, obj, prop):
         super().onChanged(obj, prop)
+
         if prop == "FilterType":
             # Save current cutoff wavelength values
             tmpcutoffs = [0, 0]
@@ -222,8 +227,8 @@ class RoundMirrorPart(WBPart):
                 obj.UpperCutoffWavelength.getValueAs("µm"),
             )
         else:
-             raise ValueError(f"Unsupported FilterType: {obj.FilterType}")
-        print(obj.FilterType, filter_spec)
+            raise ValueError(f"Unsupported FilterType: {obj.FilterType}")
+
         material = getMaterial(obj.matcat, obj.matref)
         rm = comp_lib.RoundMirror(
             obj.D.Value / 2.0,

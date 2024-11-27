@@ -43,11 +43,21 @@ class WBPart:
         ).ComponentType = PartType
         obj.setEditorMode("ComponentType", 1)  # 1 Read-Only
 
-        obj.addProperty("App::PropertyInteger", "BaseVersion").BaseVersion = 1
+        obj.addProperty(
+            "App::PropertyInteger",
+            "BaseVersion",
+            "Versioning",
+            "Version of the base class",
+        ).BaseVersion = 1
         obj.setEditorMode("BaseVersion", 1)  # 1 Read-Only
 
         # Each object must update its object_version to its real value.
-        obj.addProperty("App::PropertyInteger", "ObjectVersion").ObjectVersion = 0
+        obj.addProperty(
+            "App::PropertyInteger",
+            "ObjectVersion",
+            "Versioning",
+            "Version of the actual object",
+        ).ObjectVersion = 0
         obj.setEditorMode("ObjectVersion", 1)  # 1 Read-Only
 
     def onDocumentRestored(self, obj):
@@ -99,12 +109,22 @@ class WBPart:
 
 
 def migrate_to_v1(obj):
-    # Create BaseVersion and ObjectVesrion properties, and set the current base version.
-    obj.addProperty("App::PropertyInteger", "BaseVersion").BaseVersion = 1
+    
+    obj.addProperty(
+        "App::PropertyInteger",
+        "BaseVersion",
+        "Versioning",
+        "Version of the base class",
+    ).BaseVersion = 1
     obj.setEditorMode("BaseVersion", 1)  # 1 Read-Only
 
-    # Before this, Objects where unversioned
-    obj.addProperty("App::PropertyInteger", "ObjectVersion").ObjectVersion = 0
+    # Each object must update its object_version to its real value.
+    obj.addProperty(
+        "App::PropertyInteger",
+        "ObjectVersion",
+        "Versioning",
+        "Version of the actual object",
+    ).ObjectVersion = 0
     obj.setEditorMode("ObjectVersion", 1)  # 1 Read-Only
 
     # Rename the ComponentType attribute and remove it
@@ -120,4 +140,4 @@ def migrate_to_v1(obj):
     obj.addProperty("App::PropertyBool", "Enabled").Enabled = obj.enabled
     obj.removeProperty("enabled")
 
-    _wrn("Migrating base object from v0 to v1\n")
+    _wrn(f"Migrating base object of {obj.ComponentType} from v0 to v1\n")
