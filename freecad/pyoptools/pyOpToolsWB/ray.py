@@ -68,7 +68,7 @@ class RayPart(WBPart):
 
         # wavelength is received in nm
         obj.wl = Units.Quantity("{} nm".format(wavelength))
-        obj.enabled = enabled
+        obj.Enabled = enabled
 
         r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
         obj.ViewObject.ShapeColor = (r, g, b, 0.0)

@@ -76,7 +76,7 @@ class RaysParPart(WBPart):
         obj.distribution=distribution.lower()
         obj.wl = Units.Quantity("{} nm".format(wavelength)) # wavelength is received in nm
         obj.D = D
-        obj.enabled = enabled
+        obj.Enabled = enabled
         r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
 
         obj.ViewObject.ShapeColor = (r, g, b, 0.0)
@@ -102,7 +102,7 @@ class RaysParPart(WBPart):
         wl = obj.wl.getValueAs("µm").Value
         R = obj.D / 2.0
         r = []
-        if obj.enabled:
+        if obj.Enabled:
             if dist == "polar":
                 r = rs_lib.parallel_beam_p(
                     origin=(X, Y, Z),

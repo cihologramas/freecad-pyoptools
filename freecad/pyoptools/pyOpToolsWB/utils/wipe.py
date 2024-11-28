@@ -24,8 +24,8 @@ class WipeMenu:
             objs = FreeCAD.ActiveDocument.Objects
             todelete = []
             for obj in objs:
-                if hasattr(obj, "cType"):
-                    if obj.cType == "Propagation":
+                if hasattr(obj, "ComponentType"):
+                    if obj.ComponentType == "Propagation":
                         print("removing Propagation")
                         todelete.append(obj.Label)
                         continue

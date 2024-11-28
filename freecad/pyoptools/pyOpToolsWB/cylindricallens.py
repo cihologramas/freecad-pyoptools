@@ -131,6 +131,9 @@ class CylindricalLensPart(WBPart):
         Idea taken from:
         https://wiki.freecadweb.org/Scripted_objects_migration
         """
+        
+        super().onDocumentRestored(obj)
+        
         FreeCAD.Console.PrintWarning(
             "Reconfiguring PropertyPrecision in cylindricallens"
         )

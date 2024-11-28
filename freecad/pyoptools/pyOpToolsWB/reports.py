@@ -29,21 +29,21 @@ class ReportsMenu:
 
 
         #Eliminar los grupos y los rayos
-        opobjs = list(filter(lambda x:hasattr(x,"cType"),objs))
+        opobjs = list(filter(lambda x:hasattr(x,"ComponentType"),objs))
 
         #Buscar los sensores
-        a_sensors = list(filter(lambda x: x.cType=="Sensor",opobjs))
+        a_sensors = list(filter(lambda x: x.ComponentType=="Sensor",opobjs))
 
         #Mirar cuales estan activos
 
-        sensors = list(filter(lambda x:x.enabled, a_sensors))
+        sensors = list(filter(lambda x:x.Enabled, a_sensors))
 
 
         #Sacar los labels de los sensores
         slabels = list(map(lambda x:x.Label,sensors))
 
         #Buscar las propagaciones
-        props = list(filter(lambda x: x.cType=="Propagation",opobjs))
+        props = list(filter(lambda x: x.ComponentType=="Propagation",opobjs))
 
         #Sacar los sistemas opticos de las propagaciones
         ss = list(map(lambda x: x.Proxy.S, props))

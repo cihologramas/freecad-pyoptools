@@ -78,7 +78,7 @@ class RaysPointPart(WBPart):
         obj.distribution=distribution.lower()
         obj.wl = Units.Quantity("{} nm".format(wavelength)) # wavelength is received in nm
         obj.angle = angle
-        obj.enabled = enabled
+        obj.Enabled = enabled
 
         r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
         obj.ViewObject.ShapeColor = (r, g, b, 0.0)
