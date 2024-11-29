@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Classes used to define an ideal thick lens."""
+
 import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
@@ -84,7 +85,6 @@ class ThickLensPart(WBPart):
         SPP=False,
         SFRT=False,
     ):
-
         WBPart.__init__(self, obj, "ThickLens")
         obj.Proxy = self
         obj.addProperty(
@@ -106,12 +106,8 @@ class ThickLensPart(WBPart):
             "Shape",
             "Principal plane 2 position",
         )
-        obj.addProperty(
-            "App::PropertyDistance", "PupP", "Shape", "Pupil position"
-        )
-        obj.addProperty(
-            "App::PropertyDistance", "PupD", "Shape", "Pupil diameter"
-        )
+        obj.addProperty("App::PropertyDistance", "PupP", "Shape", "Pupil position")
+        obj.addProperty("App::PropertyDistance", "PupD", "Shape", "Pupil diameter")
         obj.addProperty(
             "App::PropertyBool",
             "PupRS",
@@ -122,15 +118,9 @@ class ThickLensPart(WBPart):
             "App::PropertyBool", "PupEn", "Shape", "Enable pupil simulation"
         )
 
-        obj.addProperty(
-            "App::PropertyDistance", "f", "Shape", "lens Focal length"
-        )
-        obj.addProperty(
-            "App::PropertyBool", "SPP", "Other", "Show principal planes"
-        )
-        obj.addProperty(
-            "App::PropertyBool", "SFRT", "Other", "Show full ray trace"
-        )
+        obj.addProperty("App::PropertyDistance", "f", "Shape", "lens Focal length")
+        obj.addProperty("App::PropertyBool", "SPP", "Other", "Show principal planes")
+        obj.addProperty("App::PropertyBool", "SFRT", "Other", "Show full ray trace")
         obj.Thk = Th
         obj.D = D
         obj.PP1P = PP1
@@ -152,7 +142,6 @@ class ThickLensPart(WBPart):
         obj.ViewObject.ShapeColor = (1.0, 0.0, 0.0, 0.0)
 
     def pyoptools_repr(self, obj):
-
         if not obj.PupEn:
             pupil = None
         else:
@@ -167,9 +156,9 @@ class ThickLensPart(WBPart):
             Circular(radius=obj.D.Value / 2.0),
             obj.Thk.Value,
             (obj.PP1P.Value, obj.PP2P.Value),
-            f=obj.f.Value,
-            complete_trace=obj.SFRT,
-            pupils=pupil,
+            focal_length=obj.f.Value,
+            show_internal_rays=obj.SFRT,
+            pupil_config=pupil,
         )
 
     def execute(self, obj):
@@ -228,11 +217,7 @@ def InsertTL(
     import FreeCAD
 
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", ID)
-    ThickLensPart(
-        myObj, Th, D, PP1, PP2, f, PupP, PupD, PupRS, PupEn, SPP, SFRT
-    )
-    myObj.ViewObject.Proxy = (
-        0  # this is mandatory unless we code the ViewProvider too
-    )
+    ThickLensPart(myObj, Th, D, PP1, PP2, f, PupP, PupD, PupRS, PupEn, SPP, SFRT)
+    myObj.ViewObject.Proxy = 0  # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj

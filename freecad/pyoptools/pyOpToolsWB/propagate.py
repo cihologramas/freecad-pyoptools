@@ -40,11 +40,11 @@ class PropagateMenu:
 
 
 def get_prop_shape(ray):
-    P1 = FreeCAD.Base.Vector(tuple(ray.pos))
+    P1 = FreeCAD.Base.Vector(tuple(ray.origin))
     if len(ray.childs) > 0:
-        P2 = FreeCAD.Base.Vector(tuple(ray.childs[0].pos))
+        P2 = FreeCAD.Base.Vector(tuple(ray.childs[0].origin))
     else:
-        P2 = FreeCAD.Base.Vector(tuple(ray.pos + 10.0 * ray.dir))
+        P2 = FreeCAD.Base.Vector(tuple(ray.origin + 10.0 * ray.direction))
 
     if ray.intensity != 0:
         L1 = [Part.makeLine(P1, P2)]

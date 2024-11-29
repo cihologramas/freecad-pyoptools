@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Classes used to define a single ray."""
+
 import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
@@ -18,7 +19,6 @@ class RayGUI(WBCommandGUI):
         WBCommandGUI.__init__(self, [pw, "Ray.ui"])
 
     def accept(self):
-
         X = self.form.Xpos.value()
         Y = self.form.Ypos.value()
         Z = self.form.Zpos.value()
@@ -26,7 +26,7 @@ class RayGUI(WBCommandGUI):
         Xrot = self.form.Xrot.value()
         Yrot = self.form.Yrot.value()
         Zrot = self.form.Zrot.value()
-        
+
         wavelength = self.form.wavelength.value()
         enabled = self.form.Enabled.isChecked()
 
@@ -36,8 +36,8 @@ class RayGUI(WBCommandGUI):
         m.rotateZ(radians(Zrot))
 
         m.move((X, Y, Z))
-        
-        obj=InsertRay(wavelength, "R", enabled)
+
+        obj = InsertRay(wavelength, "R", enabled)
 
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
@@ -59,8 +59,8 @@ class RayMenu(WBCommandMenu):
 
 
 class RayPart(WBPart):
-    def __init__(self,obj, wavelength=633, enabled=True):
-        WBPart.__init__(self,obj,"Ray")
+    def __init__(self, obj, wavelength=633, enabled=True):
+        WBPart.__init__(self, obj, "Ray")
         obj.Proxy = self
         obj.addProperty(
             "App::PropertyLength", "wl", "Options", "Wavelength of the source"
@@ -74,7 +74,6 @@ class RayPart(WBPart):
         obj.ViewObject.ShapeColor = (r, g, b, 0.0)
 
     def propertyChanged(self, obj, prop):
-
         # To keep all the housekeeping that WBPart do, this method replaces
         # the standard onChanged
 
@@ -83,7 +82,6 @@ class RayPart(WBPart):
             obj.ViewObject.ShapeColor = (r, g, b, 0.0)
 
     def pyoptools_repr(self, obj):
-
         wl = obj.wl.getValueAs("µm").Value
 
         pla = obj.getGlobalPlacement()
@@ -92,7 +90,7 @@ class RayPart(WBPart):
         r_vec = pla.Rotation.multVec(FreeCAD.Base.Vector(0, 0, 1))
 
         return [
-            Ray(pos=(X, Y, Z), dir=(r_vec.x, r_vec.y, r_vec.z), wavelength=wl)
+            Ray(origin=(X, Y, Z), direction=(r_vec.x, r_vec.y, r_vec.z), wavelength=wl)
         ]
 
     def execute(self, obj):
