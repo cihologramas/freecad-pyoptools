@@ -7,6 +7,7 @@ from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import (
     placementWidget,
 )
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
+from .feedback import FeedbackHelper
 import Part
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
@@ -19,6 +20,7 @@ class CylindricalLensGUI(WBCommandGUI):
         mw = materialWidget()
         WBCommandGUI.__init__(self, [pw, mw, "CylindricalLens.ui"])
 
+    @FeedbackHelper.with_error_handling("Cylindrical Lens")
     def accept(self):
         CS1 = self.form.CS1.value()
         CS2 = self.form.CS2.value()
@@ -47,7 +49,6 @@ class CylindricalLensGUI(WBCommandGUI):
         m.move((X, Y, Z))
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-        FreeCADGui.Control.closeDialog()
 
 
 class CylindricalLensMenu(WBCommandMenu):

@@ -1,5 +1,5 @@
 import FreeCADGui
-from PySide import QtGui, QtCore
+from PySide import QtCore, QtGui, QtWidgets
 from pyOpToolsWB.qthelpers import getUIFilePath
 
 from pyOpToolsWB.widgets.materialWidget import materialWidget

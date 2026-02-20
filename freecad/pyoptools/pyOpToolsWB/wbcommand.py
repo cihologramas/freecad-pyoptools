@@ -5,12 +5,13 @@
 import FreeCAD
 import FreeCADGui
 from freecad.pyoptools.pyOpToolsWB.qthelpers import getUIFilePath
-from PySide import QtGui
+from PySide import QtGui, QtWidgets
 
 from .wbpart import WBPart
+from .feedback import FeedbackHelper
 
 
-class widgetMix(QtGui.QDialog):
+class widgetMix(QtWidgets.QDialog):
     """Class to emulate a QDialog where multiple widgets behave as one.
 
     This class has an addWidget method, that allows to "merge" the widgets so
@@ -23,7 +24,7 @@ class widgetMix(QtGui.QDialog):
 
     def __init__(self, parent=None):
         super(widgetMix, self).__init__(parent)
-        self.layout = QtGui.QVBoxLayout()
+        self.layout = QtWidgets.QVBoxLayout()
         self.setLayout(self.layout)
         self.widgets = []
         self.extra_attribs = {}
@@ -69,10 +70,20 @@ class widgetMix(QtGui.QDialog):
         except KeyError:
             raise AttributeError
 
+    def reject(self):
+        """Handle dialog cancellation (ESC key or Cancel button).
+
+        When used with FreeCAD's Control.showDialog(), we must explicitly
+        call closeDialog() to properly clean up the FreeCAD control panel.
+
+        This fixes the issue where pressing ESC would close the widget view
+        but leave the OK/Cancel buttons visible.
+        """
+        FreeCADGui.Control.closeDialog()
+
 
 class WBCommandGUI:
     def __init__(self, gui):
-
         if isinstance(gui, str):
             fn = getUIFilePath(gui)
             self.form = FreeCADGui.PySideUic.loadUi(fn)
@@ -83,7 +94,7 @@ class WBCommandGUI:
                     fn = getUIFilePath(w)
                     nw = FreeCADGui.PySideUic.loadUi(fn)
                     self.form.addWidget(nw)
-                elif isinstance(w, QtGui.QWidget):
+                elif isinstance(w, QtWidgets.QWidget):
                     self.form.addWidget(w)
                 elif isinstance(w, dict):
                     for name, nw in w.items():
@@ -104,6 +115,55 @@ class WBCommandMenu:
         else:
             return True
 
+    def _get_tooltip_with_disabled_reason(
+        self, base_tooltip, disabled_reason="No document open"
+    ):
+        """Helper method to generate tooltip with disabled reason if applicable.
+
+        Args:
+            base_tooltip: The base tooltip text
+            disabled_reason: The reason why the command is disabled (default: "No document open")
+
+        Returns:
+            str: Tooltip with disabled reason appended if command is not active
+
+        Example:
+            def GetResources(self):
+                tooltip = self._get_tooltip_with_disabled_reason(
+                    "Insert spherical lens (Ctrl+L)",
+                    "No document open"
+                )
+                return {"ToolTip": tooltip, ...}
+        """
+        if not self.IsActive():
+            return f"{base_tooltip} - Disabled: {disabled_reason}"
+        return base_tooltip
+
     def Activated(self):
-        sl = self.gui()
-        FreeCADGui.Control.showDialog(sl)
+        """Show the component dialog with automatic error handling.
+
+        This method wraps the dialog display with user-friendly error handling.
+        Subclasses can override this method if needed, but should call super().Activated()
+        or use the @FeedbackHelper.with_error_handling decorator.
+        """
+        try:
+            sl = self.gui()
+            FreeCADGui.Control.showDialog(sl)
+        except Exception as e:
+            # Get component name from GetResources if available
+            component_name = "Component"
+            try:
+                if hasattr(self, "GetResources"):
+                    resources = self.GetResources()
+                    component_name = resources.get("MenuText", "Component")
+            except:
+                pass
+
+            FeedbackHelper.show_error_dialog(
+                f"Failed to Open {component_name} Dialog",
+                FeedbackHelper.format_error(
+                    e,
+                    f"Could not open the {component_name.lower()} creation dialog.\n\n"
+                    "Please ensure FreeCAD is properly configured and try again.",
+                ),
+            )

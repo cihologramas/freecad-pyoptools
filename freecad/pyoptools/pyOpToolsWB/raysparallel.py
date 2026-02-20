@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """Classes used to define a beam of parallel rays."""
+
 import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
+from .feedback import FeedbackHelper
 
 from pyoptools.misc.pmisc.misc import wavelength2RGB
 import pyoptools.raytrace.ray.ray_source as rs_lib
@@ -16,8 +18,8 @@ class RaysParallelGUI(WBCommandGUI):
         pw = placementWidget()
         WBCommandGUI.__init__(self, [pw, "RaysParallel.ui"])
 
+    @FeedbackHelper.with_error_handling("Parallel Rays")
     def accept(self):
-
         X = self.form.Xpos.value()
         Y = self.form.Ypos.value()
         Z = self.form.Zpos.value()
@@ -44,7 +46,6 @@ class RaysParallelGUI(WBCommandGUI):
 
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-        FreeCADGui.Control.closeDialog()
 
 
 class RaysParallelMenu(WBCommandMenu):
@@ -61,37 +62,49 @@ class RaysParallelMenu(WBCommandMenu):
 
 
 class RaysParPart(WBPart):
-    def __init__(self,obj,nr=6,na=6,distribution="polar",wavelength=633, D=5,enabled=True):
-        WBPart.__init__(self,obj,"RaysPar",enabled)
+    def __init__(
+        self, obj, nr=6, na=6, distribution="polar", wavelength=633, D=5, enabled=True
+    ):
+        WBPart.__init__(self, obj, "RaysPar", enabled)
 
-        obj.addProperty("App::PropertyIntegerConstraint","nr","Shape","Number of rays (radial)").nr=(0,0,10000,1)
-        obj.addProperty("App::PropertyIntegerConstraint","na","Shape","Number of rays (angular)").na=(0,0,10000,1)
-        obj.addProperty("App::PropertyString","distribution","Options","Ray distribution (Polar for the moment)")
-        obj.addProperty("App::PropertyLength","wl","Options","Wavelength of the source")
-        obj.addProperty("App::PropertyLength","D","Shape","Ray Source Diameter")
-        #obj.addProperty("App::PropertyVector","axis","","Direction of propagation")
+        obj.addProperty(
+            "App::PropertyIntegerConstraint", "nr", "Shape", "Number of rays (radial)"
+        ).nr = (0, 0, 10000, 1)
+        obj.addProperty(
+            "App::PropertyIntegerConstraint", "na", "Shape", "Number of rays (angular)"
+        ).na = (0, 0, 10000, 1)
+        obj.addProperty(
+            "App::PropertyString",
+            "distribution",
+            "Options",
+            "Ray distribution (Polar for the moment)",
+        )
+        obj.addProperty(
+            "App::PropertyLength", "wl", "Options", "Wavelength of the source"
+        )
+        obj.addProperty("App::PropertyLength", "D", "Shape", "Ray Source Diameter")
+        # obj.addProperty("App::PropertyVector","axis","","Direction of propagation")
 
-        obj.nr=nr
-        obj.na=na
-        obj.distribution=distribution.lower()
-        obj.wl = Units.Quantity("{} nm".format(wavelength)) # wavelength is received in nm
+        obj.nr = nr
+        obj.na = na
+        obj.distribution = distribution.lower()
+        obj.wl = Units.Quantity(
+            "{} nm".format(wavelength)
+        )  # wavelength is received in nm
         obj.D = D
         obj.Enabled = enabled
         r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
 
         obj.ViewObject.ShapeColor = (r, g, b, 0.0)
 
-    def propertyChanged(self, obj, prop):
-
-        # To keep all the housekeeping that WBPart do, this method replaces
-        # the standard onChanged
+    def onChanged(self, obj, prop):
+        super().onChanged(obj, prop)
 
         if prop == "wl":
             r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
             obj.ViewObject.ShapeColor = (r, g, b, 0.0)
 
     def pyoptools_repr(self, obj):
-
         pla = obj.getGlobalPlacement()
 
         X, Y, Z = pla.Base
@@ -102,6 +115,9 @@ class RaysParPart(WBPart):
         wl = obj.wl.getValueAs("µm").Value
         R = obj.D / 2.0
         r = []
+        
+        label = obj.Label
+        
         if obj.Enabled:
             if dist == "polar":
                 r = rs_lib.parallel_beam_p(
@@ -110,7 +126,7 @@ class RaysParPart(WBPart):
                     radius=R,
                     num_rays=(nr, na),
                     wavelength=wl,
-                    label="",
+                    label=label,
                 )
             elif dist == "cartesian":
                 print("cartesian ray distribution, not implemented yet")
@@ -140,11 +156,13 @@ class RaysParPart(WBPart):
         obj.Shape = d
 
 
-
-def InsertRPar(nr=6, na=6,distribution="polar",wavelength=633,D=5,ID="S",enabled = True):
+def InsertRPar(
+    nr=6, na=6, distribution="polar", wavelength=633, D=5, ID="S", enabled=True
+):
     import FreeCAD
-    myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",ID)
-    RaysParPart(myObj,nr,na,distribution,wavelength,D,enabled)
-    myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
+
+    myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", ID)
+    RaysParPart(myObj, nr, na, distribution, wavelength, D, enabled)
+    myObj.ViewObject.Proxy = 0  # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj

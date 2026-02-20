@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Classes used to define an aperture."""
+from .feedback import FeedbackHelper
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 import FreeCAD
@@ -19,6 +20,7 @@ class ApertureGUI(WBCommandGUI):
         pw = placementWidget()
         WBCommandGUI.__init__(self, [pw, "Aperture.ui"])
 
+    @FeedbackHelper.with_error_handling("Aperture")
     def accept(self):
         inDiam = self.form.InD.value()
         outDiam = self.form.OutD.value()
@@ -38,7 +40,6 @@ class ApertureGUI(WBCommandGUI):
         m.move((X, Y, Z))
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-        FreeCADGui.Control.closeDialog()
 
 
 class ApertureMenu(WBCommandMenu):

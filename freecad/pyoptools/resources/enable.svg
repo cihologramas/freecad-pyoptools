@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" version="1.1" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(0,-233)">
+  <!-- Power button circle (filled, indicating ON state) -->
+  <circle cx="32" cy="265" r="20" 
+          fill="#4CAF50" opacity="0.2"/>
+  <circle cx="32" cy="265" r="20" 
+          fill="none" stroke="#4CAF50" stroke-width="3"/>
+  
+  <!-- Power symbol: vertical line (on) -->
+  <path d="M 32,250 L 32,265" 
+        stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Power symbol: arc at top (standard power icon) -->
+  <path d="M 23,257 A 13 13 0 0 1 41,257" 
+        fill="none" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+ </g>
+</svg>

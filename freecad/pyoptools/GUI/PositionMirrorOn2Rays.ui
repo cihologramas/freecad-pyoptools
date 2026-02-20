@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PositionMirrorOn2Rays</class>
+ <widget class="QWidget" name="PositionMirrorOn2Rays">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>350</width>
+     <height>350</height>
+    </rect>
+   </property>
+  <property name="windowTitle">
+   <string>Position Mirror on 2 Rays</string>
+  </property>
+  <layout class="QVBoxLayout" name="mainLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::ExpandingFieldsGrow</enum>
+     </property>
+     
+     <!-- Ray 1 Selection -->
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_ray1">
+       <property name="text">
+        <string>Ray 1:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <layout class="QHBoxLayout">
+       <item>
+        <widget class="QLabel" name="ray1Label">
+         <property name="text">
+          <string>(Not selected)</string>
+         </property>
+         <property name="styleSheet">
+          <string>color: gray; font-style: italic;</string>
+         </property>
+        </widget>
+       </item>
+        <item>
+          <widget class="QPushButton" name="pickRay1Button">
+           <property name="text">
+            <string></string>
+           </property>
+           <property name="maximumWidth">
+            <number>32</number>
+           </property>
+          </widget>
+        </item>
+      </layout>
+     </item>
+     
+     <!-- Ray 1 Info -->
+     <item row="1" column="1">
+      <widget class="QLabel" name="ray1P1Label">
+       <property name="text">
+        <string></string>
+       </property>
+       <property name="toolTip">
+        <string>Ray 1 origin/P1</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="ray1P2Label">
+       <property name="text">
+        <string></string>
+       </property>
+       <property name="toolTip">
+        <string>Ray 1 direction/P2</string>
+       </property>
+      </widget>
+     </item>
+     
+     <!-- Invert Ray 1 Direction -->
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="invertRay1">
+       <property name="text">
+        <string>Invert Ray 1 Direction</string>
+       </property>
+      </widget>
+     </item>
+     
+     <!-- Spacer -->
+     <item row="4" column="0" colspan="2">
+      <widget class="Line" name="line_1">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     
+     <!-- Ray 2 Selection -->
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_ray2">
+       <property name="text">
+        <string>Ray 2:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <layout class="QHBoxLayout">
+       <item>
+        <widget class="QLabel" name="ray2Label">
+         <property name="text">
+          <string>(Not selected)</string>
+         </property>
+         <property name="styleSheet">
+          <string>color: gray; font-style: italic;</string>
+         </property>
+        </widget>
+       </item>
+        <item>
+          <widget class="QPushButton" name="pickRay2Button">
+           <property name="text">
+            <string></string>
+           </property>
+           <property name="maximumWidth">
+            <number>32</number>
+           </property>
+          </widget>
+        </item>
+      </layout>
+     </item>
+     
+     <!-- Ray 2 Info -->
+     <item row="6" column="1">
+      <widget class="QLabel" name="ray2P1Label">
+       <property name="text">
+        <string></string>
+       </property>
+       <property name="toolTip">
+        <string>Ray 2 origin/P1</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QLabel" name="ray2P2Label">
+       <property name="text">
+        <string></string>
+       </property>
+       <property name="toolTip">
+        <string>Ray 2 direction/P2</string>
+       </property>
+      </widget>
+     </item>
+     
+     <!-- Invert Ray 2 Direction -->
+     <item row="8" column="1">
+      <widget class="QCheckBox" name="invertRay2">
+       <property name="text">
+        <string>Invert Ray 2 Direction</string>
+       </property>
+      </widget>
+     </item>
+     
+     <!-- Spacer -->
+     <item row="9" column="0" colspan="2">
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     
+     <!-- Mirror Selection -->
+     <item row="10" column="0">
+      <widget class="QLabel" name="label_mirror">
+       <property name="text">
+        <string>Mirror:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="1">
+      <layout class="QHBoxLayout">
+       <item>
+        <widget class="QComboBox" name="mirrorComboBox"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pickMirrorButton">
+         <property name="text">
+          <string></string>
+         </property>
+         <property name="maximumWidth">
+          <number>32</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     
+     <!-- Invert Mirror Normal Checkbox -->
+     <item row="11" column="1">
+      <widget class="QCheckBox" name="invertNormal">
+       <property name="text">
+        <string>Invert Mirror Normal</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   
+   <!-- Status/Info Label -->
+   <item>
+    <widget class="QLabel" name="statusLabel">
+     <property name="text">
+      <string></string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="styleSheet">
+      <string>padding: 5px; background-color: #f0f0f0; border-radius: 3px;</string>
+     </property>
+    </widget>
+   </item>
+   
+   <!-- Spacer to push buttons down -->
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   
+   <!-- Apply/Close Buttons -->
+   <item>
+    <layout class="QHBoxLayout" name="buttonLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="applyButton">
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="closeButton">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

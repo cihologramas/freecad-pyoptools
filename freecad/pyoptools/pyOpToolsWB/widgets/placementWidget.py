@@ -1,213 +1,289 @@
 import FreeCADGui
-from PySide import QtGui, QtCore
+from PySide import QtCore, QtGui, QtWidgets
 from freecad.pyoptools.pyOpToolsWB.qthelpers import getUIFilePath
-from pivy import coin
+from freecad.pyoptools.pyOpToolsWB.selectionhelpers import SelectionObserver
 import FreeCAD
 import Part
+import math
 
 
-class Gate:
-    """Class that define which elements can be selected.
-
-    Used with: FreeCADGui.Selection.addSelectionGate(Gate())
-    https://forum.freecadweb.org/viewtopic.php?t=6229.
-    """
-
-    def allow(self, doc, obj, sub):
-        """Method that detects FreeCAD objects are allowed for selection."""
-
-        # print(hasattr(obj,"ComponentType"))
-        # print(obj,type(obj))
-        # print(sub,type(sub))
-        return hasattr(obj, "ComponentType")
-
-
-# Mirar si con esto la seleccion se puede hacer mejor
-
-
-class SelObserver:
-    def __init__(self):
-        view = FreeCADGui.ActiveDocument.ActiveView
-        self.root = view.getSceneGraph()
-
-    def addSelection(self, doc, obj, sub, pnt):
-        FreeCADGui.Selection.clearSelection()
-        # print("addSelection")
-
-    def removeSelection(self, doc, obj, sub):
-        # print ("removeSelection")
-        pass
-
-    def setSelection(self, doc):
-        # print ("setSelection")
-        pass
-
-    def clearSelection(self, doc):
-        # print("clearSelection")
-        pass
-
-
-# Mirar mejor https://wiki.freecadweb.org/index.php?title=Code_snippets
-# Function_resident_with_the_mouse_click_action
-# https://github.com/yorikvanhavre/FreeCAD/blob/master/src/Mod/TemplatePyMod/TaskPanel.py
+# Legacy classes removed - now using modern SelectionObserver pattern from selectionhelpers.py
 
 
 def isLine(edge):
-    """Some ideas taken from a2plib.py from A2+ workbench"""
+    """Check if edge is a straight line."""
     if not hasattr(edge, "Curve"):
         return False
-    if isinstance(edge.Curve, Part.Line):
+    return isinstance(edge.Curve, Part.Line)
+
+
+def isCircleOrArc(edge):
+    """Check if edge is a circle or arc."""
+    if not hasattr(edge, "Curve"):
+        return False
+    return isinstance(edge.Curve, (Part.Circle, Part.ArcOfCircle))
+
+
+def isValidCurveForCapture(edge):
+    """Check if edge is valid for position/orientation capture (line, circle, or arc)."""
+    return isLine(edge) or isCircleOrArc(edge)
+
+
+def isValidFaceForCapture(face):
+    """Check if face is valid for position/orientation capture.
+    
+    Accepts planar faces (flat surfaces) and cylindrical/conical surfaces.
+    """
+    if not hasattr(face, "Surface"):
+        return False
+    
+    surface = face.Surface
+    # Accept planar faces (flat surfaces like mirrors, rectangular surfaces)
+    if isinstance(surface, Part.Plane):
         return True
+    # Accept cylindrical faces (lens surfaces)
+    if isinstance(surface, (Part.Cylinder, Part.Cone, Part.Sphere, Part.Toroid)):
+        return True
+    
     return False
 
 
-class EventLogger(QtCore.QObject):
-    def eventFilter(self, obj, event):
-        print(event)
-        return QtCore.QObject.eventFilter(self, obj, event)
+# EventLogger class removed - no longer needed with SelectionObserver pattern
 
 
-class placementWidget(QtGui.QWidget):
+class placementWidget(QtWidgets.QWidget):
     def __init__(self):
         super(placementWidget, self).__init__()
         self.initUI()
-        self.so = None
+        self.position_observer = None
+        self.orientation_observer = None
 
     def initUI(self):
         fn1 = getUIFilePath("positionWidget.ui")
         self.ui = FreeCADGui.PySideUic.loadUi(fn1, self)
         self.setLayout(self.ui.mainLayout)
 
-        self.ui.orienCap.toggled.connect(self.getOrientation)
+        # Connect buttons to new pick methods
         self.ui.posCap.toggled.connect(self.getPosition)
-
-        self.view = FreeCADGui.ActiveDocument.ActiveView
-        self.snap_point = None
-
-        view = FreeCADGui.ActiveDocument.ActiveView
-        self.root = view.getSceneGraph()
-        # view.addEventCallbackPivy( coin.SoLocation2Event.getClassTypeId(), self.mouse_over_cb )
+        self.ui.orienCap.toggled.connect(self.getOrientation)
+        
+        # Setup button icons
+        self._setupPickButtonIcons()
 
     def hideEvent(self, event):
         event.accept()  # let the window close
-        self.clearEvents()
-
-    def registerEvents(self):
-        if self.so is None:
-            self.so = SelObserver()
-            self.gate = Gate()
-            FreeCADGui.Selection.addSelectionGate(self.gate)
-            FreeCADGui.Selection.addObserver(self.so)
-            self.mouse_over = self.view.addEventCallbackPivy(
-                coin.SoLocation2Event.getClassTypeId(), self.mouse_over_cb
-            )
-            self.mouse_click = self.view.addEventCallbackPivy(
-                coin.SoMouseButtonEvent.getClassTypeId(), self.mouse_click_cb
-            )
-
-    def clearEvents(self):
-        if self.so is not None:
-            FreeCADGui.Selection.removeObserver(self.so)
-            FreeCADGui.Selection.removeSelectionGate()
-            self.view.removeEventCallbackPivy(
-                coin.SoLocation2Event.getClassTypeId(), self.mouse_over
-            )
-            self.view.removeEventCallbackPivy(
-                coin.SoMouseButtonEvent.getClassTypeId(), self.mouse_click
-            )
-            self.so = None
-
-        if self.snap_point is not None:
-            self.root.removeChild(self.SnapNode)
-            self.snap_point = None
-
-    def getOrientation(self, checked):
-        self.clearEvents()
-        if checked:
-            self.ui.posCap.setChecked(False)
-            self.registerEvents()
-        else:
-            pass
+        self.stopAllPicking()
+    
+    def _setupPickButtonIcons(self):
+        """Setup icons for pick buttons to match positiononray.py style."""
+        try:
+            from freecad.pyoptools import ICONPATH
+            import os
+            
+            icon_path = os.path.join(ICONPATH, "pick-from-view.svg")
+            if os.path.exists(icon_path):
+                icon = QtGui.QIcon(icon_path)
+                self.ui.posCap.setIcon(icon)
+                self.ui.orienCap.setIcon(icon)
+                self.ui.posCap.setIconSize(QtCore.QSize(16, 16))
+                self.ui.orienCap.setIconSize(QtCore.QSize(16, 16))
+        except Exception as e:
+            # If icon loading fails, buttons will just show without icon
+            FreeCAD.Console.PrintLog(f"Could not load pick button icons: {e}\n")
+    
+    def stopAllPicking(self):
+        """Stop all active picking operations."""
+        self.stopPositionPick()
+        self.stopOrientationPick()
 
     def getPosition(self, checked):
-        self.clearEvents()
+        """Handle position capture button toggle."""
         if checked:
-            print("add")
+            # Stop orientation picking if active
             self.ui.orienCap.setChecked(False)
-            self.registerEvents()
+            self.stopOrientationPick()
+            # Start position picking
+            self.startPositionPick()
         else:
-            pass
+            self.stopPositionPick()
 
-    def draw_snap(self, sel, sensor):
-        """Method that draw the current snap point"""
+    def getOrientation(self, checked):
+        """Handle orientation capture button toggle."""
+        if checked:
+            # Stop position picking if active
+            self.ui.posCap.setChecked(False)
+            self.stopPositionPick()
+            # Start orientation picking
+            self.startOrientationPick()
+        else:
+            self.stopOrientationPick()
 
-        if self.snap_point != sel:
-            if self.snap_point is not None:
-                self.root.removeChild(self.SnapNode)
-            self.snap_point = sel
-            if sel is not None:
-                col = coin.SoBaseColor()
-                col.rgb = (0, 1, 0)
-                trans = coin.SoTranslation()
-                trans.translation.setValue(sel)
-                snap = coin.SoMarkerSet()  # this is the marker symbol
-                snap.markerIndex = FreeCADGui.getMarkerIndex("", 9)
-                # cub = coin.SoSphere()
-                self.SnapNode = coin.SoSeparator()
-                self.SnapNode.addChild(col)
-                self.SnapNode.addChild(trans)
-                self.SnapNode.addChild(snap)
-                self.root.addChild(self.SnapNode)
-
-    def mouse_over_cb(self, event_callback):
-        event = event_callback.getEvent()
-        pos = event.getPosition().getValue()
-        listObjects = FreeCADGui.ActiveDocument.ActiveView.getObjectsInfo(
-            (int(pos[0]), int(pos[1]))
+    # === Position Picking Methods (Modern SelectionObserver Pattern) ===
+    
+    def startPositionPick(self):
+        """Start picking mode for position capture."""
+        if self.position_observer is not None:
+            return  # Already picking
+        
+        # Create observer
+        self.position_observer = SelectionObserver(
+            callback=self.onPositionEdgePicked,
+            filter_func=self.isValidSelectionForCapture,
+            error_message="Please select an edge or face on an optical component"
         )
-        if listObjects:
-            # Take the closest object to the mouse
-            obj = listObjects[0]
-            fcobj = FreeCAD.ActiveDocument.getObject(obj["Object"])
-            fccmp = fcobj.Shape.getElement(obj["Component"])
-            if self.gate.allow(None, fcobj, fccmp) and isLine(fccmp):
-                x = obj["x"]
-                y = obj["y"]
-                z = obj["z"]
-
-                pc = FreeCAD.Vector(x, y, z)
-                p0 = fccmp.Vertexes[0].Point
-                p1 = fccmp.Vertexes[1].Point
-
-                # Capture the snap componrent to be used later
-                self.snap_obj = fccmp
-
-                if ((pc - p0).Length) < ((pc - p1).Length):
-                    # because of coin3d limitations, an scene can not be modified
-                    # inside an event handler. So a Sensor must be used, to
-                    # queue the  draw_snap method for later.
-                    # The "self", can not be removed because the sensor is garbage
-                    # collected as soon as mouse_over_cb is finished, and the
-                    # method draw_snap is never called.
-
-                    self.ts = coin.SoOneShotSensor(self.draw_snap, p0)
-                    self.ts.schedule()
-                else:
-                    self.ts = coin.SoOneShotSensor(self.draw_snap, p1)
-                    self.ts.schedule()
+        FreeCADGui.Selection.addObserver(self.position_observer)
+        
+        # Visual feedback
+        FreeCAD.Console.PrintMessage("Click on edge in 3D view to capture position\n")
+        QtGui.QApplication.setOverrideCursor(QtCore.Qt.CrossCursor)
+    
+    def stopPositionPick(self):
+        """Stop position picking mode."""
+        if self.position_observer is not None:
+            FreeCADGui.Selection.removeObserver(self.position_observer)
+            self.position_observer = None
+            QtGui.QApplication.restoreOverrideCursor()
+    
+    def onPositionEdgePicked(self, obj, sub):
+        """Callback when valid edge or face picked for position.
+        
+        Args:
+            obj: FreeCAD object containing the edge/face
+            sub: Sub-element string (e.g., "Edge1", "Face1")
+        """
+        try:
+            element = obj.Shape.getElement(sub)
+            
+            # Determine snap point based on element type
+            if sub.startswith("Face"):
+                # For faces, use center of mass (works for flat and curved surfaces)
+                snap_point = element.CenterOfMass
+            elif isCircleOrArc(element):
+                # For circular/arc edges, use the center point
+                snap_point = element.Curve.Center
             else:
-                self.ts = coin.SoOneShotSensor(self.draw_snap, None)
-                self.ts.schedule()
-
-    def mouse_click_cb(self, event_callback):
-        if self.snap_point is not None:
-            if self.ui.posCap.isChecked():
-                self.ui.X.setValue(self.snap_point.x)
-                self.ui.Y.setValue(self.snap_point.y)
-                self.ui.Z.setValue(self.snap_point.z)
-
-            if self.ui.orienCap.isChecked:
-                pass
+                # For line edges, use first endpoint
+                snap_point = element.Vertexes[0].Point
+            
+            # Update UI
+            self.ui.X.setValue(snap_point.x)
+            self.ui.Y.setValue(snap_point.y)
+            self.ui.Z.setValue(snap_point.z)
+            
+            # Uncheck button and cleanup
+            self.ui.posCap.setChecked(False)
+            FreeCADGui.Selection.clearSelection()
+            
+        except Exception as e:
+            FreeCAD.Console.PrintError(f"Error capturing position: {e}\n")
+    
+    # === Orientation Picking Methods ===
+    
+    def startOrientationPick(self):
+        """Start picking mode for orientation capture."""
+        if self.orientation_observer is not None:
+            return  # Already picking
+        
+        # Create observer
+        self.orientation_observer = SelectionObserver(
+            callback=self.onOrientationEdgePicked,
+            filter_func=self.isValidSelectionForCapture,
+            error_message="Please select an edge or face on an optical component"
+        )
+        FreeCADGui.Selection.addObserver(self.orientation_observer)
+        
+        # Visual feedback
+        FreeCAD.Console.PrintMessage("Click on edge in 3D view to capture orientation\n")
+        QtGui.QApplication.setOverrideCursor(QtCore.Qt.CrossCursor)
+    
+    def stopOrientationPick(self):
+        """Stop orientation picking mode."""
+        if self.orientation_observer is not None:
+            FreeCADGui.Selection.removeObserver(self.orientation_observer)
+            self.orientation_observer = None
+            QtGui.QApplication.restoreOverrideCursor()
+    
+    def onOrientationEdgePicked(self, obj, sub):
+        """Callback when valid edge or face picked for orientation.
+        
+        Args:
+            obj: FreeCAD object containing the edge/face
+            sub: Sub-element string (e.g., "Edge1", "Face1")
+        """
+        try:
+            element = obj.Shape.getElement(sub)
+            
+            # Get direction vector based on element type
+            if sub.startswith("Face"):
+                # For faces, use the surface normal at center
+                # Get the normal vector from the surface
+                if hasattr(element.Surface, 'Axis'):
+                    # Cylindrical, spherical surfaces have an axis
+                    direction = element.Surface.Axis
+                else:
+                    # For planar faces, get normal from the plane
+                    u_mid = (element.ParameterRange[0] + element.ParameterRange[1]) / 2
+                    v_mid = (element.ParameterRange[2] + element.ParameterRange[3]) / 2
+                    direction = element.normalAt(u_mid, v_mid)
+            elif isCircleOrArc(element):
+                # For circles/arcs, use the normal vector of the circle plane
+                direction = element.Curve.Axis
+            else:
+                # For lines, use the direction from vertex to vertex
+                p0 = element.Vertexes[0].Point
+                p1 = element.Vertexes[1].Point
+                direction = (p1 - p0).normalize()
+            
+            # Convert direction vector to Euler angles (simplified approach)
+            # This gives rotation that would align Z-axis with the edge direction
+            rx = math.degrees(math.atan2(direction.y, direction.z))
+            ry = math.degrees(math.atan2(-direction.x, math.sqrt(direction.y**2 + direction.z**2)))
+            rz = 0  # No roll component in this simple calculation
+            
+            # Update UI
+            self.ui.RX.setValue(rx)
+            self.ui.RY.setValue(ry)
+            self.ui.RZ.setValue(rz)
+            
+            # Uncheck button and cleanup
+            self.ui.orienCap.setChecked(False)
+            FreeCADGui.Selection.clearSelection()
+            
+        except Exception as e:
+            FreeCAD.Console.PrintError(f"Error capturing orientation: {e}\n")
+    
+    # === Validation Methods ===
+    
+    def isValidSelectionForCapture(self, obj, sub):
+        """Validate that selection is a valid edge or face on an optical component.
+        
+        Args:
+            obj: FreeCAD object
+            sub: Sub-element string (e.g., "Edge1", "Face1")
+        
+        Returns:
+            bool: True if valid for capture
+        """
+        # Must be an optical component
+        if not hasattr(obj, "ComponentType"):
+            return False
+        
+        # Must select an edge or face
+        if not sub:
+            return False
+        
+        # Check if it's a valid edge or face
+        try:
+            element = obj.Shape.getElement(sub)
+            
+            if sub.startswith("Edge"):
+                return isValidCurveForCapture(element)
+            elif sub.startswith("Face"):
+                return isValidFaceForCapture(element)
+            else:
+                return False
+        except Exception:
+            return False
 
     @property
     def Xpos(self):

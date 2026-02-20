@@ -1,25 +1,66 @@
 import FreeCAD
-from freecad.pyoptools.pyOpToolsWB.qthelpers import outputDialog
-def uno():
-    pass
+
 
 class WipeMenu:
     """
     Command to wipe (erase propagations and rays) from the system
     """
+
     def GetResources(self):
-        return {"MenuText": "Wipe",
-                "ToolTip": "Delete propagations and rays",
-                "Pixmap": ""}
+        from freecad.pyoptools import ICONPATH
+        import os
+
+        # Base tooltip
+        tooltip = "Delete ray propagation visualization (Alt+W)"
+
+        # Add disabled reason if not active
+        if not self.IsActive():
+            if FreeCAD.ActiveDocument is None:
+                tooltip += " - Disabled: No document open"
+            else:
+                tooltip += " - Disabled: No ray propagations to delete"
+
+        return {
+            "MenuText": "Wipe",
+            "Accel": "Alt+W",
+            "ToolTip": tooltip,
+            "Pixmap": os.path.join(ICONPATH, "wipe.svg"),
+        }
 
     def IsActive(self):
+        """
+        Enable button only when there are propagations to delete.
+
+        Returns:
+            bool: True if propagations exist, False otherwise
+        """
         if FreeCAD.ActiveDocument is None:
             return False
-        else:
-            return True
+
+        # Check if any propagation objects exist
+        objs = FreeCAD.ActiveDocument.Objects
+        propagations = [
+            obj
+            for obj in objs
+            if hasattr(obj, "ComponentType") and obj.ComponentType == "Propagation"
+        ]
+
+        return len(propagations) > 0
 
     def Activated(self):
-        yn = outputDialog("Are you sure?", True)
+        from PySide import QtCore, QtGui, QtWidgets
+
+        # Create confirmation dialog with proper title
+        diag = QtWidgets.QMessageBox(
+            QtWidgets.QMessageBox.Question,
+            "Wipe Propagations",
+            "Are you sure you want to delete all ray propagation visualizations?",
+        )
+        diag.setWindowModality(QtCore.Qt.ApplicationModal)
+        diag.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+
+        yn = diag.exec_() == QtWidgets.QMessageBox.Yes
+
         if yn:
             objs = FreeCAD.ActiveDocument.Objects
             todelete = []
@@ -27,7 +68,8 @@ class WipeMenu:
                 if hasattr(obj, "ComponentType"):
                     if obj.ComponentType == "Propagation":
                         print("removing Propagation")
-                        todelete.append(obj.Label)
+                        # Use the internal object name for reliable deletion.
+                        todelete.append(obj.Name)
                         continue
             for obj in todelete:
                 FreeCAD.ActiveDocument.removeObject(obj)

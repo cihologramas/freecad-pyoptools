@@ -5,6 +5,7 @@ import FreeCAD
 import FreeCADGui
 import Part
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
+from .feedback import FeedbackHelper
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
 from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
@@ -22,6 +23,7 @@ class RoundMirrorGUI(WBCommandGUI):
         mw = materialWidget()
         super().__init__([pw, mw, "RoundMirror.ui"])
 
+    @FeedbackHelper.with_error_handling("Round Mirror")
     def accept(self):
         Th = self.form.Thickness.value()
         Ref = self.form.Reflectivity.value()
@@ -46,7 +48,6 @@ class RoundMirrorGUI(WBCommandGUI):
         m.move((X, Y, Z))
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-        FreeCADGui.Control.closeDialog()
 
 
 class RoundMirrorMenu(WBCommandMenu):

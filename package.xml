@@ -15,7 +15,7 @@
       <classname>PyOpToolsWorkbench</classname> 
       <subdirectory>./freecad/pyoptools/</subdirectory>
       <depend>pyoptools</depend>
-      <freecadmin>0.21.0</freecadmin>
+      <freecadmin>1.0.0</freecadmin>
       <tag>raytracing</tag>
       <tag>optics</tag>
     </workbench>

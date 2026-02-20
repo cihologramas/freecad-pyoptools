@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """Classes used to define an array of rays."""
+
 import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
+from .feedback import FeedbackHelper
 from pyoptools.misc.pmisc.misc import wavelength2RGB
 import pyoptools.raytrace.ray.ray_source as rs_lib
 from math import tan, radians
@@ -24,7 +26,6 @@ def rot_mat(r):
 
 
 def rot_mat_i(r):
-
     c = cos(r)
     s = sin(r)
 
@@ -42,8 +43,8 @@ class RaysArrayGUI(WBCommandGUI):
         pw = placementWidget()
         WBCommandGUI.__init__(self, [pw, "RaysArray.ui"])
 
+    @FeedbackHelper.with_error_handling("Ray Array")
     def accept(self):
-
         X = self.form.Xpos.value()
         Y = self.form.Ypos.value()
         Z = self.form.Zpos.value()
@@ -72,13 +73,14 @@ class RaysArrayGUI(WBCommandGUI):
         m.rotateY(radians(Oy))
         m.rotateZ(radians(Oz))
 
-        m.move((X,Y,Z))
+        m.move((X, Y, Z))
 
-        obj=InsertRArray(Sx,Sy,Nx,Ny, nr,na, angle, distribution,wavelength,"S",enabled)
+        obj = InsertRArray(
+            Sx, Sy, Nx, Ny, nr, na, angle, distribution, wavelength, "S", enabled
+        )
 
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-        FreeCADGui.Control.closeDialog()
 
 
 class RaysArrayMenu(WBCommandMenu):
@@ -95,31 +97,43 @@ class RaysArrayMenu(WBCommandMenu):
 
 
 class RaysArrayPart(WBPart):
-    def __init__(self,obj,Sx = 5,Sy = 5,Nx = 5 ,Ny= 5,nr=6,na=6,angle=10,distribution="polar",wavelength=633,enabled=True):
-        WBPart.__init__(self,obj,"RaysArray",enabled)
+    def __init__(
+        self,
+        obj,
+        Sx=5,
+        Sy=5,
+        Nx=5,
+        Ny=5,
+        nr=6,
+        na=6,
+        angle=10,
+        distribution="polar",
+        wavelength=633,
+        enabled=True,
+    ):
+        WBPart.__init__(self, obj, "RaysArray", enabled)
 
-        obj.addProperty("App::PropertyInteger","nr").nr = nr
-        obj.addProperty("App::PropertyInteger","na").na = na
-        obj.addProperty("App::PropertyFloat","angle").angle = angle
-        obj.addProperty("App::PropertyString","distribution").distribution = distribution
-        obj.addProperty("App::PropertyFloat","wavelength").wavelength = wavelength
-        obj.addProperty("App::PropertyFloat","xSize").xSize = Sx
-        obj.addProperty("App::PropertyFloat","ySize").ySize = Sy
-        obj.addProperty("App::PropertyInteger","Nx").Nx = Nx
-        obj.addProperty("App::PropertyInteger","Ny").Ny = Ny
-        r,g,b = wavelength2RGB(wavelength/1000.)
+        obj.addProperty("App::PropertyInteger", "nr").nr = nr
+        obj.addProperty("App::PropertyInteger", "na").na = na
+        obj.addProperty("App::PropertyFloat", "angle").angle = angle
+        obj.addProperty(
+            "App::PropertyString", "distribution"
+        ).distribution = distribution
+        obj.addProperty("App::PropertyFloat", "wavelength").wavelength = wavelength
+        obj.addProperty("App::PropertyFloat", "xSize").xSize = Sx
+        obj.addProperty("App::PropertyFloat", "ySize").ySize = Sy
+        obj.addProperty("App::PropertyInteger", "Nx").Nx = Nx
+        obj.addProperty("App::PropertyInteger", "Ny").Ny = Ny
+        r, g, b = wavelength2RGB(wavelength / 1000.0)
 
-        obj.ViewObject.ShapeColor = (r,g,b,0.)
+        obj.ViewObject.ShapeColor = (r, g, b, 0.0)
 
-    def propertyChanged(self, obj, prop):
-
-        # To keep all the housekeeping that WBPart do, this method replaces
-        # the standard onChanged
+    def onChanged(self, obj, prop):
+        super().onChanged(obj, prop)
 
         if prop == "wavelength":
-            r,g,b = wavelength2RGB(obj.wavelength/1000.)
-            obj.ViewObject.ShapeColor = (r,g,b,0.)
-
+            r, g, b = wavelength2RGB(obj.wavelength / 1000.0)
+            obj.ViewObject.ShapeColor = (r, g, b, 0.0)
 
     def pyoptools_repr(self, obj):
         pla = obj.getGlobalPlacement()
@@ -134,6 +148,8 @@ class RaysArrayPart(WBPart):
         rm = rot_mat((radians(RX), radians(RY), radians(RZ)))
         dire = (radians(RX), radians(RY), radians(RZ))
 
+        label = obj.Label
+        
         r = []
         if obj.Enabled:
             if dist == "polar":
@@ -146,7 +162,7 @@ class RaysArrayPart(WBPart):
                             span=radians(ang),
                             num_rays=(nr, na),
                             wavelength=wl / 1000.0,
-                            label="",
+                            label=label,
                         )
 
             elif dist == "cartesian":
@@ -159,7 +175,7 @@ class RaysArrayPart(WBPart):
                             span=(radians(ang), radians(ang)),
                             num_rays=(nr, na),
                             wavelength=wl / 1000.0,
-                            label="",
+                            label=label,
                         )
             elif dist == "random":
                 print("random ray distribution, not implemented yet")
@@ -193,10 +209,25 @@ class RaysArrayPart(WBPart):
         obj.Shape = Part.makeCompound(d)
 
 
-def InsertRArray(Sx=5,Sy=5,Nx=5,Ny=5, nr =10,na=10, angle=5, distribution="polar",wavelength=633,ID = "S",enabled = True):
+def InsertRArray(
+    Sx=5,
+    Sy=5,
+    Nx=5,
+    Ny=5,
+    nr=10,
+    na=10,
+    angle=5,
+    distribution="polar",
+    wavelength=633,
+    ID="S",
+    enabled=True,
+):
     import FreeCAD
-    myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",ID)
-    RaysArrayPart(myObj,Sx,Sy,Nx,Ny,nr,na,angle,distribution,wavelength,enabled)
-    myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
+
+    myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", ID)
+    RaysArrayPart(
+        myObj, Sx, Sy, Nx, Ny, nr, na, angle, distribution, wavelength, enabled
+    )
+    myObj.ViewObject.Proxy = 0  # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj

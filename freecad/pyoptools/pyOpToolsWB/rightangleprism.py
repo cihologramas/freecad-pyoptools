@@ -4,6 +4,7 @@ import FreeCAD
 import FreeCADGui
 import Part
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
+from .feedback import FeedbackHelper
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
 from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
@@ -19,6 +20,7 @@ class RightAnglePrismGUI(WBCommandGUI):
         mw = materialWidget()
         WBCommandGUI.__init__(self, [pw, mw, "RightAnglePrism.ui"])
 
+    @FeedbackHelper.with_error_handling("Right Angle Prism")
     def accept(self):
         S = self.form.S.value()
         X = self.form.Xpos.value()
@@ -52,7 +54,6 @@ class RightAnglePrismGUI(WBCommandGUI):
         m.move((X, Y, Z))
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-        FreeCADGui.Control.closeDialog()
 
 
 class RightAnglePrismMenu(WBCommandMenu):

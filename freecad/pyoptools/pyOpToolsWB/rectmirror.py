@@ -5,6 +5,7 @@ import FreeCAD
 import FreeCADGui
 import Part
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
+from .feedback import FeedbackHelper
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
 from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
@@ -12,6 +13,7 @@ from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
 from math import radians
+
 _wrn = FreeCAD.Console.PrintWarning
 
 
@@ -19,8 +21,9 @@ class RectMirrorGUI(WBCommandGUI):
     def __init__(self):
         pw = placementWidget()
         mw = materialWidget()
-        super.__init__([pw, mw, "RectMirror.ui"])
+        super().__init__([pw, mw, "RectMirror.ui"])
 
+    @FeedbackHelper.with_error_handling("Rectangular Mirror")
     def accept(self):
         Th = self.form.Thickness.value()
         Ref = self.form.Reflectivity.value()
@@ -46,7 +49,6 @@ class RectMirrorGUI(WBCommandGUI):
         m.move((X, Y, Z))
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-        FreeCADGui.Control.closeDialog()
 
 
 class RectMirrorMenu(WBCommandMenu):
@@ -193,14 +195,29 @@ class RectMirrorPart(WBPart):
         if obj.ObjectVersion == 0:
             migrate_to_v1(obj)
 
-
     def pyoptools_repr(self, obj):
+        if obj.FilterType == "NoFilter":
+            filter_spec = ("nofilter",)
+        elif obj.FilterType == "ShortPass":
+            filter_spec = ("shortpass", obj.CutoffWavelength.getValueAs("µm"))
+        elif obj.FilterType == "LongPass":
+            filter_spec = ("longpass", obj.CutoffWavelength.getValueAs("µm"))
+        elif obj.FilterType == "BandPass":
+            filter_spec = (
+                "bandpass",
+                obj.LowerCutoffWavelength.getValueAs("µm"),
+                obj.UpperCutoffWavelength.getValueAs("µm"),
+            )
+        else:
+            raise ValueError(f"Unsupported FilterType: {obj.FilterType}")
+
         material = getMaterial(obj.matcat, obj.matref)
 
         rm = comp_lib.RectMirror(
             (obj.Width.Value, obj.Height.Value, obj.Thk.Value),
             obj.Reflectivity / 100.0,
             material=material,
+            filter_spec=filter_spec,
         )
         return rm
 
@@ -220,6 +237,7 @@ def InsertRectM(Ref=100, Th=10, SX=50, SY=50, ID="L", matcat="", matref=""):
     myObj.ViewObject.Proxy = 0  # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj
+
 
 def migrate_to_v1(obj):
     # Add the FilterType property

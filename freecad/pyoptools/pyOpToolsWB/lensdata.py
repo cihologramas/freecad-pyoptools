@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """Classes used to define a lens from a data list."""
+
 import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
+from .feedback import FeedbackHelper
 
 import Part
 
@@ -13,8 +15,8 @@ from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
 import pyoptools.raytrace.mat_lib as matlib
 from math import radians
 from freecad.pyoptools import ICONPATH
-from PySide2 import QtWidgets
-from PySide2.QtCore import QLocale
+from PySide import QtWidgets
+from PySide.QtCore import QLocale
 
 from .sphericallens import buildlens
 from math import isnan
@@ -22,7 +24,6 @@ from math import isnan
 
 class LensDataGUI(WBCommandGUI):
     def __init__(self):
-
         pw = placementWidget()
         self.mw = materialWidget()
         self.mw.ui.label.setText("")
@@ -38,7 +39,6 @@ class LensDataGUI(WBCommandGUI):
         self.form.delSurf.clicked.connect(self.delSurface)
 
     def addSurface(self, *args):
-
         if not self.form.surfTable.selectedIndexes():
             i = self.form.surfTable.rowCount()
         else:
@@ -84,13 +84,12 @@ class LensDataGUI(WBCommandGUI):
         self.form.surfTable.setItem(i, 5, item)
 
     def delSurface(self, *args):
-
         if self.form.surfTable.selectedIndexes():
             i = self.form.surfTable.currentRow()
             self.form.surfTable.removeRow(i)
 
+    @FeedbackHelper.with_error_handling("Lens from Catalog")
     def accept(self):
-
         surfType = []
         radius = []
         thick = []
@@ -125,7 +124,6 @@ class LensDataGUI(WBCommandGUI):
         m.move((X, Y, Z))
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-        FreeCADGui.Control.closeDialog()
 
 
 class LensDataMenu(WBCommandMenu):
@@ -143,7 +141,6 @@ class LensDataMenu(WBCommandMenu):
 
 class LensDataPart(WBPart):
     def __init__(self, obj, datalist):
-
         surfType, radius, thick, semid, matcat, matref = datalist
 
         WBPart.__init__(self, obj, "LensData")

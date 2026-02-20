@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="8" cy="8" r="2" fill="#808080" stroke="#606060" stroke-width="0.5"/>
+    <line x1="8" y1="8" x2="14" y2="8" stroke="#808080" stroke-width="1"/>
+    <line x1="8" y1="8" x2="13" y2="3" stroke="#808080" stroke-width="1"/>
+    <line x1="8" y1="8" x2="8" y2="2" stroke="#808080" stroke-width="1"/>
+    <line x1="8" y1="8" x2="3" y2="3" stroke="#808080" stroke-width="1"/>
+    <line x1="8" y1="8" x2="2" y2="8" stroke="#808080" stroke-width="1"/>
+    <line x1="8" y1="8" x2="3" y2="13" stroke="#808080" stroke-width="1"/>
+    <line x1="8" y1="8" x2="8" y2="14" stroke="#808080" stroke-width="1"/>
+    <line x1="8" y1="8" x2="13" y2="13" stroke="#808080" stroke-width="1"/>
+</svg>

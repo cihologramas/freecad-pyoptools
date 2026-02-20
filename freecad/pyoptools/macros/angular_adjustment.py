@@ -1,13 +1,15 @@
 import FreeCAD
 import FreeCADGui
+
 # from .wbcommand import *
 from freecad.pyoptools.pyOpToolsWB.wbcommand import *
 from freecad.pyoptools.pyOpToolsWB.qthelpers import outputDialog
 from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getActiveSystem
-from PySide import QtCore, QtGui
+from PySide import QtCore, QtGui, QtWidgets
 from scipy.optimize import minimize
 from numpy import dot
 from math import inf, degrees
+
 
 def center_rot(drot, sen, el):
     """Auxiliary function to be used in an optimization algorithm
@@ -37,7 +39,7 @@ def center_rot(drot, sen, el):
 
     drx, dry, drz = drot
 
-    new_pos = FreeCAD.Placement(base, FreeCAD.Rotation(Rz+drz, Ry+dry, Rx+drx))
+    new_pos = FreeCAD.Placement(base, FreeCAD.Rotation(Rz + drz, Ry + dry, Rx + drx))
 
     myObj.Placement = new_pos
 
@@ -47,7 +49,7 @@ def center_rot(drot, sen, el):
     myObj.Placement = FreeCAD.Placement(base, rot)
     hit = S[sen][0].hit_list[0][0]
     print(hit, drot)
-    return dot(hit, hit)**.5
+    return dot(hit, hit) ** 0.5
 
 
 def center_rot_pot(drot, S, R, sen, el):
@@ -82,12 +84,13 @@ def center_rot_pot(drot, S, R, sen, el):
         hit = hl[0][0]
     else:
         hit = inf
-    print( dot(hit, hit)**.5,hit, drot)
-    return dot(hit, hit)**.5
+    print(dot(hit, hit) ** 0.5, hit, drot)
+    return dot(hit, hit) ** 0.5
+
 
 class RotationGUI(WBCommandGUI):
     def __init__(self):
-        WBCommandGUI.__init__(self,'Rotation.ui')
+        WBCommandGUI.__init__(self, "Rotation.ui")
 
         self.form.btnRay.clicked.connect(self.getRay)
         self.form.btnSensor.clicked.connect(self.getSensor)
@@ -96,7 +99,6 @@ class RotationGUI(WBCommandGUI):
         self.form.txtRaysource.editingFinished.connect(self.checkRay)
         self.form.txtSensor.editingFinished.connect(self.checkSensor)
         self.form.txtComponent.editingFinished.connect(self.checkComponent)
-
 
     def getRay(self, *args):
         obj = FreeCADGui.Selection.getSelection()[0]
@@ -108,7 +110,6 @@ class RotationGUI(WBCommandGUI):
         self.form.txtSensor.setText(obj.Label)
         self.checkSensor()
 
-
     def getComponent(self, *args):
         obj = FreeCADGui.Selection.getSelection()[0]
         self.form.txtComponent.setText(obj.Label)
@@ -116,60 +117,77 @@ class RotationGUI(WBCommandGUI):
 
     def checkRay(self, *args):
         try:
-            obj = FreeCAD.ActiveDocument.getObjectsByLabel(self.form.txtRaysource.text())[0]
+            obj = FreeCAD.ActiveDocument.getObjectsByLabel(
+                self.form.txtRaysource.text()
+            )[0]
         except IndexError:
             outputDialog("Object {} not found".format(self.form.txtRaysource.text()))
             self.form.txtRaysource.setText("")
             return False
 
         if not hasattr(obj, "ComponentType"):
-            outputDialog("Object {} not recognized by pyoptools, ignored.".format(obj.Label))
+            outputDialog(
+                "Object {} not recognized by pyoptools, ignored.".format(obj.Label)
+            )
             self.form.txtRaysource.setText("")
             return False
 
         if obj.ComponentType != "Ray":
-            outputDialog("Please select a 'Ray' instance, not a '{}'".format(obj.ComponentType))
+            outputDialog(
+                "Please select a 'Ray' instance, not a '{}'".format(obj.ComponentType)
+            )
             self.form.txtRaysource.setText("")
             return False
         return True
 
     def checkSensor(self, *args):
         try:
-            obj = FreeCAD.ActiveDocument.getObjectsByLabel(self.form.txtSensor.text())[0]
+            obj = FreeCAD.ActiveDocument.getObjectsByLabel(self.form.txtSensor.text())[
+                0
+            ]
         except IndexError:
             outputDialog("Object {} not found".format(self.form.txtSensor.text()))
             self.form.txtSensor.setText("")
             return False
 
         if not hasattr(obj, "ComponentType"):
-            outputDialog("Object {} not recognized by pyoptools, ignored.".format(obj.Label))
+            outputDialog(
+                "Object {} not recognized by pyoptools, ignored.".format(obj.Label)
+            )
             self.form.txtSensor.setText("")
             return False
 
         if obj.ComponentType != "Sensor":
-            outputDialog("Please select a 'Sensor' instance, not a '{}'".format(obj.ComponentType))
+            outputDialog(
+                "Please select a 'Sensor' instance, not a '{}'".format(
+                    obj.ComponentType
+                )
+            )
             self.form.txtSensor.setText("")
             return False
         return True
 
     def checkComponent(self, *args):
         try:
-            obj = FreeCAD.ActiveDocument.getObjectsByLabel(self.form.txtComponent.text())[0]
+            obj = FreeCAD.ActiveDocument.getObjectsByLabel(
+                self.form.txtComponent.text()
+            )[0]
         except IndexError:
             outputDialog("Object {} not found".format(self.form.txtComponent.text()))
             self.form.txtComponent.setText("")
             return False
 
         if not hasattr(obj, "ComponentType"):
-            outputDialog("Object {} not recognized by pyoptools, ignored.".format(obj.Label))
+            outputDialog(
+                "Object {} not recognized by pyoptools, ignored.".format(obj.Label)
+            )
             self.form.txtSensor.setText("")
             return False
 
         return True
 
     def accept(self):
-
-        if  not (self.checkComponent() and self.checkRay() and self.checkSensor()):
+        if not (self.checkComponent() and self.checkRay() and self.checkSensor()):
             return
 
         ray = self.form.txtRaysource.text()
@@ -188,28 +206,37 @@ class RotationGUI(WBCommandGUI):
         rot = myObj.Placement.Rotation
         print("***", D)
         print("***", DR)
-        print(degrees(DR[0]),degrees(DR[1]),degrees(DR[2]))
-        newrot = FreeCAD.Rotation(degrees(DR[2]),degrees(DR[1]),degrees(DR[0]))
+        print(degrees(DR[0]), degrees(DR[1]), degrees(DR[2]))
+        newrot = FreeCAD.Rotation(degrees(DR[2]), degrees(DR[1]), degrees(DR[0]))
 
         print(rot.toEuler())
         print(newrot.toEuler())
 
         new_pos = FreeCAD.Placement(base, newrot)
 
-        rv = outputDialog(\
+        rv = outputDialog(
             "Optimization Finished.\n"
             "Old rotation: {:8.2f}, {:8.2f}, {:8.2f}\n"
             "New rotation: {:8.2f}, {:8.2f}, {:8.2f}\n\n"
             "Do you want to update the design".format(
-                degrees(D[0]), degrees(D[1]), degrees(D[2]),
-                degrees(DR[0]), degrees(DR[1]), degrees(DR[2])),
-            True)
+                degrees(D[0]),
+                degrees(D[1]),
+                degrees(D[2]),
+                degrees(DR[0]),
+                degrees(DR[1]),
+                degrees(DR[2]),
+            ),
+            True,
+        )
 
         if rv:
             myObj.Placement = new_pos
 
         FreeCADGui.Control.closeDialog()
 
-print("Warning, This tool does not use the selected ray source. Right now it uses all the active")
+
+print(
+    "Warning, This tool does not use the selected ray source. Right now it uses all the active"
+)
 panel = RotationGUI()
 FreeCADGui.Control.showDialog(panel)

@@ -4,6 +4,7 @@ import FreeCAD
 import FreeCADGui
 import Part
 
+from .feedback import FeedbackHelper
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
@@ -19,6 +20,7 @@ class DiffractionGrattingGUI(WBCommandGUI):
         mw = materialWidget()
         WBCommandGUI.__init__(self, [pw, mw, "DiffractionGratting.ui"])
 
+    @FeedbackHelper.with_error_handling("Diffraction Grating")
     def accept(self):
         Th = self.form.Thickness.value()
         Ref = self.form.Reflectivity.value()
@@ -64,7 +66,6 @@ class DiffractionGrattingGUI(WBCommandGUI):
         m.move((X, Y, Z))
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-        FreeCADGui.Control.closeDialog()
 
 
 class DiffractionGrattingMenu(WBCommandMenu):

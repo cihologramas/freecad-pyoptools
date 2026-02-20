@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" version="1.1" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(0,-233)">
+  <!-- Power button circle (empty, indicating OFF state) -->
+  <circle cx="32" cy="265" r="20" 
+          fill="none" stroke="#757575" stroke-width="3" opacity="0.6"/>
+  
+  <!-- Power symbol: vertical line (off - gray) -->
+  <path d="M 32,250 L 32,265" 
+        stroke="#757575" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+  
+  <!-- Power symbol: arc at top (standard power icon - gray) -->
+  <path d="M 23,257 A 13 13 0 0 1 41,257" 
+        fill="none" stroke="#757575" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+  
+  <!-- Red slash indicating "disabled/off" -->
+  <path d="M 18,250 L 46,280" 
+        stroke="#F44336" stroke-width="4" stroke-linecap="round"/>
+ </g>
+</svg>

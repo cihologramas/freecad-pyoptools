@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" version="1.1" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="componentGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+   <stop offset="0%" style="stop-color:#729fcf;stop-opacity:1" />
+   <stop offset="100%" style="stop-color:#3465a4;stop-opacity:1" />
+  </linearGradient>
+ </defs>
+ 
+ <!-- Global XY plane (grid/reference) -->
+ <rect x="8" y="8" width="48" height="48" 
+       fill="none" stroke="#888a85" stroke-width="1.5" 
+       stroke-dasharray="4,4" opacity="0.5"/>
+ 
+ <!-- Component (optical element) -->
+ <circle cx="32" cy="32" r="12" 
+         fill="url(#componentGradient)" 
+         stroke="#204a87" stroke-width="2.5"/>
+ 
+ <!-- Component X-axis (being aligned) -->
+ <path d="M 32 32 L 48 32" 
+       fill="none" stroke="#cc0000" stroke-width="3" 
+       stroke-linecap="round"/>
+ <path d="M 44 29 L 48 32 L 44 35" 
+       fill="#cc0000" stroke="none"/>
+ 
+ <!-- Component Y-axis -->
+ <path d="M 32 32 L 32 16" 
+       fill="none" stroke="#4e9a06" stroke-width="2.5" 
+       stroke-linecap="round"/>
+ <path d="M 29 20 L 32 16 L 35 20" 
+       fill="#4e9a06" stroke="none"/>
+ 
+ <!-- Rotation arc showing alignment -->
+ <path d="M 40 24 A 11 11 0 0 1 40 40" 
+       fill="none" stroke="#f57900" stroke-width="2.5" 
+       stroke-linecap="round" opacity="0.8"/>
+ 
+ <!-- Rotation arrow -->
+ <path d="M 38 41 L 40 40 L 39 37" 
+       fill="#f57900" stroke="none"/>
+ 
+ <!-- Z-axis indicator (dot showing it comes out of screen) -->
+ <circle cx="32" cy="32" r="2.5" 
+         fill="#5c3566" stroke="#75507b" stroke-width="1"/>
+</svg>

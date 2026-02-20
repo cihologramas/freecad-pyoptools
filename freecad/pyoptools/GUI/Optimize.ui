@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>OptimizeWidget</class>
+ <widget class="QWidget" name="OptimizeWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,9 +10,9 @@
     <height>522</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Optimize Collimation</string>
-  </property>
+   <property name="windowTitle">
+    <string>Optimize Position</string>
+   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="formLayout">
@@ -22,13 +22,13 @@
      <property name="fieldGrowthPolicy">
       <enum>QFormLayout::ExpandingFieldsGrow</enum>
      </property>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>Position to optimize:</string>
-       </property>
-      </widget>
-     </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Movement Direction:</string>
+        </property>
+       </widget>
+      </item>
      <item row="2" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
@@ -51,21 +51,31 @@
          </attribute>
         </widget>
        </item>
-       <item>
-        <widget class="QRadioButton" name="Z">
-         <property name="text">
-          <string>Z</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-         <attribute name="buttonGroup">
-          <string notr="true">buttonGroup</string>
-         </attribute>
-        </widget>
-       </item>
-      </layout>
-     </item>
+        <item>
+         <widget class="QRadioButton" name="Z">
+          <property name="text">
+           <string>Z</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="Normal">
+          <property name="text">
+           <string>Normal</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="label_11">
        <property name="text">
@@ -73,9 +83,29 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="Element"/>
-     </item>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="elementPickLayout">
+        <item>
+         <widget class="QComboBox" name="Element"/>
+        </item>
+        <item>
+          <widget class="QPushButton" name="PickElement">
+           <property name="text">
+            <string></string>
+           </property>
+           <property name="toolTip">
+            <string>Click to select element from 3D view</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="maximumWidth">
+            <number>32</number>
+           </property>
+          </widget>
+        </item>
+       </layout>
+      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_10">
        <property name="text">
@@ -83,9 +113,29 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QComboBox" name="Sensor"/>
-     </item>
+      <item row="3" column="1">
+       <layout class="QHBoxLayout" name="sensorPickLayout">
+        <item>
+         <widget class="QComboBox" name="Sensor"/>
+        </item>
+        <item>
+          <widget class="QPushButton" name="PickSensor">
+           <property name="text">
+            <string></string>
+           </property>
+           <property name="toolTip">
+            <string>Click to select sensor from 3D view</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="maximumWidth">
+            <number>32</number>
+           </property>
+          </widget>
+        </item>
+       </layout>
+      </item>
      <item row="4" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
@@ -138,13 +188,409 @@
      <item row="5" column="1">
       <widget class="QComboBox" name="Solver"/>
      </item>
-    </layout>
-   </item>
-  </layout>
- </widget>
- <resources/>
- <connections/>
- <buttongroups>
-  <buttongroup name="buttonGroup"/>
- </buttongroups>
-</ui>
+      </layout>
+     </item>
+      <!-- Separator -->
+      <item>
+       <widget class="QFrame" name="line">
+        <property name="frameShape">
+         <enum>QFrame::HLine</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="buttonLayout">
+        <item>
+         <spacer name="horizontalSpacerLeft">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="startButton">
+          <property name="text">
+           <string>Start Optimization</string>
+          </property>
+          <property name="toolTip">
+           <string>Run optimization with current settings</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="stopButton">
+          <property name="text">
+           <string>Stop</string>
+          </property>
+          <property name="toolTip">
+           <string>Stop optimization</string>
+          </property>
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+         <item>
+          <widget class="QPushButton" name="acceptButton">
+           <property name="text">
+            <string>Accept Changes</string>
+           </property>
+           <property name="toolTip">
+            <string>Apply optimized parameters to component (Ctrl+Enter)</string>
+           </property>
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string>QPushButton { font-weight: bold; }
+QPushButton:disabled { color: #999; }</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="closeButton">
+           <property name="text">
+            <string>Close</string>
+           </property>
+           <property name="toolTip">
+            <string>Close optimization panel</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacerRight">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+       </layout>
+      </item>
+     <item>
+      <widget class="QGroupBox" name="progressGroup">
+       <property name="title">
+        <string>Progress</string>
+       </property>
+       <property name="visible">
+        <bool>false</bool>
+       </property>
+       <layout class="QVBoxLayout" name="progressLayout">
+        <item>
+         <widget class="QLabel" name="statusLabel">
+          <property name="text">
+           <string>Status: Ready</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QProgressBar" name="progressBar">
+          <property name="value">
+           <number>0</number>
+          </property>
+          <property name="textVisible">
+           <bool>true</bool>
+          </property>
+          <property name="format">
+           <string>%p%</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="iterationLabel">
+          <property name="text">
+           <string>Iteration: 0 / --</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="meritLabel">
+          <property name="text">
+           <string>Merit: --</string>
+          </property>
+         </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="elapsedLabel">
+           <property name="text">
+            <string>Elapsed: --</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="resultLabel">
+           <property name="text">
+            <string></string>
+           </property>
+           <property name="visible">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string>font-weight: bold;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="warningLabel">
+           <property name="text">
+            <string></string>
+           </property>
+           <property name="visible">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string>background-color: #FFF3CD; color: #856404; padding: 8px; border: 1px solid #FFE69C; border-radius: 4px; margin-top: 8px;</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+          </item>
+          <item>
+          <widget class="QGroupBox" name="parameterTrackingGroup">
+           <property name="title">
+            <string>Parameter Tracking</string>
+           </property>
+           <layout class="QFormLayout" name="parameterFormLayout">
+             <item row="0" column="0" colspan="2">
+              <widget class="QLabel" name="componentNameLabel">
+               <property name="text">
+                <string>Component: --</string>
+               </property>
+               <property name="styleSheet">
+                <string>font-weight: bold;</string>
+               </property>
+              </widget>
+             </item>
+              <item row="1" column="0" colspan="2">
+               <widget class="QLabel" name="normalVectorLabel">
+                <property name="text">
+                 <string>Direction: --</string>
+                </property>
+                <property name="styleSheet">
+                 <string>font-style: italic; color: #666;</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0" colspan="2">
+               <widget class="QLabel" name="label_original">
+                <property name="text">
+                 <string>Original Position:</string>
+                </property>
+                <property name="styleSheet">
+                 <string>font-weight: bold; margin-top: 5px;</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_orig_merit">
+                <property name="text">
+                 <string>  Merit:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QLabel" name="originalMeritLabel">
+                <property name="text">
+                 <string>--</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="label_orig_x">
+                <property name="text">
+                 <string>  X:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QLabel" name="originalXLabel">
+                <property name="text">
+                 <string>-- mm</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_orig_y">
+                <property name="text">
+                 <string>  Y:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QLabel" name="originalYLabel">
+                <property name="text">
+                 <string>-- mm</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="label_orig_z">
+                <property name="text">
+                 <string>  Z:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1">
+               <widget class="QLabel" name="originalZLabel">
+                <property name="text">
+                 <string>-- mm</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="0" colspan="2">
+               <widget class="QLabel" name="label_current">
+                <property name="text">
+                 <string>Current Position:</string>
+                </property>
+                <property name="styleSheet">
+                 <string>font-weight: bold; margin-top: 5px;</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="label_curr_merit">
+                <property name="text">
+                 <string>  Merit:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1">
+               <layout class="QHBoxLayout" name="currentMeritLayout">
+                <item>
+                 <widget class="QLabel" name="currentMeritLabel">
+                  <property name="text">
+                   <string>--</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="meritImprovementLabel">
+                  <property name="text">
+                   <string></string>
+                  </property>
+                  <property name="styleSheet">
+                   <string>color: green; font-weight: bold;</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="9" column="0">
+               <widget class="QLabel" name="label_curr_x">
+                <property name="text">
+                 <string>  X:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1">
+               <layout class="QHBoxLayout" name="currentXLayout">
+                <item>
+                 <widget class="QLabel" name="currentXLabel">
+                  <property name="text">
+                   <string>-- mm</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="deltaXLabel">
+                  <property name="text">
+                   <string></string>
+                  </property>
+                  <property name="styleSheet">
+                   <string>color: gray;</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="10" column="0">
+               <widget class="QLabel" name="label_curr_y">
+                <property name="text">
+                 <string>  Y:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="1">
+               <layout class="QHBoxLayout" name="currentYLayout">
+                <item>
+                 <widget class="QLabel" name="currentYLabel">
+                  <property name="text">
+                   <string>-- mm</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="deltaYLabel">
+                  <property name="text">
+                   <string></string>
+                  </property>
+                  <property name="styleSheet">
+                   <string>color: gray;</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="11" column="0">
+               <widget class="QLabel" name="label_curr_z">
+                <property name="text">
+                 <string>  Z:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="11" column="1">
+               <layout class="QHBoxLayout" name="currentZLayout">
+                <item>
+                 <widget class="QLabel" name="currentZLabel">
+                  <property name="text">
+                   <string>-- mm</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="deltaZLabel">
+                  <property name="text">
+                   <string></string>
+                  </property>
+                  <property name="styleSheet">
+                   <string>color: gray;</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+           </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+     </layout>
+   </widget>
+   <resources/>
+   <connections/>
+   <buttongroups>
+    <buttongroup name="buttonGroup"/>
+   </buttongroups>
+  </ui>

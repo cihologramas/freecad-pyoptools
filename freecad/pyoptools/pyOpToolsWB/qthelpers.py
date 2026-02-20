@@ -1,9 +1,10 @@
 import FreeCAD
-from PySide import QtCore, QtGui
+from PySide import QtCore, QtGui, QtWidgets
 import os
 
+
 def outputDialog(msg, yn=False):
-    """ Auxiliary function to create a dialog in pyside.
+    """Auxiliary function to create a dialog in pyside.
 
     Parameters
     ----------
@@ -18,17 +19,23 @@ def outputDialog(msg, yn=False):
     True if Yes button was present and pressed. False otherwise.
     """
 
-    diag = QtGui.QMessageBox(QtGui.QMessageBox.Information, 'Output', msg)
+    diag = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Information, "Output", msg)
     diag.setWindowModality(QtCore.Qt.ApplicationModal)
     if yn:
-        diag.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-    return diag.exec_() == QtGui.QMessageBox.Yes
+        diag.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+    return diag.exec_() == QtWidgets.QMessageBox.Yes
 
 
 def getUIFilePath(targetfile):
     """Helper function to find UI files"""
 
-    ui_file_path = os.path.join(FreeCAD.ConfigGet("UserAppData"), "Mod",
-                        "pyOpToolsWorkbench", "freecad", "pyoptools",
-                        "GUI",targetfile)
+    ui_file_path = os.path.join(
+        FreeCAD.ConfigGet("UserAppData"),
+        "Mod",
+        "pyOpToolsWorkbench",
+        "freecad",
+        "pyoptools",
+        "GUI",
+        targetfile,
+    )
     return ui_file_path

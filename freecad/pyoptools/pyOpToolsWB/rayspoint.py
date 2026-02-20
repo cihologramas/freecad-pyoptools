@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """Classes used to define a point source."""
+
 import FreeCAD
 import FreeCADGui
 import Part
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
+from .feedback import FeedbackHelper
 
 from pyoptools.misc.pmisc.misc import wavelength2RGB
 import pyoptools.raytrace.ray.ray_source as rs_lib
@@ -14,12 +16,11 @@ from FreeCAD import Units
 
 class RaysPointGUI(WBCommandGUI):
     def __init__(self):
-
         pw = placementWidget()
         WBCommandGUI.__init__(self, [pw, "RaysPoint.ui"])
 
+    @FeedbackHelper.with_error_handling("Point Source")
     def accept(self):
-
         X = self.form.Xpos.value()
         Y = self.form.Ypos.value()
         Z = self.form.Zpos.value()
@@ -41,14 +42,10 @@ class RaysPointGUI(WBCommandGUI):
         m.rotateZ(radians(Zrot))
 
         m.move((X, Y, Z))
-        obj = InsertRPoint(
-            nr, na, distribution, wavelength, angle, "S", enabled
-        )
+        obj = InsertRPoint(nr, na, distribution, wavelength, angle, "S", enabled)
 
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-
-        FreeCADGui.Control.closeDialog()
 
 
 class RaysPointMenu(WBCommandMenu):
@@ -65,33 +62,53 @@ class RaysPointMenu(WBCommandMenu):
 
 
 class RaysPointPart(WBPart):
-    def __init__(self,obj,nr=6,na=6,distribution="polar",wavelength=633, angle=30,enabled = True):
-        WBPart.__init__(self,obj,"RaysPoint")
+    def __init__(
+        self,
+        obj,
+        nr=6,
+        na=6,
+        distribution="polar",
+        wavelength=633,
+        angle=30,
+        enabled=True,
+    ):
+        WBPart.__init__(self, obj, "RaysPoint")
         obj.Proxy = self
-        obj.addProperty("App::PropertyIntegerConstraint","nr","Shape","Number of rays (radial)").nr=(0,0,10000,1)
-        obj.addProperty("App::PropertyIntegerConstraint","na","Shape","Number of rays (angular)").na=(0,0,10000,1)
-        obj.addProperty("App::PropertyString","distribution","Options","Ray distribution (Polar for the moment)")
-        obj.addProperty("App::PropertyLength","wl","Options","Wavelength of the source")
-        obj.addProperty("App::PropertyAngle","angle","Shape","Source subtended angle")
-        obj.nr=nr
-        obj.na=na
-        obj.distribution=distribution.lower()
-        obj.wl = Units.Quantity("{} nm".format(wavelength)) # wavelength is received in nm
+        obj.addProperty(
+            "App::PropertyIntegerConstraint", "nr", "Shape", "Number of rays (radial)"
+        ).nr = (0, 0, 10000, 1)
+        obj.addProperty(
+            "App::PropertyIntegerConstraint", "na", "Shape", "Number of rays (angular)"
+        ).na = (0, 0, 10000, 1)
+        obj.addProperty(
+            "App::PropertyString",
+            "distribution",
+            "Options",
+            "Ray distribution (Polar for the moment)",
+        )
+        obj.addProperty(
+            "App::PropertyLength", "wl", "Options", "Wavelength of the source"
+        )
+        obj.addProperty(
+            "App::PropertyAngle", "angle", "Shape", "Source subtended angle"
+        )
+        obj.nr = nr
+        obj.na = na
+        obj.distribution = distribution.lower()
+        obj.wl = Units.Quantity(
+            "{} nm".format(wavelength)
+        )  # wavelength is received in nm
         obj.angle = angle
         obj.Enabled = enabled
 
         r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
         obj.ViewObject.ShapeColor = (r, g, b, 0.0)
 
-    def propertyChanged(self, obj, prop):
-
-        # To keep all the housekeeping that WBPart do, this method replaces
-        # the standard onChanged
+    def onChanged(self, obj, prop):
+        super().onChanged(obj, prop)
 
         if prop == "wl":
-            r, g, b = wavelength2RGB(
-                obj.wl.getValueAs("µm").Value
-            )  # se pasa wl a um
+            r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)  # se pasa wl a um
             obj.ViewObject.ShapeColor = (r, g, b, 0.0)
 
     def pyoptools_repr(self, obj):
@@ -104,7 +121,7 @@ class RaysPointPart(WBPart):
         pla = obj.getGlobalPlacement()
         X, Y, Z = pla.Base
         RZ, RY, RX = pla.Rotation.toEuler()
-
+        label = obj.Label
         if dist == "polar":
             r = rs_lib.point_source_p(
                 origin=(X, Y, Z),
@@ -112,7 +129,7 @@ class RaysPointPart(WBPart):
                 span=ang,
                 num_rays=(nr, na),
                 wavelength=wl,
-                label="",
+                label=label,
             )
         elif dist == "cartesian":
             r = rs_lib.point_source_c(
@@ -121,7 +138,7 @@ class RaysPointPart(WBPart):
                 span=(ang, ang),
                 num_rays=(nr, na),
                 wavelength=wl,
-                label="",
+                label=label,
             )
         elif dist == "random":
             print("random ray distribution, not implemented yet")
@@ -131,7 +148,6 @@ class RaysPointPart(WBPart):
         return r
 
     def execute(self, obj):
-
         dist = obj.distribution.lower()
 
         if dist not in ["polar", "cartesian"]:
@@ -142,8 +158,8 @@ class RaysPointPart(WBPart):
             # For small angles there is a big time delay in the cone draw. for
             # this reason the angle is limited to 5 degrees. This is only visual.
 
-            if obj.angle<5:
-                ang=radians(5)
+            if obj.angle < 5:
+                ang = radians(5)
             else:
                 ang = obj.angle.getValueAs("rad").Value
             r = 5 * tan(ang)
@@ -156,9 +172,11 @@ class RaysPointPart(WBPart):
         obj.Shape = d
 
 
-def InsertRPoint(nr=6, na=6,distribution="polar",wavelength=633,angle=30,ID="S", enabled = True):
-    myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",ID)
-    RaysPointPart(myObj,nr,na,distribution,wavelength,angle,enabled)
-    myObj.ViewObject.Proxy = 0 # this is mandatory unless we code the ViewProvider too
+def InsertRPoint(
+    nr=6, na=6, distribution="polar", wavelength=633, angle=30, ID="S", enabled=True
+):
+    myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", ID)
+    RaysPointPart(myObj, nr, na, distribution, wavelength, angle, enabled)
+    myObj.ViewObject.Proxy = 0  # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj

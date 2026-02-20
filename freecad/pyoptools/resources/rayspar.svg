@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#808080" stroke-width="1.5" fill="none">
+        <line x1="2" y1="3" x2="12" y2="3"/>
+        <polyline points="10,1 12,3 10,5" stroke-linejoin="miter" fill="#808080"/>
+        <line x1="2" y1="8" x2="12" y2="8"/>
+        <polyline points="10,6 12,8 10,10" stroke-linejoin="miter" fill="#808080"/>
+        <line x1="2" y1="13" x2="12" y2="13"/>
+        <polyline points="10,11 12,13 10,15" stroke-linejoin="miter" fill="#808080"/>
+    </g>
+</svg>

@@ -2,6 +2,7 @@
 """Classes used to define a light sensor."""
 import FreeCAD
 import FreeCADGui
+from .feedback import FeedbackHelper
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 
@@ -15,6 +16,7 @@ class SensorGUI(WBCommandGUI):
         pw = placementWidget()
         WBCommandGUI.__init__(self, [pw, "Sensor.ui"])
 
+    @FeedbackHelper.with_error_handling("Sensor")
     def accept(self):
         width = self.form.Width.value()
         height = self.form.Height.value()
@@ -34,7 +36,6 @@ class SensorGUI(WBCommandGUI):
         m.move((X, Y, Z))
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-        FreeCADGui.Control.closeDialog()
 
 
 class SensorMenu(WBCommandMenu):

@@ -13,7 +13,33 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QLineEdit" name="SearchField">
+       <property name="placeholderText">
+        <string>Search parts by number, type, or description...</string>
+       </property>
+       <property name="toolTip">
+        <string>Search parts by number, type, or description. Shortcuts: Ctrl+F to focus, Down arrow to navigate results, Ctrl+K to clear</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    <item>
+     <widget class="QCheckBox" name="AvailableOnlyCheckbox">
+      <property name="text">
+       <string>Show only available components</string>
+      </property>
+      <property name="toolTip">
+       <string>Filter results to only show components with available materials in the database</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
@@ -29,16 +55,20 @@
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QLabel" name="label_8">
-             <property name="text">
-              <string>Catalog</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="Catalog"/>
-           </item>
+            <item>
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Search in:</string>
+              </property>
+             </widget>
+            </item>
+             <item>
+              <widget class="QComboBox" name="Catalog">
+               <property name="toolTip">
+                <string>Select catalog(s) to search. Ctrl+Click for multi-select. Shortcuts: Ctrl+L to focus, Alt+A to toggle All Catalogs</string>
+               </property>
+              </widget>
+             </item>
           </layout>
          </item>
          <item>
@@ -77,13 +107,31 @@
    </item>
    <item>
     <widget class="QPlainTextEdit" name="Info">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>280</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <family>Monospace</family>
+      </font>
+     </property>
      <property name="readOnly">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-  </layout>
- </widget>
- <resources/>
- <connections/>
-</ui>
+   </layout>
+  </widget>
+  <tabstops>
+   <tabstop>SearchField</tabstop>
+   <tabstop>AvailableOnlyCheckbox</tabstop>
+   <tabstop>Catalog</tabstop>
+   <tabstop>Reference</tabstop>
+   <tabstop>Info</tabstop>
+  </tabstops>
+  <resources/>
+  <connections/>
+ </ui>

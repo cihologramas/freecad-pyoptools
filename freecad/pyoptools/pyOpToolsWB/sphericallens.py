@@ -11,6 +11,7 @@ from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import (
 )
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
 from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
+from .feedback import FeedbackHelper
 
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
@@ -26,6 +27,7 @@ class SphericalLensGUI(WBCommandGUI):
 
         WBCommandGUI.__init__(self, [pw, mw, "SphericalLens.ui"])
 
+    @FeedbackHelper.with_error_handling("Spherical Lens")
     def accept(self):
         curvature_front = self.form.CurvatureFront.value()
         curvature_back = self.form.CurvatureBack.value()
@@ -59,7 +61,11 @@ class SphericalLensGUI(WBCommandGUI):
         m.move((X, Y, Z))
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-        FreeCADGui.Control.closeDialog()
+        
+        # Decorator automatically handles:
+        # - FreeCAD.ActiveDocument.recompute()
+        # - FreeCADGui.updateGui()
+        # - FreeCADGui.Control.closeDialog()
 
 
 class SphericalLensMenu(WBCommandMenu):
@@ -73,6 +79,8 @@ class SphericalLensMenu(WBCommandMenu):
             "ToolTip": "Add Spherical Lens",
             "Pixmap": "",
         }
+    
+    # Activated() inherited from WBCommandMenu - includes automatic error handling
 
 
 class SphericalLensPart(WBPart):

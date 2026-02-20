@@ -6,6 +6,7 @@ import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
+from .feedback import FeedbackHelper
 
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
@@ -19,6 +20,7 @@ class ThickLensGUI(WBCommandGUI):
         pw = placementWidget()
         WBCommandGUI.__init__(self, [pw, "IdealThickLens.ui"])
 
+    @FeedbackHelper.with_error_handling("Thick Lens")
     def accept(self):
         Th = self.form.Thk.value()
         D = self.form.D.value()
@@ -53,7 +55,6 @@ class ThickLensGUI(WBCommandGUI):
         m.move((X, Y, Z))
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-        FreeCADGui.Control.closeDialog()
 
 
 class ThickLensMenu(WBCommandMenu):

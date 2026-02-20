@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16" height="16" version="1.1" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+ <g fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Crosshair center circle -->
+  <circle cx="8" cy="8" r="3" stroke-width="1.5"/>
+  
+  <!-- Crosshair lines -->
+  <path d="m8 1v3" stroke-width="1.5"/>
+  <path d="m8 12v3" stroke-width="1.5"/>
+  <path d="m1 8h3" stroke-width="1.5"/>
+  <path d="m12 8h3" stroke-width="1.5"/>
+  
+  <!-- Mouse pointer -->
+  <path d="m11 11 3 3" stroke-width="2"/>
+  <path d="m11.5 13.5 2.5 1" stroke-width="1.5"/>
+  <path d="m13.5 11.5 1 2.5" stroke-width="1.5"/>
+ </g>
+</svg>

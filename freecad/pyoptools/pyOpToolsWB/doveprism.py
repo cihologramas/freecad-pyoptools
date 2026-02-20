@@ -4,6 +4,7 @@ import FreeCAD
 import FreeCADGui
 import Part
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
+from .feedback import FeedbackHelper
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
 import pyoptools.raytrace.comp_lib as comp_lib
@@ -18,6 +19,7 @@ class DovePrismGUI(WBCommandGUI):
         mw = materialWidget()
         WBCommandGUI.__init__(self, [pw, mw, "DovePrism.ui"])
 
+    @FeedbackHelper.with_error_handling("Dove Prism")
     def accept(self):
         S = self.form.S.value()
         L = self.form.L.value()
@@ -41,7 +43,6 @@ class DovePrismGUI(WBCommandGUI):
         m.move((X, Y, Z))
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-        FreeCADGui.Control.closeDialog()
 
 
 class DovePrismMenu(WBCommandMenu):

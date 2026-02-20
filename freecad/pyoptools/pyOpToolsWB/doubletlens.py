@@ -7,6 +7,7 @@ from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import (
     placementWidget,
 )
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
+from .feedback import FeedbackHelper
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
 from .sphericallens import buildlens
@@ -43,6 +44,7 @@ class DoubletLensGUI(WBCommandGUI):
         if not self.form.CS1_2.isEnabled():
             self.form.CS1_2.setValue(d)
 
+    @FeedbackHelper.with_error_handling("Doublet Lens")
     def accept(self):
 
         CS1_1 = self.form.CS1_1.value()
@@ -97,8 +99,6 @@ class DoubletLensGUI(WBCommandGUI):
         m.move((X, Y, Z))
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-
-        FreeCADGui.Control.closeDialog()
 
 
 class DoubletLensMenu(WBCommandMenu):

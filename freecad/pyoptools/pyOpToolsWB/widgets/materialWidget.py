@@ -1,10 +1,10 @@
 import FreeCADGui
-from PySide import QtGui
+from PySide import QtGui, QtWidgets
 from freecad.pyoptools.pyOpToolsWB.qthelpers import getUIFilePath
 import pyoptools.raytrace.mat_lib as matlib
 
 
-class materialWidget(QtGui.QWidget):
+class materialWidget(QtWidgets.QWidget):
     def __init__(self):
         super(materialWidget, self).__init__()
         self.initUI()
@@ -17,7 +17,7 @@ class materialWidget(QtGui.QWidget):
         self.ui.Catalog.addItem("Value", [])
 
         for i in matlib.material.get_glass_libraries():
-            mats=matlib.material.get_glass_materials_from_library(i)
+            mats = matlib.material.get_glass_materials_from_library(i)
             self.ui.Catalog.addItem(i, sorted(mats))
 
         self.ui.Catalog.currentIndexChanged.connect(self.catalogChange)

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AlignRotation</class>
+ <widget class="QWidget" name="AlignRotation">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>350</width>
+     <height>220</height>
+    </rect>
+   </property>
+  <property name="windowTitle">
+   <string>Align Component Rotation</string>
+  </property>
+  <layout class="QVBoxLayout" name="mainLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::ExpandingFieldsGrow</enum>
+     </property>
+     
+     <!-- Component Selection -->
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_1">
+       <property name="text">
+        <string>Component:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <layout class="QHBoxLayout">
+       <item>
+        <widget class="QComboBox" name="componentComboBox"/>
+       </item>
+        <item>
+          <widget class="QPushButton" name="pickComponentButton">
+           <property name="text">
+            <string></string>
+           </property>
+           <property name="maximumWidth">
+            <number>32</number>
+           </property>
+          </widget>
+        </item>
+      </layout>
+     </item>
+     
+     <!-- Align Axis -->
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Align Axis:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <layout class="QHBoxLayout">
+        <item>
+         <widget class="QRadioButton" name="alignAxisX">
+          <property name="text">
+           <string>X</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">alignAxisGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="alignAxisY">
+          <property name="text">
+           <string>Y</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">alignAxisGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+      </layout>
+     </item>
+     
+     <!-- To Global Plane -->
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>To Global Plane:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <layout class="QHBoxLayout">
+        <item>
+         <widget class="QRadioButton" name="planeXY">
+          <property name="text">
+           <string>XY</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">planeGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="planeYZ">
+          <property name="text">
+           <string>YZ</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">planeGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="planeZX">
+          <property name="text">
+           <string>ZX</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">planeGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+      </layout>
+     </item>
+     
+     <!-- Reverse -->
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="reverseCheckBox">
+       <property name="text">
+        <string>Reverse</string>
+       </property>
+      </widget>
+     </item>
+     
+     </layout>
+    </item>
+    
+    <!-- Separator -->
+    <item>
+     <widget class="QFrame" name="line">
+      <property name="frameShape">
+       <enum>QFrame::HLine</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+     </widget>
+    </item>
+    
+    <!-- Buttons -->
+    <item>
+     <layout class="QHBoxLayout">
+      <item>
+       <spacer name="horizontalSpacerLeft">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="applyButton">
+        <property name="text">
+         <string>Apply</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="closeButton">
+        <property name="text">
+         <string>Close</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacerRight">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+   
+  </layout>
+ </widget>
+ <buttongroups>
+  <buttongroup name="alignAxisGroup"/>
+  <buttongroup name="planeGroup"/>
+ </buttongroups>
+ <resources/>
+ <connections/>
+</ui>

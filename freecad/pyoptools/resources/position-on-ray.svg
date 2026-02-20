@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" version="1.1" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="rayGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+   <stop offset="0%" style="stop-color:#fcaf3e;stop-opacity:1" />
+   <stop offset="100%" style="stop-color:#f57900;stop-opacity:1" />
+  </linearGradient>
+  <linearGradient id="componentGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+   <stop offset="0%" style="stop-color:#729fcf;stop-opacity:1" />
+   <stop offset="100%" style="stop-color:#3465a4;stop-opacity:1" />
+  </linearGradient>
+ </defs>
+ 
+ <!-- Ray line from bottom-left to top-right -->
+ <path d="M 10 54 L 54 10" 
+       fill="none" stroke="#f57900" stroke-width="3" 
+       stroke-linecap="round" stroke-dasharray="none"/>
+ 
+ <!-- Arrow at end of ray -->
+ <path d="M 50 13 L 54 10 L 51 6" 
+       fill="#f57900" stroke="none"/>
+ 
+ <!-- Component (lens/optical element) positioned on ray -->
+ <!-- Circle representing component at specific distance along ray -->
+ <circle cx="32" cy="32" r="10" 
+         fill="url(#componentGradient)" 
+         stroke="#204a87" stroke-width="2"/>
+ 
+ <!-- Component axis indicator (Z-axis aligned with ray) -->
+ <path d="M 32 32 L 38 26" 
+       fill="none" stroke="#204a87" stroke-width="2" 
+       stroke-linecap="round"/>
+ 
+ <!-- Distance marker/indicator -->
+ <circle cx="32" cy="32" r="3" 
+         fill="#edd400" stroke="#c4a000" stroke-width="1"/>
+ 
+ <!-- Small measurement tick marks along ray -->
+ <path d="M 21 43 L 19 45" 
+       fill="none" stroke="#888a85" stroke-width="1.5" 
+       stroke-linecap="round"/>
+ <path d="M 43 21 L 45 19" 
+       fill="none" stroke="#888a85" stroke-width="1.5" 
+       stroke-linecap="round"/>
+</svg>

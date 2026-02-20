@@ -8,6 +8,7 @@ from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import (
 )
 from freecad.pyoptools.pyOpToolsWB.widgets.materialWidget import materialWidget
 from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
+from .feedback import FeedbackHelper
 
 import Part
 
@@ -24,6 +25,7 @@ class PowellLensGUI(WBCommandGUI):
         mw = materialWidget()
         WBCommandGUI.__init__(self, [pw, mw, "PowellLens.ui"])
 
+    @FeedbackHelper.with_error_handling("Powell Lens")
     def accept(self):
         R = self.form.R.value()
         K = self.form.K.value()
@@ -49,7 +51,6 @@ class PowellLensGUI(WBCommandGUI):
         m.move((X, Y, Z))
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-        FreeCADGui.Control.closeDialog()
 
 
 class PowellLensMenu(WBCommandMenu):

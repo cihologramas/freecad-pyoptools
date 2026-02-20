@@ -15,6 +15,10 @@ means cloning the repo into ~/.local/share/FreeCAD/Mod directory.
 After that you just select the "pyOpTools" workbench in FreeCAD in the usual way. As seen in the following screenshot
 ![image](https://raw.githubusercontent.com/cihologramas/freecad-pyoptools/master/media/PyOpTools-workbench-selection.png)
 
+## Development
+
+For information on testing local pyoptools library changes in FreeCAD, see the [Development Guide](docs/DEVELOPMENT.md).
+
 
 ## Small Instructions
 

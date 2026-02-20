@@ -5,6 +5,7 @@ import FreeCAD
 import FreeCADGui
 from .wbcommand import WBCommandGUI, WBCommandMenu, WBPart
 from freecad.pyoptools.pyOpToolsWB.widgets.placementWidget import placementWidget
+from .feedback import FeedbackHelper
 
 from pyoptools.misc.pmisc.misc import wavelength2RGB
 from pyoptools.raytrace.ray import Ray
@@ -18,6 +19,7 @@ class RayGUI(WBCommandGUI):
         pw = placementWidget()
         WBCommandGUI.__init__(self, [pw, "Ray.ui"])
 
+    @FeedbackHelper.with_error_handling("Ray")
     def accept(self):
         X = self.form.Xpos.value()
         Y = self.form.Ypos.value()
@@ -41,8 +43,6 @@ class RayGUI(WBCommandGUI):
 
         p1 = FreeCAD.Placement(m)
         obj.Placement = p1
-
-        FreeCADGui.Control.closeDialog()
 
 
 class RayMenu(WBCommandMenu):
@@ -73,9 +73,8 @@ class RayPart(WBPart):
         r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
         obj.ViewObject.ShapeColor = (r, g, b, 0.0)
 
-    def propertyChanged(self, obj, prop):
-        # To keep all the housekeeping that WBPart do, this method replaces
-        # the standard onChanged
+    def onChanged(self, obj, prop):
+        super().onChanged(obj, prop)
 
         if prop == "wl":
             r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
@@ -88,9 +87,9 @@ class RayPart(WBPart):
         X, Y, Z = pla.Base
 
         r_vec = pla.Rotation.multVec(FreeCAD.Base.Vector(0, 0, 1))
-
+        label = obj.Label
         return [
-            Ray(origin=(X, Y, Z), direction=(r_vec.x, r_vec.y, r_vec.z), wavelength=wl)
+            Ray(origin=(X, Y, Z), direction=(r_vec.x, r_vec.y, r_vec.z), wavelength=wl, label=label)
         ]
 
     def execute(self, obj):
