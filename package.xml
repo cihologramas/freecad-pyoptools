@@ -2,8 +2,8 @@
 <package format="1" xmlns="https://wiki.freecad.org/Package_Metadata">
   <name>pyOpTools Workbench</name>
   <description>An optics ray-tracing workbench based on pyOpTools</description>
-  <version>0.0.3</version>
-  <date>2023-03-20</date>
+  <version>0.0.4</version>
+  <date>2026-02-20</date>
   <maintainer email="ramezquitao@cihologramas.com">Ricardo Amézquita Orozco</maintainer>
   <license file="LICENSE">GPL-3.0-or-later</license>
   <url type="repository" branch="master">https://github.com/cihologramas/freecad-pyoptools</url>
@@ -14,7 +14,7 @@
     <workbench>
       <classname>PyOpToolsWorkbench</classname> 
       <subdirectory>./freecad/pyoptools/</subdirectory>
-      <depend>pyoptools</depend>
+      <depend version_gte="0.3.8" type="python">pyoptools</depend>
       <freecadmin>1.0.0</freecadmin>
       <tag>raytracing</tag>
       <tag>optics</tag>
