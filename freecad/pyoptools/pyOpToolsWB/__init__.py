@@ -111,6 +111,10 @@ from .positionmirroron2rays import PositionMirrorOn2RaysMenu
 
 FreeCADGui.addCommand("PositionMirrorOn2Rays", PositionMirrorOn2RaysMenu())
 
+from .about import AboutMenu
+
+FreeCADGui.addCommand("AboutPyOpTools", AboutMenu())
+
 from .utils import WipeMenu, EnableComponentsMenu, DisableComponentsMenu
 
 FreeCADGui.addCommand("btnWipe", WipeMenu())
