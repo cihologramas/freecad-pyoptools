@@ -91,26 +91,14 @@ class PyOpToolsWorkbench(Gui.Workbench):
             ["SpotDiagram", "EnableComponents", "DisableComponents", "PositionOnRay", "AlignRotation", "PositionMirrorOn2Rays"],
         )
 
+        # Help menu - append to FreeCAD's existing Help menu
+        self.appendMenu(["&Help"], ["AboutPyOpTools"])
+
     def Activated(self):
         """
         code which should be computed when a user switch to this workbench
         """
-        try:
-            import pyoptools
-
-            FreeCAD.Console.PrintMessage("pyOpTools Workbench loaded\n")
-            FreeCAD.Console.PrintMessage(
-                f"pyoptools library version: {pyoptools.__version__}\n"
-            )
-        except ImportError:
-            # pyoptools not installed - workbench should still load
-            FreeCAD.Console.PrintWarning(
-                "pyoptools library not found - install via: pip install pyoptools\n"
-            )
-        except AttributeError:
-            # Old pyoptools version without __version__ (unlikely)
-            FreeCAD.Console.PrintWarning("pyoptools version information unavailable\n")
-        
+                
         # Create and show Light Sources panel (docked on right side)
         if self.light_sources_panel is None:
             from .pyOpToolsWB.lightsourcespanel import LightSourcesPanel
