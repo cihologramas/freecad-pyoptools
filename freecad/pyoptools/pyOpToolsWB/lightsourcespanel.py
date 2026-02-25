@@ -269,6 +269,10 @@ class LightSourcesPanel(QtWidgets.QDockWidget):
                         notes_text = obj.Notes if hasattr(obj, "Notes") and obj.Notes else ""
                         notes_item.setText(notes_text)
     
+    def slotActivateDocument(self, doc):
+        """Called when the active document changes (user switches between documents)."""
+        self.refresh_sources()
+
     def slotCreatedObject(self, obj):
         """Called when a new object is created in the document."""
         # Check if it's a light source
