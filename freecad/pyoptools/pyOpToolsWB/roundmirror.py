@@ -96,7 +96,7 @@ class RoundMirrorPart(WBPart):
         - Initial version with basic properties and functionalities.
     """
 
-    def __init__(self, obj, Ref=100, Th=10, D=50, matcat="", matref=""):
+    def __init__(self, obj, Ref=100, Th=10, D=50, matcat="", matref="", WedgeAngle=0.0):
         """
         Initializes a new instance of the RoundMirrorPart class.
 
@@ -148,8 +148,14 @@ class RoundMirrorPart(WBPart):
         obj.ViewObject.Transparency = 50
         obj.ViewObject.ShapeColor = (0.5, 0.5, 0.5, 0.0)
 
+        obj.addProperty(
+        "App::PropertyAngle", "WedgeAngle", "Shape", "Wedge angle"
+        )
+
+        obj.WedgeAngle = WedgeAngle
+
         # Set current RoundMirror Version
-        obj.ObjectVersion = 1
+        obj.ObjectVersion = 2
 
     def onChanged(self, obj, prop):
         super().onChanged(obj, prop)
@@ -213,6 +219,8 @@ class RoundMirrorPart(WBPart):
 
         if obj.ObjectVersion == 0:
             migrate_to_v1(obj)
+        if obj.ObjectVersion == 1:
+            migrate_to_v2(obj)
 
     def pyoptools_repr(self, obj):
         if obj.FilterType == "NoFilter":
@@ -270,3 +278,16 @@ def migrate_to_v1(obj):
     obj.ObjectVersion = 1
 
     _wrn("Migrating round mirror from v0 to v1\n")
+
+def migrate_to_v2(obj):
+    # No changes to the object structure were made in v2, so no migration steps are necessary.
+    # However, we update the object version to ensure accurate tracking of the object's version history.
+    obj.ObjectVersion = 2
+
+    _wrn("Migrating round mirror from v1 to v2\n")
+    
+    obj.addProperty(
+        "App::PropertyAngle", "WedgeAngle", "Shape", "Wedge angle"
+    )
+    obj.WedgeAngle = 0.0
+    
