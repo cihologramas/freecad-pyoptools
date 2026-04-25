@@ -117,16 +117,25 @@ class PropagatePart(WBPart):
             )
             raise  # Re-raise so FreeCAD knows object creation failed
 
+    def __getstate__(self):
+        # TODO: Implement proper serialization of self.S (System object) so that
+        # propagation results survive document save/reload without needing to
+        # re-run propagation. For now we exclude it entirely to avoid the
+        # "Object of type System is not JSON serializable" error.
+        return {}
+
+    def __setstate__(self, state):
+        # self.S will be absent after reload; execute() already handles this
+        # gracefully via hasattr(self, "S").
+        pass
+
     @FeedbackHelper.with_busy_cursor
     def execute(self, obj):
         raydict = {}
         raylist = []
         colorlist = []
 
-        # The System attribute ('S') is not being serialized correctly when saving
-        # and reloading the model, causing it to be missing. As a workaround,
-        # we skip plotting rays if 'S' is not present.
-        if hasattr(self, "S"):
+        if hasattr(self, "S"):  # S is absent after document reload (see __getstate__)
             try:
                 for ray in self.S.prop_ray:
                     llines = get_prop_shape(ray)
