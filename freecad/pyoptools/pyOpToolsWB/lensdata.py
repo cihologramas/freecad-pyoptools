@@ -140,6 +140,7 @@ class LensDataMenu(WBCommandMenu):
 
 
 class LensDataPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(self, obj, datalist):
         surfType, radius, thick, semid, matcat, matref = datalist
 

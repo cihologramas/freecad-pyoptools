@@ -61,6 +61,7 @@ class BSCubeMenu(WBCommandMenu):
 
 
 class BSCubePart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(self, obj, S=50, Ref=100, matcat="", matref=""):
 
         WBPart.__init__(self, obj, "BSCube")

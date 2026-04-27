@@ -62,6 +62,7 @@ class RaysParallelMenu(WBCommandMenu):
 
 
 class RaysParPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(
         self, obj, nr=6, na=6, distribution="polar", wavelength=633, D=5, enabled=True
     ):

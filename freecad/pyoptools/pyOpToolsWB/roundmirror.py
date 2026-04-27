@@ -97,6 +97,8 @@ class RoundMirrorPart(WBPart):
         - Initial version with basic properties and functionalities.
     """
 
+    CURRENT_PART_VERSION = 2
+
     def __init__(self, obj, Ref=100, Th=10, D=50, matcat="", matref="", WedgeAngle=0.0):
         """
         Initializes a new instance of the RoundMirrorPart class.
@@ -157,9 +159,6 @@ class RoundMirrorPart(WBPart):
         )
 
         obj.WedgeAngle = WedgeAngle
-
-        # Set current RoundMirror Version
-        obj.ObjectVersion = 2
 
     def onChanged(self, obj, prop):
         super().onChanged(obj, prop)

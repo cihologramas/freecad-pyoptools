@@ -70,6 +70,7 @@ class RightAnglePrismMenu(WBCommandMenu):
 
 
 class RightAnglePrismPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(self, obj, S=50, matcat="", matref="", rla=0, rlb=0, rhy=0):
 
         WBPart.__init__(self, obj, "RightAnglePrism")

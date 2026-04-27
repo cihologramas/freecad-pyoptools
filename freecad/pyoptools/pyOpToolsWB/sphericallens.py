@@ -110,6 +110,8 @@ class SphericalLensPart(WBPart):
     A curvature of 0 creates a flat surface.
     """
 
+    CURRENT_PART_VERSION = 1
+
     def __init__(
         self,
         obj,
@@ -170,8 +172,6 @@ class SphericalLensPart(WBPart):
         obj.MaterialReference = material_reference
         obj.ViewObject.Transparency = 50
         obj.ViewObject.ShapeColor = (1.0, 1.0, 0.0, 0.0)
-
-        obj.ObjectVersion = 1
 
     def execute(self, obj):
         obj.Shape = buildlens(
@@ -324,4 +324,4 @@ def migrate_to_v1(obj):
     # Update to object version  = 1
     obj.ObjectVersion = 1
 
-    _wrn("Migrating round mirror from v0 to v1\n")
+    _wrn("Migrating spherical lens from v0 to v1\n")

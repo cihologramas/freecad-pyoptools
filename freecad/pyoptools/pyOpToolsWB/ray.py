@@ -59,6 +59,7 @@ class RayMenu(WBCommandMenu):
 
 
 class RayPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(self, obj, wavelength=633, enabled=True):
         WBPart.__init__(self, obj, "Ray")
         obj.addProperty(

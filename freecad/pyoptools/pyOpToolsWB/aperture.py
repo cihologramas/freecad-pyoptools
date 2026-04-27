@@ -56,6 +56,7 @@ class ApertureMenu(WBCommandMenu):
 
 
 class AperturePart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(self, obj, InD=10, OutD=50):
         WBPart.__init__(self, obj, "Aperture")
 

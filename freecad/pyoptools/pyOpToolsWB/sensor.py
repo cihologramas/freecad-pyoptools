@@ -52,6 +52,7 @@ class SensorMenu(WBCommandMenu):
 
 
 class SensorPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(self, obj, height=10, width=10):
 
         WBPart.__init__(self, obj, "Sensor")

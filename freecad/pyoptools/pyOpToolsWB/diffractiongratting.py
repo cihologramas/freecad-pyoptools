@@ -79,6 +79,7 @@ class DiffractionGrattingMenu(WBCommandMenu):
                 "Pixmap": ""}
 
 class DiffractionGrattingPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(
         self,
         obj,
@@ -93,7 +94,7 @@ class DiffractionGrattingPart(WBPart):
         matref="",
     ):
 
-        WBPart.__init__(self, obj, "RectangularMirror")
+        WBPart.__init__(self, obj, "DiffractionGratting")
         obj.addProperty(
             "App::PropertyPercent",
             "Reflectivity",

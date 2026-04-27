@@ -59,9 +59,10 @@ class DovePrismMenu(WBCommandMenu):
 
 
 class DovePrismPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(self, obj, S=20, L=50, matcat="", matref=""):
 
-        WBPart.__init__(self, obj, "PentaPrism")
+        WBPart.__init__(self, obj, "DovePrism")
         obj.addProperty("App::PropertyLength","S","Shape","Dove Prism side size ")
         obj.addProperty("App::PropertyLength","L","Shape","Dove Prism length size ")
         obj.addProperty("App::PropertyString","matcat","Material","Material catalog")

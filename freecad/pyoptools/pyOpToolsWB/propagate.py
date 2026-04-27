@@ -12,6 +12,39 @@ from pyoptools.misc.pmisc.misc import wavelength2RGB
 from pyoptools.raytrace.calc import parallel_propagate
 
 
+def _has_forward_incompatible_objects():
+    """Check if the active document contains any forward-incompatible objects."""
+    if FreeCAD.ActiveDocument is None:
+        return False
+    from freecad.pyoptools.pyOpToolsWB.wbpart import WBPart
+
+    for obj in FreeCAD.ActiveDocument.Objects:
+        # Skip objects that don't belong to pyoptools (same filter used across codebase)
+        if not hasattr(obj, "ComponentType"):
+            continue
+
+        if hasattr(obj, "BaseVersion") and obj.BaseVersion > WBPart.CURRENT_BASE_VERSION:
+            return True
+
+        # Proxy exists: check via the class's CURRENT_PART_VERSION
+        if (
+            hasattr(obj, "ObjectVersion")
+            and hasattr(obj, "Proxy")
+            and obj.Proxy is not None
+            and hasattr(type(obj.Proxy), "CURRENT_PART_VERSION")
+        ):
+            part_version = type(obj.Proxy).CURRENT_PART_VERSION
+            if obj.ObjectVersion > part_version:
+                return True
+
+        # Proxy missing on a pyoptools object: the class no longer exists
+        # in this version of the workbench — treat as forward-incompatible
+        if hasattr(obj, "ObjectVersion") and hasattr(obj, "Proxy") and obj.Proxy is None:
+            return True
+
+    return False
+
+
 class PropagateMenu:
     def __init__(self):
         # Esta no tiene GUI, no necesitamos heredar de WBCommandMenu
@@ -60,6 +93,15 @@ class PropagateMenu:
 
     def Activated(self):
         try:
+            if _has_forward_incompatible_objects():
+                FeedbackHelper.show_error_dialog(
+                    "Ray Propagation Blocked",
+                    "This document contains objects saved with a newer version of\n"
+                    "pyoptools. Ray propagation is disabled to prevent incorrect results.\n\n"
+                    "Please upgrade the freecad-pyoptools workbench to enable propagation."
+                )
+                return
+
             myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", "PROP")
             PropagatePart(myObj)
             myObj.ViewObject.Proxy = 0
@@ -96,6 +138,8 @@ def get_prop_shape(ray):
 
 
 class PropagatePart(WBPart):
+    CURRENT_PART_VERSION = 0
+
     def __init__(self, obj):
         WBPart.__init__(self, obj, "Propagation")
 
