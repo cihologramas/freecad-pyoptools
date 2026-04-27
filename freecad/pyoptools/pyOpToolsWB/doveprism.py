@@ -62,7 +62,6 @@ class DovePrismPart(WBPart):
     def __init__(self, obj, S=20, L=50, matcat="", matref=""):
 
         WBPart.__init__(self, obj, "PentaPrism")
-        obj.Proxy = self
         obj.addProperty("App::PropertyLength","S","Shape","Dove Prism side size ")
         obj.addProperty("App::PropertyLength","L","Shape","Dove Prism length size ")
         obj.addProperty("App::PropertyString","matcat","Material","Material catalog")
@@ -97,6 +96,9 @@ class DovePrismPart(WBPart):
         d = F.extrude(FreeCAD.Base.Vector(0, 2 * s2, 0))
 
         obj.Shape = d
+
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
 
 
 def InsertDP(S=20, L=50, ID="L", matcat="", matref=""):

@@ -133,7 +133,6 @@ class DoubletLensPart(WBPart):
     ):
 
         WBPart.__init__(self, obj, "DoubletLens")
-        obj.Proxy = self
 
         obj.addProperty(
             "App::PropertyPrecision",

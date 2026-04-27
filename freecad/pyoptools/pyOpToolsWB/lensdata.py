@@ -252,6 +252,9 @@ class LensDataPart(WBPart):
 
         return comp_lib.MultiLens(l)
 
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
+
 
 def InsertLD(datalist, ID="L"):
     import FreeCAD

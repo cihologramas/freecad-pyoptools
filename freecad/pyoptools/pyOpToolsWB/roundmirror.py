@@ -123,7 +123,6 @@ class RoundMirrorPart(WBPart):
 
         super().__init__(obj, "RoundMirror")
 
-        obj.Proxy = self
         obj.addProperty(
             "App::PropertyPercent",
             "Reflectivity",

@@ -61,7 +61,6 @@ class RayMenu(WBCommandMenu):
 class RayPart(WBPart):
     def __init__(self, obj, wavelength=633, enabled=True):
         WBPart.__init__(self, obj, "Ray")
-        obj.Proxy = self
         obj.addProperty(
             "App::PropertyLength", "wl", "Options", "Wavelength of the source"
         )
@@ -79,6 +78,9 @@ class RayPart(WBPart):
         if prop == "wl":
             r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
             obj.ViewObject.ShapeColor = (r, g, b, 0.0)
+
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
 
     def pyoptools_repr(self, obj):
         wl = obj.wl.getValueAs("µm").Value

@@ -170,3 +170,6 @@ class PropagatePart(WBPart):
     def pyoptools_repr(self, obj):
         # Solo para que no se estrelle
         return []
+
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)

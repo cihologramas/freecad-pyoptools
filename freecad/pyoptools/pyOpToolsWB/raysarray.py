@@ -135,6 +135,9 @@ class RaysArrayPart(WBPart):
             r, g, b = wavelength2RGB(obj.wavelength / 1000.0)
             obj.ViewObject.ShapeColor = (r, g, b, 0.0)
 
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
+
     def pyoptools_repr(self, obj):
         pla = obj.getGlobalPlacement()
         X, Y, Z = pla.Base

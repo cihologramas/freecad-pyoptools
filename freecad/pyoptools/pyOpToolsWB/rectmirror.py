@@ -98,7 +98,6 @@ class RectMirrorPart(WBPart):
         """
 
         super().__init__(obj, "RectangularMirror")
-        obj.Proxy = self
         obj.addProperty(
             "App::PropertyPercent",
             "Reflectivity",

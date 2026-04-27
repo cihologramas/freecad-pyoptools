@@ -55,7 +55,6 @@ class SensorPart(WBPart):
     def __init__(self, obj, height=10, width=10):
 
         WBPart.__init__(self, obj, "Sensor")
-        obj.Proxy = self
         obj.addProperty("App::PropertyLength", "Width", "Shape", "Sensor width")
         obj.addProperty(
             "App::PropertyLength", "Height", "Shape", "Sensor height"
@@ -82,6 +81,9 @@ class SensorPart(WBPart):
             ),
         )
         obj.Shape = d
+
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
 
 
 def InsertSen(height=100, width=100, ID="SEN"):

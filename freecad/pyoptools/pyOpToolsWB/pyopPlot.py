@@ -24,7 +24,7 @@
 #*                                                                         *
 #***************************************************************************
 
-from PySide2 import QtCore, QtWidgets
+from PySide import QtCore, QtWidgets
 from distutils.version import LooseVersion as V
 
 #import matplotlib.pyplot as plt

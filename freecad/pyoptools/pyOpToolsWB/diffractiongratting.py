@@ -94,7 +94,6 @@ class DiffractionGrattingPart(WBPart):
     ):
 
         WBPart.__init__(self, obj, "RectangularMirror")
-        obj.Proxy = self
         obj.addProperty(
             "App::PropertyPercent",
             "Reflectivity",
@@ -168,6 +167,9 @@ class DiffractionGrattingPart(WBPart):
         )
         obj.Shape = d
         print(obj.M)
+
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
 
 
 def InsertDiffG(

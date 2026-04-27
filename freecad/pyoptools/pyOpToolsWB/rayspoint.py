@@ -73,7 +73,6 @@ class RaysPointPart(WBPart):
         enabled=True,
     ):
         WBPart.__init__(self, obj, "RaysPoint")
-        obj.Proxy = self
         obj.addProperty(
             "App::PropertyIntegerConstraint", "nr", "Shape", "Number of rays (radial)"
         ).nr = (0, 0, 10000, 1)
@@ -110,6 +109,9 @@ class RaysPointPart(WBPart):
         if prop == "wl":
             r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)  # se pasa wl a um
             obj.ViewObject.ShapeColor = (r, g, b, 0.0)
+
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
 
     def pyoptools_repr(self, obj):
         dist = obj.distribution

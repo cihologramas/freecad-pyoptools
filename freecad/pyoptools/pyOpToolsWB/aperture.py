@@ -81,6 +81,9 @@ class AperturePart(WBPart):
 
         return comp_lib.Stop(Circular(OutD / 2.0), Circular(InD / 2.0))
 
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
+
 
 def InsertApp(InD=10, OutD=25, ID=""):
     import FreeCAD
