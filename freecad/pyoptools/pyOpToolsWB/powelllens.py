@@ -67,6 +67,7 @@ class PowellLensMenu(WBCommandMenu):
 
 
 class PowellLensPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(
         self, obj, R=3.00, CT=7.62, K=-4.302, D=8.89, matcat="", matref=""
     ):

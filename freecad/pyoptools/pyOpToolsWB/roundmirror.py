@@ -12,7 +12,7 @@ from freecad.pyoptools.pyOpToolsWB.pyoptoolshelpers import getMaterial
 
 import pyoptools.raytrace.comp_lib as comp_lib
 import pyoptools.raytrace.mat_lib as matlib
-from math import radians
+from math import radians, sin
 
 _wrn = FreeCAD.Console.PrintWarning
 
@@ -28,6 +28,7 @@ class RoundMirrorGUI(WBCommandGUI):
         Th = self.form.Thickness.value()
         Ref = self.form.Reflectivity.value()
         D = self.form.D.value()
+        WA = self.form.WedgeAngle.value()
         X = self.form.Xpos.value()
         Y = self.form.Ypos.value()
         Z = self.form.Zpos.value()
@@ -40,7 +41,7 @@ class RoundMirrorGUI(WBCommandGUI):
         else:
             matref = self.form.Reference.currentText()
 
-        obj = InsertRM(Ref, Th, D, ID="M1", matcat=matcat, matref=matref)
+        obj = InsertRM(Ref, Th, D, ID="M1", matcat=matcat, matref=matref, WedgeAngle=WA)
         m = FreeCAD.Matrix()
         m.rotateX(radians(Xrot))
         m.rotateY(radians(Yrot))
@@ -96,7 +97,9 @@ class RoundMirrorPart(WBPart):
         - Initial version with basic properties and functionalities.
     """
 
-    def __init__(self, obj, Ref=100, Th=10, D=50, matcat="", matref=""):
+    CURRENT_PART_VERSION = 2
+
+    def __init__(self, obj, Ref=100, Th=10, D=50, matcat="", matref="", WedgeAngle=0.0):
         """
         Initializes a new instance of the RoundMirrorPart class.
 
@@ -114,11 +117,14 @@ class RoundMirrorPart(WBPart):
             Initial material catalog (default is an empty string).
         matref : str, optional
             Initial material reference (default is an empty string).
+        WedgeAngle : float, optional
+            Tilt angle (degrees) of S2 around the Y-axis. Default is 0
+            (parallel faces, no wedge). The ``thickness`` value always
+            represents the center thickness.
         """
 
         super().__init__(obj, "RoundMirror")
 
-        obj.Proxy = self
         obj.addProperty(
             "App::PropertyPercent",
             "Reflectivity",
@@ -148,8 +154,11 @@ class RoundMirrorPart(WBPart):
         obj.ViewObject.Transparency = 50
         obj.ViewObject.ShapeColor = (0.5, 0.5, 0.5, 0.0)
 
-        # Set current RoundMirror Version
-        obj.ObjectVersion = 1
+        obj.addProperty(
+        "App::PropertyAngle", "WedgeAngle", "Shape", "Wedge angle"
+        )
+
+        obj.WedgeAngle = WedgeAngle
 
     def onChanged(self, obj, prop):
         super().onChanged(obj, prop)
@@ -213,6 +222,8 @@ class RoundMirrorPart(WBPart):
 
         if obj.ObjectVersion == 0:
             migrate_to_v1(obj)
+        if obj.ObjectVersion == 1:
+            migrate_to_v2(obj)
 
     def pyoptools_repr(self, obj):
         if obj.FilterType == "NoFilter":
@@ -237,22 +248,47 @@ class RoundMirrorPart(WBPart):
             obj.Reflectivity / 100.0,
             material=material,
             filter_spec=filter_spec,
+            wedge_angle=radians(obj.WedgeAngle),
         )
         return rm
 
     def execute(self, obj):
-        d = Part.makeCylinder(
-            obj.D.Value / 2.0, obj.Thk.Value, FreeCAD.Base.Vector(0, 0, 0)
+        R = obj.D.Value / 2.0
+        Thk = obj.Thk.Value
+        wa = obj.WedgeAngle.Value
+
+        # WedgeAngle == 0: plain cylinder, identical to original behavior
+        if wa == 0:
+            obj.Shape = Part.makeCylinder(R, Thk, FreeCAD.Base.Vector(0, 0, 0))
+            return
+
+        # WedgeAngle > 0: build wedge shape via boolean cut
+        # Extra height accounts for the thick-side extension caused by the tilt
+        extra = R * abs(sin(radians(wa))) + 0.1  # small safety margin
+        cyl = Part.makeCylinder(R, Thk + extra, FreeCAD.Base.Vector(0, 0, 0))
+
+        # Large cutting box starting at z=Thk, extending upward
+        big = 4 * (R + Thk + extra)
+        cut_box = Part.makeBox(
+            big, big, big,
+            FreeCAD.Base.Vector(-big / 2, -big / 2, Thk)
         )
-        # Esto aca no funciona
-        # d.translate(FreeCAD.Base.Vector(0,0,-obj.Thickness))
 
-        obj.Shape = d
+        # Rotate cutting box around Y-axis at (0, 0, Thk)
+        # Right-hand rule: positive angle → +X side goes down → thinner at +X
+        # This matches the pyoptools convention: S2 rotated around Y at (0,0,thickness)
+        cut_box.rotate(
+            FreeCAD.Base.Vector(0, 0, Thk),
+            FreeCAD.Base.Vector(0, 1, 0),
+            wa
+        )
+
+        obj.Shape = cyl.cut(cut_box)
 
 
-def InsertRM(Ref=100, Th=10, D=50, ID="L", matcat="", matref=""):
+def InsertRM(Ref=100, Th=10, D=50, ID="L", matcat="", matref="", WedgeAngle=0.0):
     myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", ID)
-    RoundMirrorPart(myObj, Ref, Th, D, matcat, matref)
+    RoundMirrorPart(myObj, Ref, Th, D, matcat, matref, WedgeAngle)
     myObj.ViewObject.Proxy = 0  # this is mandatory unless we code the ViewProvider too
     FreeCAD.ActiveDocument.recompute()
     return myObj
@@ -270,3 +306,15 @@ def migrate_to_v1(obj):
     obj.ObjectVersion = 1
 
     _wrn("Migrating round mirror from v0 to v1\n")
+
+def migrate_to_v2(obj):
+    # Add the WedgeAngle property
+    obj.ObjectVersion = 2
+
+    _wrn("Migrating round mirror from v1 to v2\n")
+    
+    obj.addProperty(
+        "App::PropertyAngle", "WedgeAngle", "Shape", "Wedge angle"
+    )
+    obj.WedgeAngle = 0.0
+    

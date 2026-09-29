@@ -62,6 +62,7 @@ class RaysParallelMenu(WBCommandMenu):
 
 
 class RaysParPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(
         self, obj, nr=6, na=6, distribution="polar", wavelength=633, D=5, enabled=True
     ):
@@ -103,6 +104,9 @@ class RaysParPart(WBPart):
         if prop == "wl":
             r, g, b = wavelength2RGB(obj.wl.getValueAs("µm").Value)
             obj.ViewObject.ShapeColor = (r, g, b, 0.0)
+
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
 
     def pyoptools_repr(self, obj):
         pla = obj.getGlobalPlacement()

@@ -65,6 +65,7 @@ class CylindricalLensMenu(WBCommandMenu):
 
 
 class CylindricalLensPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(
         self, obj, CS1=0.01, CS2=-0.01, CT=10, W=20, H=20, matcat="", matref=""
     ):

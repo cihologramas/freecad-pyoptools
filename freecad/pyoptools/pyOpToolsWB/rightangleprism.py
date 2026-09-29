@@ -70,10 +70,10 @@ class RightAnglePrismMenu(WBCommandMenu):
 
 
 class RightAnglePrismPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(self, obj, S=50, matcat="", matref="", rla=0, rlb=0, rhy=0):
 
         WBPart.__init__(self, obj, "RightAnglePrism")
-        obj.Proxy = self
         obj.addProperty(
             "App::PropertyLength", "S", "Shape", "Right Angle Prism side size "
         )
@@ -131,6 +131,9 @@ class RightAnglePrismPart(WBPart):
         d = F.extrude(FreeCAD.Base.Vector(0, 2 * l2, 0))
 
         obj.Shape = d
+
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
 
 
 def InsertRAP(S=50, ID="RAP", matcat="", matref="", rla=0, rlb=0, rhy=0):

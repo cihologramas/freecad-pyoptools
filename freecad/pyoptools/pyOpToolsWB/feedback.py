@@ -157,13 +157,14 @@ class FeedbackHelper:
             )
             FeedbackHelper.show_error_dialog("Component Creation Failed", msg)
         """
-        # Log technical error for debugging
-        FreeCAD.Console.PrintLog(
-            f"[pyOpTools Debug] {type(exception).__name__}: {str(exception)}\n"
+        # Log technical error to console (visible in Report View)
+        FreeCAD.Console.PrintError(
+            f"[pyOpTools] {type(exception).__name__}: {str(exception)}\n"
         )
 
-        # Return user-friendly message
-        return user_message
+        # Return user-friendly message with exception details appended
+        exc_info = f"{type(exception).__name__}: {str(exception)}"
+        return f"{user_message}\n\nError: {exc_info}"
 
     @staticmethod
     def with_error_handling(component_name=None, operation="creation"):

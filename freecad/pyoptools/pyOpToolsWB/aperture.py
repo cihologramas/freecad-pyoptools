@@ -56,6 +56,7 @@ class ApertureMenu(WBCommandMenu):
 
 
 class AperturePart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(self, obj, InD=10, OutD=50):
         WBPart.__init__(self, obj, "Aperture")
 
@@ -80,6 +81,9 @@ class AperturePart(WBPart):
         OutD = obj.OutD.Value
 
         return comp_lib.Stop(Circular(OutD / 2.0), Circular(InD / 2.0))
+
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
 
 
 def InsertApp(InD=10, OutD=25, ID=""):

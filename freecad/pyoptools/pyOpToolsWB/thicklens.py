@@ -71,6 +71,7 @@ class ThickLensMenu(WBCommandMenu):
 
 
 class ThickLensPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(
         self,
         obj,
@@ -87,7 +88,6 @@ class ThickLensPart(WBPart):
         SFRT=False,
     ):
         WBPart.__init__(self, obj, "ThickLens")
-        obj.Proxy = self
         obj.addProperty(
             "App::PropertyLength",
             "Thk",
@@ -199,8 +199,11 @@ class ThickLensPart(WBPart):
 
         obj.Shape = Part.makeCompound(oblist)
 
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
 
-# (self,obj,Th=10,D=50,PP1=0,PP2=0,f=100,Pup1P=0, Pup1D=10,Pup1En=False,Pup2P=0, Pup2D=10,Pup2En=False, SPP=False,SFRT=False):
+
+    # (self,obj,Th=10,D=50,PP1=0,PP2=0,f=100,Pup1P=0, Pup1D=10,Pup1En=False,Pup2P=0, Pup2D=10,Pup2En=False, SPP=False,SFRT=False):
 def InsertTL(
     Th=10,
     D=50,

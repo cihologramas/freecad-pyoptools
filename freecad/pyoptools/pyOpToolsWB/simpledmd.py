@@ -128,6 +128,8 @@ class SimpleDMDPart(WBPart):
       This discrepancy needs verification and may require correction.
     """
 
+    CURRENT_PART_VERSION = 1
+
     def __init__(
         self,
         obj,
@@ -196,9 +198,6 @@ class SimpleDMDPart(WBPart):
         # Visual properties (silver/gray mirror surface)
         obj.ViewObject.Transparency = 0
         obj.ViewObject.ShapeColor = (0.8, 0.8, 0.8, 0.0)
-
-        # Version for migration support
-        obj.ObjectVersion = 1
 
     def execute(self, obj):
         """Generate 3D geometry representing DMD device.

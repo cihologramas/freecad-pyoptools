@@ -14,6 +14,7 @@ class LightSourcesPanel(QtWidgets.QDockWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Light Sources")
+        self.setObjectName("PyOpTools_LightSourcesPanel")
         
         # Initialize caches before creating icons
         self._icon_cache = {}

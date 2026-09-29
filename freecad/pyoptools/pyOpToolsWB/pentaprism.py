@@ -60,10 +60,10 @@ class PentaPrismMenu(WBCommandMenu):
 
 
 class PentaPrismPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(self, obj, S=50, matcat="", matref=""):
 
         WBPart.__init__(self, obj, "PentaPrism")
-        obj.Proxy = self
         obj.addProperty(
             "App::PropertyLength", "S", "Shape", "Penta Prism side size "
         )
@@ -102,6 +102,9 @@ class PentaPrismPart(WBPart):
         d = F.extrude(FreeCAD.Base.Vector(0, 2 * l2, 0))
 
         obj.Shape = d
+
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
 
 
 def InsertPP(S=50, ID="PP", matcat="", matref=""):

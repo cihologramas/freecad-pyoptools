@@ -61,10 +61,10 @@ class BSCubeMenu(WBCommandMenu):
 
 
 class BSCubePart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(self, obj, S=50, Ref=100, matcat="", matref=""):
 
         WBPart.__init__(self, obj, "BSCube")
-        obj.Proxy = self
         obj.addProperty("App::PropertyLength", "S", "Shape", "Cube side size ")
         obj.addProperty(
             "App::PropertyString", "matcat", "Material", "Material catalog"
@@ -108,6 +108,9 @@ class BSCubePart(WBPart):
         d = F.extrude(FreeCAD.Base.Vector(0, 2 * l2, 0))
 
         obj.Shape = d
+
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
 
 
 def InsertBSC(S=50, Ref=100, ID="PP", matcat="", matref=""):

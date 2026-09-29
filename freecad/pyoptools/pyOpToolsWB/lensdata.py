@@ -140,6 +140,7 @@ class LensDataMenu(WBCommandMenu):
 
 
 class LensDataPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(self, obj, datalist):
         surfType, radius, thick, semid, matcat, matref = datalist
 
@@ -251,6 +252,9 @@ class LensDataPart(WBPart):
         l = list(zip(Type, Radius, Thick, SemiDiam, matcat, matref))
 
         return comp_lib.MultiLens(l)
+
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)
 
 
 def InsertLD(datalist, ID="L"):

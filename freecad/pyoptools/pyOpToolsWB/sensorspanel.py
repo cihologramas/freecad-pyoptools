@@ -12,6 +12,7 @@ class SensorsPanel(QtWidgets.QDockWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Sensors")
+        self.setObjectName("PyOpTools_SensorsPanel")
         
         # Allow docking on left or right only
         self.setAllowedAreas(

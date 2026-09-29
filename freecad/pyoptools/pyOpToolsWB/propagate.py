@@ -12,6 +12,39 @@ from pyoptools.misc.pmisc.misc import wavelength2RGB
 from pyoptools.raytrace.calc import parallel_propagate
 
 
+def _has_forward_incompatible_objects():
+    """Check if the active document contains any forward-incompatible objects."""
+    if FreeCAD.ActiveDocument is None:
+        return False
+    from freecad.pyoptools.pyOpToolsWB.wbpart import WBPart
+
+    for obj in FreeCAD.ActiveDocument.Objects:
+        # Skip objects that don't belong to pyoptools (same filter used across codebase)
+        if not hasattr(obj, "ComponentType"):
+            continue
+
+        if hasattr(obj, "BaseVersion") and obj.BaseVersion > WBPart.CURRENT_BASE_VERSION:
+            return True
+
+        # Proxy exists: check via the class's CURRENT_PART_VERSION
+        if (
+            hasattr(obj, "ObjectVersion")
+            and hasattr(obj, "Proxy")
+            and obj.Proxy is not None
+            and hasattr(type(obj.Proxy), "CURRENT_PART_VERSION")
+        ):
+            part_version = type(obj.Proxy).CURRENT_PART_VERSION
+            if obj.ObjectVersion > part_version:
+                return True
+
+        # Proxy missing on a pyoptools object: the class no longer exists
+        # in this version of the workbench — treat as forward-incompatible
+        if hasattr(obj, "ObjectVersion") and hasattr(obj, "Proxy") and obj.Proxy is None:
+            return True
+
+    return False
+
+
 class PropagateMenu:
     def __init__(self):
         # Esta no tiene GUI, no necesitamos heredar de WBCommandMenu
@@ -60,6 +93,15 @@ class PropagateMenu:
 
     def Activated(self):
         try:
+            if _has_forward_incompatible_objects():
+                FeedbackHelper.show_error_dialog(
+                    "Ray Propagation Blocked",
+                    "This document contains objects saved with a newer version of\n"
+                    "pyoptools. Ray propagation is disabled to prevent incorrect results.\n\n"
+                    "Please upgrade the freecad-pyoptools workbench to enable propagation."
+                )
+                return
+
             myObj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", "PROP")
             PropagatePart(myObj)
             myObj.ViewObject.Proxy = 0
@@ -96,6 +138,8 @@ def get_prop_shape(ray):
 
 
 class PropagatePart(WBPart):
+    CURRENT_PART_VERSION = 0
+
     def __init__(self, obj):
         WBPart.__init__(self, obj, "Propagation")
 
@@ -117,16 +161,25 @@ class PropagatePart(WBPart):
             )
             raise  # Re-raise so FreeCAD knows object creation failed
 
+    def __getstate__(self):
+        # TODO: Implement proper serialization of self.S (System object) so that
+        # propagation results survive document save/reload without needing to
+        # re-run propagation. For now we exclude it entirely to avoid the
+        # "Object of type System is not JSON serializable" error.
+        return {}
+
+    def __setstate__(self, state):
+        # self.S will be absent after reload; execute() already handles this
+        # gracefully via hasattr(self, "S").
+        pass
+
     @FeedbackHelper.with_busy_cursor
     def execute(self, obj):
         raydict = {}
         raylist = []
         colorlist = []
 
-        # The System attribute ('S') is not being serialized correctly when saving
-        # and reloading the model, causing it to be missing. As a workaround,
-        # we skip plotting rays if 'S' is not present.
-        if hasattr(self, "S"):
+        if hasattr(self, "S"):  # S is absent after document reload (see __getstate__)
             try:
                 for ray in self.S.prop_ray:
                     llines = get_prop_shape(ray)
@@ -161,3 +214,6 @@ class PropagatePart(WBPart):
     def pyoptools_repr(self, obj):
         # Solo para que no se estrelle
         return []
+
+    def onDocumentRestored(self, obj):
+        super().onDocumentRestored(obj)

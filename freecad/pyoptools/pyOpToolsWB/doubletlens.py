@@ -115,6 +115,7 @@ class DoubletLensMenu(WBCommandMenu):
 
 
 class DoubletLensPart(WBPart):
+    CURRENT_PART_VERSION = 0
     def __init__(
         self,
         obj,
@@ -133,7 +134,6 @@ class DoubletLensPart(WBPart):
     ):
 
         WBPart.__init__(self, obj, "DoubletLens")
-        obj.Proxy = self
 
         obj.addProperty(
             "App::PropertyPrecision",

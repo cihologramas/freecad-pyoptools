@@ -65,6 +65,7 @@ class RectMirrorMenu(WBCommandMenu):
 
 
 class RectMirrorPart(WBPart):
+    CURRENT_PART_VERSION = 1
     def __init__(self, obj, Ref=100, Th=10, SX=50, SY=50, matcat="", matref=""):
         """RectMirrorPart class.
 
@@ -98,7 +99,6 @@ class RectMirrorPart(WBPart):
         """
 
         super().__init__(obj, "RectangularMirror")
-        obj.Proxy = self
         obj.addProperty(
             "App::PropertyPercent",
             "Reflectivity",
@@ -128,9 +128,6 @@ class RectMirrorPart(WBPart):
 
         obj.ViewObject.Transparency = 50
         obj.ViewObject.ShapeColor = (0.5, 0.5, 0.5, 0.0)
-
-        # Set current RoundMirror Version
-        obj.ObjectVersion = 1
 
     def onChanged(self, obj, prop):
         super().onChanged(obj, prop)
